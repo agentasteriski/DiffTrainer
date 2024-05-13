@@ -177,8 +177,13 @@ class tabview(ctk.CTkTabview):
         self.confbox7.grid(row=3, column=3, pady=5)
         global shallow_diff
         shallow_diff = tk.BooleanVar()
-        self.confbox8 =  ctk.CTkCheckBox(master=self.frame6, text="shallow diff", variable=shallow_diff, onvalue = True, offvalue = False, state=tk.DISABLED)
+        self.confbox8 =  ctk.CTkCheckBox(master=self.frame6, text="shallow", variable=shallow_diff, onvalue = True, offvalue = False, state=tk.DISABLED)
         self.confbox8.grid(row=4, column=2, pady=5)
+        global preferds
+        preferds = tk.BooleanVar()
+        self.confbox9 = ctk.CTkCheckBox(master=self.frame6, text="prefer_ds", variable=preferds, onvalue = True, offvalue = False, state=tk.DISABLED)
+        self.confbox9.grid(row=4, column=3, pady=5)
+
 
         self.frame7 = ctk.CTkFrame(master=self.tab("Configuration"))
         self.frame7.grid(row=2, column=0)
@@ -276,6 +281,7 @@ class tabview(ctk.CTkTabview):
             self.confbox6.configure(state=tk.NORMAL)
             self.confbox7.configure(state=tk.NORMAL)
             self.confbox8.configure(state=tk.NORMAL)
+            self.confbox9.configure(state=tk.NORMAL)
             self.confnamebox.configure(state=tk.NORMAL)
         elif adv_on.get() == "off":
             self.confbox1.configure(state=tk.DISABLED)
@@ -286,6 +292,7 @@ class tabview(ctk.CTkTabview):
             self.confbox6.configure(state=tk.DISABLED)
             self.confbox7.configure(state=tk.DISABLED)
             self.confbox8.configure(state=tk.DISABLED)
+            self.confbox9.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
         else:
             self.confbox1.configure(state=tk.DISABLED)
@@ -296,6 +303,7 @@ class tabview(ctk.CTkTabview):
             self.confbox6.configure(state=tk.DISABLED)
             self.confbox7.configure(state=tk.DISABLED)
             self.confbox8.configure(state=tk.DISABLED)
+            self.confbox9.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
 
     def combobox_callback(self, choice):
@@ -872,6 +880,7 @@ class tabview(ctk.CTkTabview):
         tension = trainten.get()
         voicing = trainvoc.get()
         shallow = shallow_diff.get()
+        ds = preferds.get()
         save_interval = save_int.get()
         batch = batch_size.get()
         selected_config_type = trainselect.get()
@@ -939,6 +948,8 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_melody_encoder"] = pitch
             bitch_ass_config["tension_logit_max"] = 6
             bitch_ass_config["tension_logit_min"] = -6
+            bitch_ass_config["binarization_args"]["prefer_ds"] = ds
+
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
