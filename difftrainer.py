@@ -2,9 +2,9 @@ import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, w
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
-from PIL import Image
+from PIL import Image, ImageTk
 from tqdm import tqdm
-from contextlib import contextmanager
+
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
@@ -1205,6 +1205,9 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("DiffTrainer")
+        self.iconpath = ImageTk.PhotoImage(file=os.path.join("assets","sussy.png"))
+        self.wm_iconbitmap()
+        self.iconphoto(False, self.iconpath)
         self.create_widgets()
 
     def on_tab_change(self, event):
