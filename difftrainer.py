@@ -458,27 +458,27 @@ class tabview(ctk.CTkTabview):
                 if "release" in line.lower():
                     version = line.split()[-1]
                     print("CUDA version:", version)
-                    subprocess.check_call(["pip", "install", "-r", "DiffSinger/requirements.txt"])
-                    subprocess.check_call(["pip", "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117"])
-                    subprocess.check_call(["pip", "install", "protobuf"])
-                    subprocess.check_call(["pip", "install", "onnxruntime"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime"])
                     break
             else:
                 print("CUDA version not found")
-                subprocess.check_call(["pip", "install", "-r", "DiffSinger/requirements.txt"])
-                subprocess.check_call(["pip", "install", "torch==1.13.0"])
-                subprocess.check_call(["pip", "install", "torchvision==0.14.0"])
-                subprocess.check_call(["pip", "install", "torchaudio==0.13.0"])
-                subprocess.check_call(["pip", "install", "protobuf"])
-                subprocess.check_call(["pip", "install", "onnxruntime"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.0"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchvision==0.14.0"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime"])
         except (FileNotFoundError, subprocess.CalledProcessError):
             print("CUDA is not available")
-            subprocess.check_call(["pip", "install", "-r", "DiffSinger/requirements.txt"])
-            subprocess.check_call(["pip", "install", "torch==1.13.0"])
-            subprocess.check_call(["pip", "install", "torchvision==0.14.0"])
-            subprocess.check_call(["pip", "install", "torchaudio==0.13.0"])
-            subprocess.check_call(["pip", "install", "protobuf"])
-            subprocess.check_call(["pip", "install", "onnxruntime"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.0"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchvision==0.14.0"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime"])
 
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
