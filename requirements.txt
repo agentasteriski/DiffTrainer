@@ -1,0 +1,5 @@
+customtkinter
+tk
+tdqm
+pyyaml
+requests
