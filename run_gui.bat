@@ -20,3 +20,5 @@ if not "%min%"=="10" (
 )
 
 %cd%\python\python.exe check_update.py
+
+pause
