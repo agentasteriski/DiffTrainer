@@ -24,4 +24,4 @@ pip install tk tqdm PyYAML requests -q
 
 rem cd the dir into the current directory cus why not <3
 cd /d "%~dp0"
-python check_update.py
+%cd%\python\python.exe check_update.py
