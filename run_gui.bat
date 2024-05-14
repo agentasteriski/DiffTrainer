@@ -19,9 +19,4 @@ if not "%min%"=="10" (
     goto end
 )
 
-rem force pip install cus it doesn't really matter if you already have the modules plus PyYAML is a pain to deal with for checking and im lAzY
-pip install tk tqdm PyYAML requests -q
-
-rem cd the dir into the current directory cus why not <3
-cd /d "%~dp0"
 %cd%\python\python.exe check_update.py
