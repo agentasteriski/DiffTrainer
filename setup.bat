@@ -26,4 +26,9 @@ if "%arch%"=="32-bit" (
 %cd%\python\python.exe -m pip install --upgrade pip --no-warn-script-location
 %cd%\python\Scripts\pip install customtkinter tk tdqm pyyaml requests pillow --no-warn-script-location
 
-pause
+echo Setup complete!
+echo Launching gui...
+call run_gui.bat
+
+
+
