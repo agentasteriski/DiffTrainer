@@ -3,3 +3,4 @@ tk
 tdqm
 pyyaml
 requests
+pillow
