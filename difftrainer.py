@@ -458,27 +458,27 @@ class tabview(ctk.CTkTabview):
                 if "release" in line.lower():
                     version = line.split()[-1]
                     print("CUDA version:", version)
-                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt"])
-                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117"])
-                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf"])
-                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt", "--no-warn-script-location"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117", "--no-warn-script-location"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf", "--no-warn-script-location"])
+                    subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime", "--no-warn-script-location"])
                     break
             else:
                 print("CUDA version not found")
-                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt"])
-                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.0"])
-                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchvision==0.14.0"])
-                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0"])
-                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf"])
-                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt", "--no-warn-script-location"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.0", "--no-warn-script-location"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchvision==0.14.0", "--no-warn-script-location"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0", "--no-warn-script-location"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf", "--no-warn-script-location"])
+                subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime", "--no-warn-script-location"])
         except (FileNotFoundError, subprocess.CalledProcessError):
             print("CUDA is not available")
-            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt"])
-            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.0"])
-            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchvision==0.14.0"])
-            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0"])
-            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf"])
-            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt", "--no-warn-script-location"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.0", "--no-warn-script-location"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchvision==0.14.0", "--no-warn-script-location"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0", "--no-warn-script-location"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf", "--no-warn-script-location"])
+            subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime", "--no-warn-script-location"])
 
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
@@ -740,7 +740,7 @@ class tabview(ctk.CTkTabview):
             if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                 print("segmenting data...")
                 #dear god please work
-                cmd = ['python', 'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-S', str(max_silence_length), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                cmd = [f'{main_path}/python/python.exe', 'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-S', str(max_silence_length), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                 if self.estimatemidivar.get() == True:
                     cmd.append('-mD')
                     cmd.append('-f')
@@ -1010,7 +1010,7 @@ class tabview(ctk.CTkTabview):
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
         os.environ["CUDA_VISIBLE_DEVICES"] = cuda
-        cmd = ['python', 'scripts/binarize.py', '--config', configpath]
+        cmd = [f'{main_path}/python/python.exe', 'scripts/binarize.py', '--config', configpath]
         print(' '.join(cmd))
         output = subprocess.check_output(cmd, universal_newlines=True)
         print(output)
@@ -1044,7 +1044,7 @@ class tabview(ctk.CTkTabview):
         if not configpath or not ckpt_save_dir:
             self.label.config(text="Please select your config and the data you would like to train first!")
             return
-        subprocess.check_call(['python', 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
+        subprocess.check_call([f'{main_path}/python/python.exe', 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
 
     def onnx_folder_save(self):
         global onnx_folder_dir
@@ -1086,7 +1086,7 @@ class tabview(ctk.CTkTabview):
             onnx_bak = ckpt_save_dir + "/onnx_old"
             os.rename(onnx_folder_dir, onnx_bak)
             print("backing up existing onnx folder...")
-        cmd = ['python', 'scripts/export.py']
+        cmd = [f'{main_path}/python/python.exe', 'scripts/export.py']
         if export_check == 1:
             print("exporting acoustic...")
             cmd.append('acoustic')
@@ -1188,7 +1188,7 @@ class tabview(ctk.CTkTabview):
             ##return
         ou_name = ou_name_var.get()
         dict_path = aco_folder_dir + "/dictionary.txt"
-        cmd = ['python', 'scripts/build_ou_vb.py', '--acoustic_onnx_folder', aco_folder_onnx, '--acoustic_config', aco_config, '--variance_onnx_folder', var_folder_onnx, '--variance_config', var_config, '--dictionary_path', dict_path, '--save_path', ou_export_location, '--name', ou_name]
+        cmd = [f'{main_path}/python/python.exe', 'scripts/build_ou_vb.py', '--acoustic_onnx_folder', aco_folder_onnx, '--acoustic_config', aco_config, '--variance_onnx_folder', var_folder_onnx, '--variance_config', var_config, '--dictionary_path', dict_path, '--save_path', ou_export_location, '--name', ou_name]
         if self.vocoder_onnx != None:
             cmd.append('--vocoder_onnx_model')
             cmd.append(self.vocoder_onnx)
