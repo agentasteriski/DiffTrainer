@@ -1,4 +1,4 @@
-import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, textwrap
+import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
@@ -8,7 +8,8 @@ from contextlib import contextmanager
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "add version here"
+version = "0.0.1"
+releasedate = "05/14/24"
 
 class tabview(ctk.CTkTabview):
 
@@ -32,24 +33,26 @@ class tabview(ctk.CTkTabview):
         self.add("Export Singer(advanced)")
 
         # load images
-        self.logo = ctk.CTkImage(light_image=Image.open("assets/placeholder.png"),
-                                  dark_image=Image.open("assets/placeholder.png"),
-                                  size=(175, 100))
+        self.logo = ctk.CTkImage(light_image=Image.open("assets/difftrainerlogo.png"),
+                                  dark_image=Image.open("assets/difftrainerlogo.png"),
+                                  size=(400, 150))
 
         ##ABOUT
         self.label = ctk.CTkLabel(master=self.tab("About"), text = "", image = self.logo)
         self.label.grid(row=0, column=0, ipady=10, columnspan = 3)
-        self.label = ctk.CTkLabel(master=self.tab("About"), text = f"version {version}")
+        self.label = ctk.CTkLabel(master=self.tab("About"), text = f"version {version}({releasedate})")
         self.label.grid(row=1, column=1)
-        self.button = ctk.CTkButton(master=self.tab("About"), text = "Full Install", command = self.dl_scripts_github)
+        self.button = ctk.CTkButton(master=self.tab("About"), text = "Full install", command = self.dl_scripts_github)
         self.button.grid(row=2, column=0, padx=50)
-        self.button = ctk.CTkButton(master=self.tab("About"), text = "Update Tools", command = self.dl_update)
+        self.button = ctk.CTkButton(master=self.tab("About"), text = "Update tools", command = self.dl_update)
         self.button.grid(row=2, column=2, padx=50)
-        self.label = ctk.CTkLabel(master=self.tab("About"), text = "link")
-        self.label.bind("<Button-1>", lambda e: self.credit("http://www.example.com"))
+        self.label = ctk.CTkLabel(master=self.tab("About"), text = "Front end: Aster")
+        self.label.cget("font").configure(underline=True)
+        self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski"))
         self.label.grid(row=3, column=0, columnspan=2, pady=30)
-        self.label = ctk.CTkLabel(master=self.tab("About"), text = "link")
-        self.label.bind("<Button-1>", lambda e: self.credit("http://www.example.org"))
+        self.label = ctk.CTkLabel(master=self.tab("About"), text = "Back end: Ghin")
+        self.label.cget("font").configure(underline=True)
+        self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/MLo7Ghinsan"))
         self.label.grid(row=3, column=1, columnspan=2, pady=30)
 
         ##SEGMENT
