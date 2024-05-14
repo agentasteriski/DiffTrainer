@@ -13,11 +13,11 @@ set "arch="
 for /f "tokens=2 delims==" %%a in ('wmic os get OSArchitecture /value') do set "arch=%%a"
 if "%arch%"=="32-bit" (
     echo Installing python....
-    assets\python-3.10.11.exe /quiet InstallAllUsers=0 DefaultJustForMeTargetDir=%cd%\python
+    assets\python-3.10.11.exe InstallAllUsers=0 DefaultJustForMeTargetDir=%cd%\python
     echo Python installed successfully!
 ) else if "%arch%"=="64-bit" (
     echo Installing python....
-    assets\python-3.10.11-amd64.exe /quiet InstallAllUsers=0 DefaultJustForMeTargetDir=%cd%\python
+    assets\python-3.10.11-amd64.exe InstallAllUsers=0 DefaultJustForMeTargetDir=%cd%\python
     echo Python installed successfully!
 ) else (
     echo Unable to determine system architecture. Your system might not be compatible with python.
