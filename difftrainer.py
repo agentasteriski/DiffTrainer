@@ -267,8 +267,8 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.frame13, text="Select acoustic checkpoint folder", command=self.get_aco_folder)
         self.button.grid(row=0, column=0, padx=10, pady=10)
         global ou_name_var
-        ou_name_var = tk.StringVar()
-        self.namebox = ctk.CTkEntry(master=self.frame13, textvariable=ou_name_var, placeholder_text="Enter singer name")
+        ou_name_var = tk.StringVar(value="enter_singer_name")
+        self.namebox = ctk.CTkEntry(master=self.frame13, textvariable=ou_name_var)
         self.namebox.grid(row=1, column=0, padx=10, pady=10)
         self.button = ctk.CTkButton(master=self.frame13, text="OPTIONAL: Custom vocoder", command=self.get_vocoder)
         self.button.grid(row=2, column=0, padx=10, pady=10)
