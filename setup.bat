@@ -9,7 +9,7 @@ if exist "%cd%\python" (
 )
 
 %python_exe% -m pip install --upgrade pip --no-warn-script-location
-%pip_exe% install customtkinter tk tdqm pyyaml requests pillow --no-warn-script-location
+%pip_exe% install -r requirements.txt --no-warn-script-location
 
 echo Setup complete!
 echo Launching gui...
