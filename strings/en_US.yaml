@@ -8,7 +8,7 @@ tab_ttl_5: "Export Singer(basic)"
 tab_ttl_6: "Export Singer(advanced)"
 
 # About tab
-version: "version"
+vers: "version"
 install: "Full install"
 update: "Update tools"
 cred_front: "Front end:"
