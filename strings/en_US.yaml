@@ -1,0 +1,57 @@
+lang_code: "English (US)"
+app_ttl: "DiffTrainer"
+tab_ttl_1: "About"
+tab_ttl_2: "Data Preparation"
+tab_ttl_3: "Configuration"
+tab_ttl_4: "Preprocess&Train"
+tab_ttl_5: "Export Singer(basic)"
+tab_ttl_6: "Export Singer(advanced)"
+
+# About tab
+version: "version"
+install: "Full install"
+update: "Update tools"
+cred_front: "Front end:"
+cred_back: "Back end:"
+
+#Data Prep tab
+silperseg: "Max no. of silences per segment"
+length_sil: "Max length of silences(seconds)"
+length_seg: "Max length of segments(seconds)"
+estmidi: "Estimate MIDI"
+detbre: "Detect breath"
+rawdata: "Select raw data folder"
+prepdata: "Prepare data"
+
+#Config tab
+type: "Type:"
+aco: "Acoustic"
+var: "Variance"
+adv: "ADVANCED: Custom config"
+datafolder: "Select formatted data folder"
+savefolder: "Select checkpoint save folder"
+confsel: "Select configuration:"
+advconfig: "Advanced configuration:"
+saveint: "Save interval:"
+maxbatch: "Max batch size"
+saveconf: "Save configuration"
+
+#Train tab
+step1: "Select configuration"
+step2: "Select checkpoint folder"
+step3a: "Preprocess data"
+step3b: "Train"
+warning1: "This window will not respond during training."
+warning2: "To stop training, press Ctrl+C in the command line window."
+patchlabel: "Optional patch:"
+patchbutton: "Use Tensor cores"
+
+#Export tab
+##strings 'aco', 'var', and 'step2' are reused
+onnx: "Export ONNX"
+oupatch: "Temporary patch button(run once after setup/update)"
+getaco: "Select acoustic checkpoint folder"
+getvar: "Select variance checkpoint folder"
+ousave: "Select save location"
+vocoder: "OPTIONAL: Custom vocoder"
+ouexport: "Prepare for OpenUtau"

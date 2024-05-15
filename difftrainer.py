@@ -4,7 +4,10 @@ from tkinter import filedialog, messagebox
 import customtkinter as ctk
 from PIL import Image, ImageTk
 from tqdm import tqdm
-
+from CTkToolTip import CTkToolTip
+    #for some reason my editor won't acknowledge this one but i swear it's real and works
+from ezlocalizr import ezlocalizr
+    #or this one! it's tiger's
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()

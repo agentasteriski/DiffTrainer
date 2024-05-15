@@ -1,4 +1,6 @@
 customtkinter
+ctktooltip
+ez-localizr
 tk
 tdqm
 pyyaml
