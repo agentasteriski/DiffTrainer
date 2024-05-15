@@ -4,7 +4,7 @@ echo Downloading python installer(s)
 curl -o %cd%\assets\python-3.10.11.exe https://www.python.org/ftp/python/3.10.11/python-3.10.11.exe
 curl -o %cd%\assets\python-3.10.11-amd64.exe https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe
 
-echo Granting write permissions to current user for directory... (for installing python)
+echo Granting write permissions to current user's directory... (for installing python)
 set dir=.
 for /f "tokens=*" %%a in ('whoami') do set current=%%a
 icacls "%dir%" /grant "%current%:(oi)(ci)f" /t
