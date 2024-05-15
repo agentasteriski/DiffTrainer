@@ -462,6 +462,7 @@ class tabview(ctk.CTkTabview):
                     subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117", "--no-warn-script-location"])
                     subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf", "--no-warn-script-location"])
                     subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime", "--no-warn-script-location"])
+                    subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
                     break
             else:
                 print("CUDA version not found")
@@ -471,6 +472,7 @@ class tabview(ctk.CTkTabview):
                 subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0", "--no-warn-script-location"])
                 subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf", "--no-warn-script-location"])
                 subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime", "--no-warn-script-location"])
+                subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
         except (FileNotFoundError, subprocess.CalledProcessError):
             print("CUDA is not available")
             subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "-r", "DiffSinger/requirements.txt", "--no-warn-script-location"])
@@ -479,6 +481,7 @@ class tabview(ctk.CTkTabview):
             subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "torchaudio==0.13.0", "--no-warn-script-location"])
             subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "protobuf", "--no-warn-script-location"])
             subprocess.check_call([f"{main_path}/python/Scripts/pip", "install", "onnxruntime", "--no-warn-script-location"])
+            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
 
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
