@@ -411,6 +411,12 @@ class tabview(ctk.CTkTabview):
         vocoder_folder = "DiffSinger/checkpoints"
         vocoder_subfolder_name = "Diffsinger/checkpoints/nsf_hifigan_44.1k_hop512_128bin_2024.02"
 
+        rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
+        rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])  # current scripts dir to avoid issues
+        rmvpe_folder = "DiffSinger/checkpoints"
+        rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
+        os.makedirs(rmvpe_subfolder_name, exist_ok = True)
+
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
@@ -470,6 +476,18 @@ class tabview(ctk.CTkTabview):
         with zipfile.ZipFile(vocoder_zip, "r") as zip_ref:
             zip_ref.extractall(vocoder_folder)
         os.remove(vocoder_zip)
+
+        response = requests.get(rmvpe_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading RMVPE") as progress_bar:
+            with open("rmvpe.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(rmvpe_zip, "r") as zip_ref:
+            zip_ref.extractall(rmvpe_subfolder_name)
+        os.remove(rmvpe_zip)
 
         try:
             output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
@@ -543,6 +561,11 @@ class tabview(ctk.CTkTabview):
         vocoder_folder = "DiffSinger/checkpoints"
         vocoder_subfolder_name = "Diffsinger/checkpoints/nsf_hifigan_44.1k_hop512_128bin_2024.02"
 
+        rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
+        rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])  # current scripts dir to avoid issues
+        rmvpe_folder = "DiffSinger/checkpoints"
+        rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
+        os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
@@ -911,6 +934,12 @@ class tabview(ctk.CTkTabview):
         batch = batch_size.get()
         selected_config_type = trainselect.get()
         if selected_config_type == 1:
+            with open("Diffsinger/configs/base.yaml", "r") as baseconfig:
+                based = yaml.safe_load(baseconfig)
+            based["pe"] = "rmvpe"
+            based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
+            with open("DiffSinger/configs/base.yaml", "w") as baseconfig:
+                    yaml.dump(based, baseconfig)
             with open("DiffSinger/configs/acoustic.yaml", "r") as config:
                 bitch_ass_config = yaml.safe_load(config)
             bitch_ass_config["speakers"] = spk_names
@@ -951,6 +980,12 @@ class tabview(ctk.CTkTabview):
                 print("wrote acoustic config!")
 
         else:
+            with open("Diffsinger/configs/base.yaml", "r") as baseconfig:
+                based = yaml.safe_load(baseconfig)
+            based["pe"] = "rmvpe"
+            based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
+            with open("DiffSinger/configs/base.yaml", "w") as baseconfig:
+                    yaml.dump(based, baseconfig)
             with open("DiffSinger/configs/variance.yaml", "r") as config:
                 bitch_ass_config = yaml.safe_load(config)
             bitch_ass_config["speakers"] = spk_names
