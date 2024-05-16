@@ -1,5 +1,11 @@
 @echo off
 
-%cd%\python\python.exe check_update.py
+if exist "%cd%\python" (
+    set "python_exe=%cd%\python\python.exe"
+) else (
+    set "python_exe=python"
+)
+
+%python_exe% check_update.py
 
 pause
