@@ -117,7 +117,7 @@
     "button_length": 0,
     "fg_color": [
       "#4A4D50",
-      "#4A4D50"
+      "#686b6e"
     ],
     "progress_color": [
       "#0d9db7",
@@ -361,11 +361,11 @@
     }
   },
   "provenance": {
-    "theme name": "difftrainer",
+    "theme name": "ds_gui",
     "theme author": "Aster",
     "date created": "May 14 2024 01:32:51",
-    "last modified by": "Aster",
-    "last modified": "May 14 2024 01:44:54",
+    "last modified by": "megdo",
+    "last modified": "May 16 2024 09:19:11",
     "created with": "CTk Theme Builder v3.1.0",
     "keystone colour": null,
     "harmony method": null,
