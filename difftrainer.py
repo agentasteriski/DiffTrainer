@@ -1136,7 +1136,9 @@ class tabview(ctk.CTkTabview):
         export_check = expselect.get()
         ckpt_main = "Diffsinger\checkpoints"
         ckpt_dir_rel = os.path.relpath(ckpt_save_dir, ckpt_main)
+        ckpt_dir_rel = repr(ckpt_dir_rel)[1:-1]
         ckpt_dir_short = ckpt_dir_rel.lstrip("..\checkpoints\\")
+        ckpt_dir_short = repr(ckpt_dir_short)[1:-1]
         print(ckpt_dir_rel)
         print(ckpt_dir_short)
         onnx_folder_dir = ckpt_save_dir + "/onnx"
