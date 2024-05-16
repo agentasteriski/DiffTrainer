@@ -5,3 +5,4 @@ a CustomTkInter GUI for processing and training DiffSinger models
 ### to do
 - tooltips
 - a real readme
+- use os.path.join instead of combining strings
