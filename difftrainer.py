@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr # type: ignore
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.0.2"
-releasedate = "05/15/24"
+version = "0.0.3"
+releasedate = "05/16/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -37,6 +37,14 @@ class tabview(ctk.CTkTabview):
         self.guisettings = {
             'lang': 'en_US'
         }
+
+        if os.path.exists(('assets/guisettings.yaml')):
+            with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
+                try:
+                    self.guisettings.update(yaml.safe_load(c))
+                    c.close()
+                except yaml.YAMLError as exc:
+                    print("No language choice detected, defaulting to EN_US")
         self.lang = ctk.StringVar(value=self.guisettings['lang'])
         self.L = ezlocalizr(language=self.lang.get(),
 							string_path='strings',
@@ -62,17 +70,23 @@ class tabview(ctk.CTkTabview):
         self.label.grid(row=1, column=1)
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('install'), command = self.dl_scripts_github)
         self.button.grid(row=2, column=0, padx=50)
+        self.tooltip = CTkToolTip(self.button, message=self.L('install2'))
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update)
         self.button.grid(row=2, column=2, padx=50)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('update2')))
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_front') + " Aster"))
         self.label.cget("font").configure(underline=True)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski"))
         self.label.grid(row=3, column=0, columnspan=2, pady=30)
+        self.tooltip = CTkToolTip(self.label, message="owo")
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_back') + " Ghin"))
         self.label.cget("font").configure(underline=True)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/MLo7Ghinsan"))
         self.label.grid(row=3, column=1, columnspan=2, pady=30)
-        self.langselect = ctk.CTkComboBox(master=self.tab(self.L('tab_ttl_1')))
+        self.tooltip = CTkToolTip(self.label, message="uwu")
+        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = self.L('restart'))
+        self.label.grid(row=4, column=2, sticky=tk.W)
+        self.langselect = ctk.CTkComboBox(master=self.tab(self.L('tab_ttl_1')), values=self.L.lang_list, command=lambda x: self.refresh(self.lang.get(), master=self), variable=self.lang)
         self.langselect.grid(row=4, column=2, sticky=tk.SE)
 
         ##SEGMENT
@@ -81,6 +95,7 @@ class tabview(ctk.CTkTabview):
         self.frame1.grid(padx=(35, 10), pady=(10,0))
         self.label = ctk.CTkLabel(master=self.frame1, text = (self.L('silperseg')))
         self.label.grid(row=0, column=0)
+        self.tooltip = CTkToolTip(self.label, message=(self.L('silperseg2')))
         global max_sil
         max_sil = tk.IntVar()
         self.maxsil_box = ctk.CTkEntry(master=self.frame1, textvariable = max_sil, width = 40)
@@ -93,6 +108,7 @@ class tabview(ctk.CTkTabview):
         self.frame2 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
         self.frame2.grid(row=0, column=2, pady=(10, 0))
         self.label = ctk.CTkLabel(master=self.frame2, text = (self.L('length_sil')))
+        self.tooltip = CTkToolTip(self.label, message=(self.L('length_sil2')))
         self.label.grid(row=0, column=0)
         global max_sil_ln
         max_sil_ln = tk.DoubleVar()
@@ -106,6 +122,7 @@ class tabview(ctk.CTkTabview):
         self.frame3 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
         self.frame3.grid(row=1, column=0, padx=(35, 10), pady=(40, 20))
         self.label = ctk.CTkLabel(master=self.frame3, text = (self.L('length_seg')))
+        self.tooltip = CTkToolTip(self.label, message=(self.L('length_seg2')))
         self.label.grid(row=0, column=0)
         global max_seg_ln
         max_seg_ln = tk.DoubleVar()
@@ -122,17 +139,22 @@ class tabview(ctk.CTkTabview):
         self.estimatemidi = ctk.CTkCheckBox(master=self.frame4, text = (self.L('estmidi')), variable = self.estimatemidivar)
         self.estimatemidi.select()
         self.estimatemidi.grid(row=0)
+        self.tooltip = CTkToolTip(self.estimatemidi, message=(self.L('estmidi2')))
         global estimate_midi
         estimate_midi = self.estimatemidivar
         self.detectbreathvar = tk.BooleanVar()
         self.detectbreath = ctk.CTkCheckBox(master=self.frame4, text = (self.L('detbre')), variable = self.detectbreathvar)
         self.detectbreath.deselect()
         self.detectbreath.grid(row=1, pady=10)
+        self.tooltip = CTkToolTip(self.detectbreath, message=(self.L('detbre2')))
         global detectbreath
         detectbreath = self.detectbreathvar
-        ctk.CTkButton(master=self.frame4, text = (self.L('rawdata')), command = self.grab_raw_data).grid(row=2)
-        
-        ctk.CTkButton(master=self.tab(self.L('tab_ttl_2')), text = (self.L('prepdata')), command = self.run_segment).grid(row=2, column=1, pady=(5, 15))
+        self.button = ctk.CTkButton(master=self.frame4, text = (self.L('rawdata')), command = self.grab_raw_data)
+        self.button.grid(row=2)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('rawdata2')))
+        self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_2')), text = (self.L('prepdata')), command = self.run_segment)
+        self.button.grid(row=2, column=1, pady=(5, 15))
+        self.tooltip = CTkToolTip(self.button, message=(self.L('prepdata2')))
 
         ##CONFIG
         self.frame5 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
@@ -151,25 +173,30 @@ class tabview(ctk.CTkTabview):
         adv_on = tk.StringVar()
         self.advswitch = ctk.CTkSwitch(master=self.frame5, text=(self.L('adv')), variable=adv_on, onvalue="on", offvalue="off", command=self.changeState)
         self.advswitch.grid(row=0, column=2)
+        self.tooltip = CTkToolTip(self.advswitch, message=(self.L('adv2')))
         global config_name
         config_name = tk.StringVar(value="enter_custom_name")
         self.confnamebox = ctk.CTkEntry(master=self.frame5, textvariable=config_name, state=tk.DISABLED)
         self.confnamebox.grid(row=1, column=2, padx=10)
         self.databutton = ctk.CTkButton(master=self.frame5, text=(self.L('datafolder')), command=self.grab_data_folder)
         self.databutton.grid(row=0, column=3, rowspan=2, padx=10)
+        self.tooltip = CTkToolTip(self.databutton, message=(self.L('datafolder2')))
         self.ckptbutton = ctk.CTkButton(master=self.frame5, text=(self.L('savefolder')), command=self.ckpt_folder_save)
         self.ckptbutton.grid(row=0, column=4, rowspan=2, padx=(0,15))
+        self.tooltip = CTkToolTip(self.ckptbutton, message=(self.L('savefolder2')))
 
         self.frame6 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame6.grid(columnspan=3, row=1, pady=10)
         self.label = ctk.CTkLabel(master=self.frame6, text=(self.L('confsel')))
         self.label.grid(row=0, column=0, padx=15)
+        self.tooltip = CTkToolTip(self.label, message=(self.L('confsel2')))
         global preset
         preset = ctk.StringVar()
         self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback)
         self.configbox.grid(row=0, column=1)
         self.label = ctk.CTkLabel(master=self.frame6, text=(self.L('advconfig')))
         self.label.grid(row=1, column=0, padx=15)
+        self.tooltip = CTkToolTip(self.label, message=(self.L('advconfig2')))
         global randaug
         randaug = tk.BooleanVar()
         self.confbox1 =  ctk.CTkCheckBox(master=self.frame6, text="gen", variable=randaug, onvalue = True, offvalue = False, state=tk.DISABLED)
@@ -212,6 +239,7 @@ class tabview(ctk.CTkTabview):
         self.frame7.grid(row=2, column=0)
         self.label = ctk.CTkLabel(master=self.frame7, text = (self.L('saveint')))
         self.label.grid(row=0, column=0)
+        self.tooltip = CTkToolTip(self.label, message=(self.L('saveint2')))
         global save_int
         save_int = tk.IntVar()
         self.saveintbox = ctk.CTkEntry(master=self.frame7, textvariable = save_int, width = 60)
@@ -225,6 +253,7 @@ class tabview(ctk.CTkTabview):
         self.frame8.grid(row=2, column=1)
         self.label = ctk.CTkLabel(master=self.frame8, text = (self.L('maxbatch')))
         self.label.grid(row=0, column=0)
+        self.tooltip = CTkToolTip(self.label, message=(self.L('maxbatch2')))
         global batch_size
         batch_size = tk.IntVar()
         self.batchbox = ctk.CTkEntry(master=self.frame8, textvariable = batch_size, width = 60)
@@ -241,10 +270,13 @@ class tabview(ctk.CTkTabview):
         self.frame9.grid(row=0, column=0, rowspan=2, columnspan=2, padx=120)
         self.loadbutton = ctk.CTkButton(master=self.frame9, text=("1. " + (self.L('step1'))), command=self.load_config_function)
         self.loadbutton.grid(row=0, column=0, padx=25, pady=25)
+        self.tooltip = CTkToolTip(self.loadbutton, message=(self.L('step1-2')))
         self.savebutton = ctk.CTkButton(master=self.frame9, text=("2. " + (self.L('step2'))), command=self.ckpt_folder_save)
         self.savebutton.grid(row=0, column=1, padx=25, pady=25)
+        self.tooltip = CTkToolTip(self.savebutton, message=(self.L('step2-2')))
         self.binarizebutton = ctk.CTkButton(master=self.frame9, text=("3a. " + (self.L('step3a'))), command=self.binarize)
         self.binarizebutton.grid(row=1, column=0, padx=25, pady=25)
+        self.tooltip = CTkToolTip(self.binarizebutton, message=(self.L('step3a2')))
         self.trainbutton = ctk.CTkButton(master=self.frame9, text=("3b. " + (self.L('step3b'))), command=self.train_function)
         self.trainbutton.grid(row=1, column=1, padx=25, pady=25)
         self.frame10 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_4')))
@@ -253,9 +285,12 @@ class tabview(ctk.CTkTabview):
         self.label = ctk.CTkLabel(master=self.frame10, text=(self.L('warning2'))).grid(row=1, column=0)
         self.frame11 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_4')))
         self.frame11.grid(row=2, column=1)
-        self.label = ctk.CTkLabel(master=self.frame11, text=(self.L('patchlabel'))).grid()
+        self.label = ctk.CTkLabel(master=self.frame11, text=(self.L('patchlabel')))
+        self.label.grid()
+        self.tooltip = CTkToolTip(self.label, message=(self.L('patchtip')))
         self.tensorpatch = ctk.CTkButton(master=self.frame11, text=(self.L('patchbutton')), command=self.tensor_patch)
         self.tensorpatch.grid()
+        self.tooltip = CTkToolTip(self.tensorpatch, message=(self.L('patchtip')))
 
         ##EXPORT
         self.frame12 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_5')))
@@ -263,12 +298,15 @@ class tabview(ctk.CTkTabview):
         self.expselect_option = tk.IntVar(value=0)
         self.acobutton = ctk.CTkRadioButton(master=self.frame12, text=(self.L('aco')), variable=self.expselect_option, value=1)
         self.acobutton.grid(row=0, column=0, padx=10)
+        self.tooltip = CTkToolTip(self.acobutton, message=(self.L('acotip')))
         self.varbutton = ctk.CTkRadioButton(master=self.frame12, text=(self.L('var')), variable=self.expselect_option, value=2)
         self.varbutton.grid(row=1, column=0, padx=10)
+        self.tooltip = CTkToolTip(self.varbutton, message=(self.L('vartip')))
         global expselect
         expselect = self.expselect_option
         self.button = ctk.CTkButton(master=self.frame12, text=(self.L('step2')), command=self.ckpt_folder_save)
         self.button.grid(row=0, column=1, rowspan=2, padx=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('step2-2alt')))
         global onnx_folder
         onnx_folder = self.onnx_folder_save
         self.button = ctk.CTkButton(master=self.frame12, text=(self.L('onnx')), command=self.run_onnx_export)
@@ -279,16 +317,21 @@ class tabview(ctk.CTkTabview):
         self.frame13.grid(row=3, column=0, pady=10)
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('getaco')), command=self.get_aco_folder)
         self.button.grid(row=0, column=0, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')))
         global ou_name_var
         ou_name_var = tk.StringVar(value="enter_singer_name")
         self.namebox = ctk.CTkEntry(master=self.frame13, textvariable=ou_name_var)
         self.namebox.grid(row=1, column=0, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.namebox, message=(self.L('namebox')))
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('vocoder')), command=self.get_vocoder)
         self.button.grid(row=2, column=0, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('vocoder2')))
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('getvar')), command=self.get_var_folder)
         self.button.grid(row=0, column=1, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')))
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('ousave')), command=self.get_OU_folder)
         self.button.grid(row=1, column=1, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')))
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('ouexport')), command=self.run_OU_config)
         self.button.grid(row=2, column=1, padx=10, pady=10)
 
@@ -391,6 +434,19 @@ class tabview(ctk.CTkTabview):
 ###COMMANDS###
     global all_shits_not_wav_n_lab
     all_shits_not_wav_n_lab = "raw_data/diffsinger_db"
+
+    def refresh(self, choice, master):
+		# Better option for updating the display language tbh.
+        self.guisettings['lang'] = choice
+        with open('assets/guisettings.yaml', 'w', encoding='utf-8') as f:
+            yaml.dump(self.guisettings, f, default_flow_style=False)
+            f.close()
+        self.L.load_lang(choice)
+
+        print(f'Set display language to {choice}')
+
+        self.destroy()
+        create_widgets
 
     def credit(self, url):
         webbrowser.open_new(url)
@@ -1270,11 +1326,13 @@ class App(ctk.CTk):
         self.wm_iconbitmap()
         self.iconphoto(False, self.iconpath)
         self.resizable(False, False)
-        self.create_widgets()
+        create_widgets(self)
+
 
     def on_tab_change(self, event):
         os.chdir(main_path)
 
+    global create_widgets
     def create_widgets(self):
         self.tab_view = tabview(master=self)
         self.tab_view.grid(row=0, column=0, padx=10, pady=(0, 15))
