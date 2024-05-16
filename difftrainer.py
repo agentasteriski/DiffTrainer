@@ -865,7 +865,7 @@ class tabview(ctk.CTkTabview):
     def ckpt_folder_save(self):
         global ckpt_save_dir
         ckpt_save_dir = filedialog.askdirectory(title="Select save folder", initialdir = "DiffSinger/checkpoints")
-	ckpt_save_dir = repr(ckpt_save_dir)
+        ckpt_save_dir = repr(ckpt_save_dir)
         self.binary_save_dir = ckpt_save_dir + "/binary"
         print("save path: " + ckpt_save_dir)
         
