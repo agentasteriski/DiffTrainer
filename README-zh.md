@@ -5,7 +5,7 @@
 # 用於處理和訓練 DiffSinger 模型的 CustomTkInter GUI
 DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包中。
 - [nnsvs-db-converter](https://github.com/UtaUtaUtau/nnsvs-db-converter) 用於將 wav+lab 資料轉換為 wav/ds+csv
-- [DiffSinger](https://github.com/openvpi/DiffSinger)的基礎訓練
+- [DiffSinger](https://github.com/openvpi/DiffSinger)的基礎訓練功能
 - OpenUtau匯出腳本
 ## 安裝選項
 ### 如果你從未用過Python：
