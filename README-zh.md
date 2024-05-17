@@ -27,7 +27,7 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 ## 語言支持
 DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) 來允許 GUI 語言選擇。 歡迎所有使用者將 [en_US](/strings/en_US.yaml) 中找到的文字翻譯為其他語言並提交拉取請求。
 
-## to do
+## 待辦事項
 很快
 - 更好的自述文件
 - 使用 os.path.join 而不是組合字串
