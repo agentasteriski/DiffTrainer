@@ -6,13 +6,13 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - OpenUtau export scripts
 ## setup options
 ### If you have never used Python:
-- run pythoninstaller.bat, go through the installer
+- run python_installer.bat, go through the installer
 - run setup.bat
 - use run_gui.bat to launch after that
 
 ### If you have used Python:
 - requires Python 3.10 specifically: [direct download for installer](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
-- if you would like a copy specifically installed in the DiffTrainer folder, you can use pythoninstaller.bat instead
+- if you would like a copy specifically installed in the DiffTrainer folder, you can use python_installer.bat instead
 - once Python 3.10 is installed, setup.bat can be run to download the requirements, or do the usual `pip install -r requirements.txt`
 - [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/) is recommended for users of multiple Python versions.
 
