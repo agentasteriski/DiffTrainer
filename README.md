@@ -1,4 +1,7 @@
 ![DiffTrainer](https://github.com/agentasteriski/DiffTrainer/blob/main/assets/difftrainerlogo.png?raw=true)
+
+**English** *[中文（正體）](./README-zh.md)*
+
 # a CustomTkInter GUI for processing and training DiffSinger models
 DiffTrainer brings together the most useful tools for DiffSinger in one easy, graphical package.
 - [nnsvs-db-converter](https://github.com/UtaUtaUtau/nnsvs-db-converter) for converting wav+lab data to wav/ds+csv
