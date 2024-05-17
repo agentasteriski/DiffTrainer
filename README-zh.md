@@ -1,0 +1,38 @@
+![DiffTrainer](https://github.com/agentasteriski/DiffTrainer/blob/main/assets/difftrainerlogo.png?raw=true)
+
+*[English](./README.md)* **中文（正體）**
+
+# 用於處理和訓練 DiffSinger 模型的 CustomTkInter GUI
+DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包中。
+- [nnsvs-db-converter](https://github.com/UtaUtaUtau/nnsvs-db-converter) 用於將 wav+lab 資料轉換為 wav/ds+csv
+- [DiffSinger](https://github.com/openvpi/DiffSinger)的基礎訓練
+- OpenUtau匯出腳本
+## 安裝選項
+### 如果你從未用過Python：
+- 執行 python_installer.bat ，完成安裝程序
+- 執行 setup.bat
+- 之後使用 run_gui.bat 啟動
+
+### 如果你用過Python：
+- 特別需要Python 3.10： [直接下載安裝程式](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
+- 如果您想要專門安裝在 DiffTrainer 資料夾中的副本，您可以使用 python_installer.bat
+- 一旦安裝了Python 3.10，就可以執行 setup.bat 來下載需求組件，或執行通常的 `pip install -r requirements.txt`
+- 建議多個Python版本的使用者使用 [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/) 。
+
+## 已知錯誤
+- 如果您的檢查點資料夾的名稱以 t 或 n 開頭，則匯出 ONNX 會失敗（確實如此）
+
+## 語言支持
+DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) 來允許 GUI 語言選擇。 歡迎所有使用者將 [en_US](/strings/en_US.yaml) 中找到的文字翻譯為其他語言並提交拉取請求。
+
+## to do
+很快
+- 更好的自述文件
+- 使用 os.path.join 而不是組合字串
+
+最終
+- SOME用於 MIDI 估算
+- 完全支持 .ds 訓練
+- 高級匯出
+- 更多翻譯
+- 一個不 amogus 的圖標
