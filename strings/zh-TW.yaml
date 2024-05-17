@@ -13,8 +13,8 @@ install: "完整安裝"
 install2: "安裝 DiffSinger、Uta 的轉換器、SOME 和所有必要 Python 組件。 \n 第二次運行將刪除並替換所有檔案。"
 update: "更新工具"
 update2: "安裝 DiffSinger、Uta 的轉換器、SOME，但不安裝必要 Python 組件。\n 第二次運行將刪除並替換所有檔案。"
-cred_front: "Front end:"
-cred_back: "Back end:"
+cred_front: "前端:"
+cred_back: "後端:"
 restart: "(重啓以應用)"
 #note: string should not be longer than this or it will be cut off
 
