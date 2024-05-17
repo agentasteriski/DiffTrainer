@@ -70,10 +70,10 @@ patchtip: "针对较新的 Nvidia GPU \n 如果您在训练开始时收到有关
 
 #Export tab
 ##strings 'aco', 'var', and 'step2' are reused
-acotip: "将原声检查点汇出到 ONNX"
-vartip: "将方差检查点汇出到 ONNX"
+acotip: "将原声检查点导出到 ONNX"
+vartip: "将方差检查点导出到 ONNX"
 step2-2alt: "选择储存检查点的文件夹 \n 将使用文件夹中最新的检查点"
-onnx: "汇出ONNX"
+onnx: "导出ONNX"
 oupatch: "临时补丁按钮(安装/更新后运行一次)"
 namebox: "输入歌手的名字,不要包含空格或特殊字元"
 getaco: "选择原声检查点文件夹"
