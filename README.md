@@ -32,3 +32,4 @@ eventually
 - fully support .ds training
 - advanced export
 - more translations
+- an icon that isn't amogus
