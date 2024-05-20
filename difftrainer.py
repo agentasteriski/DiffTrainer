@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr # type: ignore
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.0"
-releasedate = "05/17/24"
+version = "0.1.1"
+releasedate = "05/20/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -682,6 +682,18 @@ class tabview(ctk.CTkTabview):
             zip_ref.extractall(vocoder_folder)
         os.remove(vocoder_zip)
 
+        response = requests.get(rmvpe_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading RMVPE") as progress_bar:
+            with open("rmvpe.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(rmvpe_zip, "r") as zip_ref:
+            zip_ref.extractall(rmvpe_subfolder_name)
+        os.remove(rmvpe_zip)
+
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
 
@@ -703,6 +715,12 @@ class tabview(ctk.CTkTabview):
         }
         with open("db_converter_config.yaml", "w") as config:
             yaml.dump(converter_config, config)
+        
+        with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
+            d4cpatch = b.readlines()
+        d4cpatch[152] = "\tself._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
+        with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
+            b.writelines(d4cpatch)
 
         print("Setup Complete!")
 
