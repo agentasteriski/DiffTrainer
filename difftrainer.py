@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr # type: ignore
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.1"
-releasedate = "05/20/24"
+version = "0.1.2"
+releasedate = "05/21/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -601,7 +601,7 @@ class tabview(ctk.CTkTabview):
 
         with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
             d4cpatch = b.readlines()
-        d4cpatch[152] = "\tself._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
+        d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
         with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
             b.writelines(d4cpatch)
 
@@ -724,7 +724,7 @@ class tabview(ctk.CTkTabview):
         
         with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
             d4cpatch = b.readlines()
-        d4cpatch[152] = "\tself._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
+        d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
         with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
             b.writelines(d4cpatch)
 
