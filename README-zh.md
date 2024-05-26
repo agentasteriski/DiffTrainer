@@ -29,6 +29,7 @@ DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/t
 
 ## 待辦事項
 很快
+- 修復字形！！！
 - 更好的自述文件
 - 使用 os.path.join 而不是組合字串
 
