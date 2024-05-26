@@ -21,12 +21,14 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 
 ## known bugs
 - export ONNX fails if your checkpoint folder's name starts with t or n(yes really)
+- broken characters in non-roman alphabet languages
 
 ## language support
 DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) to allow GUI language selection. All users are welcome to translate the text found in [en_US](/strings/en_US.yaml) to other languages and submit a pull request.
 
 ## to do
 soon
+- fix fonts!!!
 - better readme
 - use os.path.join instead of combining strings
 
