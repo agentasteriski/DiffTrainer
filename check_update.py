@@ -17,7 +17,7 @@ if local_version == github_version:
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest difftrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update difftrainer?")
 	if update_prompt:
-		with open("ds_gui.py", "wb") as gui_script:
+		with open("difftrainer.py", "wb") as gui_script:
 			gui_script.write(gui_github.content)
 	else:
 		pass
