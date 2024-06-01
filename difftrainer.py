@@ -58,8 +58,8 @@ class tabview(ctk.CTkTabview):
 
         self.lang = ctk.StringVar(value=guisettings['lang'])
         self.L = ezlocalizr(language=self.lang.get(),
-							string_path='strings',
-							default_lang='en_US')
+                            string_path='strings',
+                            default_lang='en_US')
         if self.lang.get() in ['jp-JP']:
             self.font = ctk.CTkFont(family=font_jp, size = 14)
             self.font_ul = ctk.CTkFont(family=font_jp, size = 14, underline=True)
@@ -459,7 +459,7 @@ class tabview(ctk.CTkTabview):
     all_shits_not_wav_n_lab = "raw_data/diffsinger_db"
 
     def refresh(self, choice, master):
-		# Better option for updating the display language tbh.
+        # Better option for updating the display language tbh.
         guisettings['lang'] = choice
         with open('assets/guisettings.yaml', 'w', encoding='utf-8') as f:
             yaml.dump(guisettings, f, default_flow_style=False)
@@ -891,7 +891,7 @@ class tabview(ctk.CTkTabview):
             if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                 print("segmenting data...")
                 #dear god please work
-                cmd = [python_exe, 'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-S', str(max_silence_length), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-S', str(max_silence_length), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                 if self.estimatemidivar.get() == True:
                     cmd.append('-mD')
                     cmd.append('-f')
@@ -971,7 +971,7 @@ class tabview(ctk.CTkTabview):
         global ckpt_save_dir
         ckpt_save_dir = filedialog.askdirectory(title="Select save folder", initialdir = "DiffSinger/checkpoints")
         ckpt_save_dir = repr(ckpt_save_dir)[1:-1]
-        self.binary_save_dir = ckpt_save_dir + "/binary"
+        self.binary_save_dir = os.path.join(ckpt_save_dir, "binary")
         print("save path: " + ckpt_save_dir)
         
     def write_config(self):
@@ -1018,7 +1018,8 @@ class tabview(ctk.CTkTabview):
             folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
             random_ass_test_files = []
             for folder_path in raw_dir:
-                audio_files = [f[:-4] for f in os.listdir(folder_path + "/wavs") if f.endswith(".wav")]
+                audio_files_prev = os.path.join(folder_path, "wavs")
+                audio_files = [f[:-4] for f in os.listdir(audio_files_prev) if f.endswith(".wav")]
                 folder_name = os.path.basename(folder_path)
                 folder_id = folder_to_id.get(folder_name, -1)
                 prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
@@ -1239,17 +1240,17 @@ class tabview(ctk.CTkTabview):
             self.label.config(text="Please select your config and the checkpoint you would like to export first!")
             return
         export_check = expselect.get()
-        ckpt_main = "Diffsinger\checkpoints"
+        ckpt_main = "Diffsinger\\checkpoints"
         ckpt_dir_rel = os.path.relpath(ckpt_save_dir, ckpt_main)
         ckpt_dir_rel = repr(ckpt_dir_rel)[1:-1]
-        ckpt_dir_short = ckpt_dir_rel.lstrip("..\checkpoints\\")
+        ckpt_dir_short = ckpt_dir_rel.lstrip("..\\checkpoints\\")
         ckpt_dir_short = repr(ckpt_dir_short)[1:-1]
         print(ckpt_dir_rel)
         print(ckpt_dir_short)
-        onnx_folder_dir = ckpt_save_dir + "/onnx"
+        onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
         print(onnx_folder_dir)
         if os.path.exists(onnx_folder_dir):
-            onnx_bak = ckpt_save_dir + "/onnx_old"
+            onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
             os.rename(onnx_folder_dir, onnx_bak)
             print("backing up existing onnx folder...")
         cmd = [python_exe, 'scripts/export.py']
@@ -1308,17 +1309,17 @@ class tabview(ctk.CTkTabview):
         aco_folder_dir = filedialog.askdirectory(title="Select folder with acoustic checkpoints", initialdir = "DiffSinger/checkpoints/")
         print("Acoustic folder: " + aco_folder_dir)
         global aco_folder_onnx
-        aco_folder_onnx = aco_folder_dir + "/onnx"
+        aco_folder_onnx = os.path.join(aco_folder_dir, "onnx")
         global aco_config
-        aco_config = aco_folder_dir + "/config.yaml"
+        aco_config = os.path.join(aco_folder_dir, "config.yaml")
 
     def get_var_folder(self):
         var_folder_dir = filedialog.askdirectory(title="Select folder with variance checkpoints", initialdir = "DiffSinger/checkpoints/")
         print("Variance folder: " + var_folder_dir)
         global var_folder_onnx
-        var_folder_onnx = var_folder_dir + "/onnx"
+        var_folder_onnx = os.path.join(var_folder_dir, "onnx")
         global var_config
-        var_config = var_folder_dir + "/config.yaml"
+        var_config = os.path.join(var_folder_dir, "config.yaml")
 
     def get_vocoder(self):
         self.vocoder_onnx = filedialog.askopenfilename(title="OPTIONAL: Select custom vocoder onnx", initialdir="DiffSinger/checkpoints/", filetypes=[("ONNX files", "*.onnx")])
@@ -1353,7 +1354,7 @@ class tabview(ctk.CTkTabview):
             ##self.label.config(text="Please select both onnx export folders!")
             ##return
         ou_name = ou_name_var.get()
-        dict_path = aco_folder_dir + "/dictionary.txt"
+        dict_path = os.path.join(aco_folder_dir, "dictionary.txt")
         cmd = [python_exe, 'scripts/build_ou_vb.py', '--acoustic_onnx_folder', aco_folder_onnx, '--acoustic_config', aco_config, '--variance_onnx_folder', var_folder_onnx, '--variance_config', var_config, '--dictionary_path', dict_path, '--save_path', ou_export_location, '--name', ou_name]
         if self.vocoder_onnx:
             cmd.append('--vocoder_onnx_model')
