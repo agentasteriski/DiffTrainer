@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.5"
-releasedate = "05/31/24"
+version = "0.1.6"
+releasedate = "06/01/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
