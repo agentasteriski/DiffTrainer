@@ -48,11 +48,11 @@ class tabview(ctk.CTkTabview):
 
         os.chdir(main_path)
 
-        self.all_shits = None #forcing users to select the folder <3
-        self.data_folder = None #more forces
-        self.ckpt_save_dir = None #even more forces
-        self.trainselect_option = None #rawr
-        self.vocoder_onnx = None #actually this one isn't forcing anything none is fine
+        self.all_shits = r"" #forcing users to select the folder <3
+        self.data_folder = r"" #more forces
+        self.ckpt_save_dir = r"" #even more forces
+        self.trainselect_option = r"" #rawr
+        self.vocoder_onnx = r"" #actually this one isn't forcing anything none is fine
 
         self.lang = ctk.StringVar(value=guisettings['lang'])
         self.L = ezlocalizr(language=self.lang.get(),
@@ -755,7 +755,7 @@ class tabview(ctk.CTkTabview):
 
         
     def run_segment(self):
-        if self.all_shits is None:
+        if not self.all_shits:
             messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
             return
         messagebox.showinfo("Warning", 'This process will remove the original .wav and .lab files, please be sure to make a backup for your data before pressing "OK" or closing this window')
@@ -974,10 +974,10 @@ class tabview(ctk.CTkTabview):
         if not config_check:
             messagebox.showinfo("Required", "Please select a config type")
             return
-        if self.data_folder is None:
+        if not self.data_folder:
             messagebox.showinfo("Required", "Please select a folder containing data folder(s)")
             return
-        if ckpt_save_dir is None:
+        if not ckpt_save_dir:
             messagebox.showinfo("Required", "Please select a save directory")
             return
         print("writing config...")
@@ -1349,7 +1349,7 @@ class tabview(ctk.CTkTabview):
         ou_name = ou_name_var.get()
         dict_path = aco_folder_dir + "/dictionary.txt"
         cmd = [python_exe, 'scripts/build_ou_vb.py', '--acoustic_onnx_folder', aco_folder_onnx, '--acoustic_config', aco_config, '--variance_onnx_folder', var_folder_onnx, '--variance_config', var_config, '--dictionary_path', dict_path, '--save_path', ou_export_location, '--name', ou_name]
-        if self.vocoder_onnx != None:
+        if self.vocoder_onnx:
             cmd.append('--vocoder_onnx_model')
             cmd.append(self.vocoder_onnx)
         else:
