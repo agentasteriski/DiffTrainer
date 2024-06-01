@@ -6,12 +6,12 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from ezlocalizr import ezlocalizr
-from pyglet import font
+import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.3"
-releasedate = "05/26/24"
+version = "0.1.6"
+releasedate = "06/01/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -24,6 +24,8 @@ guisettings = {
     'lang': 'en_US'
 }
 
+pyglet.options['win32_gdi_font'] = True
+
 if os.path.exists(('assets/guisettings.yaml')):
     with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
         try:
@@ -32,14 +34,14 @@ if os.path.exists(('assets/guisettings.yaml')):
         except yaml.YAMLError as exc:
             print("No language choice detected, defaulting to EN_US")
 
-font.add_file('assets/RedHatDisplay-Regular.ttf')
-font_en = font.load('Red Hat Display')
-font.add_file('assets/MPLUS2-Regular.ttf')
-font_jp = font.load('M PLUS 2')
-font.add_file('assets/NotoSansSC-Regular.ttf')
-font_cn = font.load('Noto Sans SC')
-font.add_file('assets/NotoSansTC-Regular.ttf')
-font_tw = font.load('Noto Sans TC')
+pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
+font_en = 'Red Hat Display'
+pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
+font_jp = 'M PLUS 2'
+pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
+font_cn = 'Noto Sans SC'
+pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
+font_tw = 'Noto Sans TC'
 
 class tabview(ctk.CTkTabview):
 
@@ -48,24 +50,28 @@ class tabview(ctk.CTkTabview):
 
         os.chdir(main_path)
 
-        self.all_shits = None #forcing users to select the folder <3
-        self.data_folder = None #more forces
-        self.ckpt_save_dir = None #even more forces
-        self.trainselect_option = None #rawr
-        self.vocoder_onnx = None #actually this one isn't forcing anything none is fine
+        self.all_shits = r"" #forcing users to select the folder <3
+        self.data_folder = r"" #more forces
+        self.ckpt_save_dir = r"" #even more forces
+        self.trainselect_option = r"" #rawr
+        self.vocoder_onnx = r"" #actually this one isn't forcing anything none is fine
 
         self.lang = ctk.StringVar(value=guisettings['lang'])
         self.L = ezlocalizr(language=self.lang.get(),
-							string_path='strings',
-							default_lang='en_US')
+                            string_path='strings',
+                            default_lang='en_US')
         if self.lang.get() in ['jp-JP']:
             self.font = ctk.CTkFont(family=font_jp, size = 14)
+            self.font_ul = ctk.CTkFont(family=font_jp, size = 14, underline=True)
         elif self.lang.get() in ['zh-CN']:
             self.font = ctk.CTkFont(family=font_cn, size = 16)
+            self.font_ul = ctk.CTkFont(family=font_cn, size = 16, underline=True)
         elif self.lang.get() in ['zh-TW']:
             self.font = ctk.CTkFont(family=font_tw, size = 16)
+            self.font_ul = ctk.CTkFont(family=font_tw, size = 16, underline=True)
         else:
             self.font = ctk.CTkFont(family=font_en)
+            self.font_ul = ctk.CTkFont(family=font_en, underline=True)
 
         # create tabs
         self.add(self.L('tab_ttl_1'))
@@ -93,13 +99,11 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
-        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_front') + " Aster"), font = self.font)
-        self.label.cget("font").configure(underline=True)
+        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_front') + " Aster"), font = self.font_ul)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski"))
         self.label.grid(row=3, column=0, columnspan=2, pady=30)
         self.tooltip = CTkToolTip(self.label, message="owo")
-        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_back') + " Ghin"), font = self.font)
-        self.label.cget("font").configure(underline=True)
+        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_back') + " Ghin"), font = self.font_ul)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/MLo7Ghinsan"))
         self.label.grid(row=3, column=1, columnspan=2, pady=30)
         self.tooltip = CTkToolTip(self.label, message="uwu")
@@ -455,7 +459,7 @@ class tabview(ctk.CTkTabview):
     all_shits_not_wav_n_lab = "raw_data/diffsinger_db"
 
     def refresh(self, choice, master):
-		# Better option for updating the display language tbh.
+        # Better option for updating the display language tbh.
         guisettings['lang'] = choice
         with open('assets/guisettings.yaml', 'w', encoding='utf-8') as f:
             yaml.dump(guisettings, f, default_flow_style=False)
@@ -719,6 +723,8 @@ class tabview(ctk.CTkTabview):
             zip_ref.extractall(rmvpe_subfolder_name)
         os.remove(rmvpe_zip)
 
+        subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
+
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
 
@@ -755,7 +761,7 @@ class tabview(ctk.CTkTabview):
 
         
     def run_segment(self):
-        if self.all_shits is None:
+        if not self.all_shits:
             messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
             return
         messagebox.showinfo("Warning", 'This process will remove the original .wav and .lab files, please be sure to make a backup for your data before pressing "OK" or closing this window')
@@ -885,7 +891,7 @@ class tabview(ctk.CTkTabview):
             if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                 print("segmenting data...")
                 #dear god please work
-                cmd = [python_exe, 'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-S', str(max_silence_length), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-S', str(max_silence_length), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                 if self.estimatemidivar.get() == True:
                     cmd.append('-mD')
                     cmd.append('-f')
@@ -964,8 +970,7 @@ class tabview(ctk.CTkTabview):
     def ckpt_folder_save(self):
         global ckpt_save_dir
         ckpt_save_dir = filedialog.askdirectory(title="Select save folder", initialdir = "DiffSinger/checkpoints")
-        ckpt_save_dir = repr(ckpt_save_dir)[1:-1]
-        self.binary_save_dir = ckpt_save_dir + "/binary"
+        self.binary_save_dir = os.path.join(ckpt_save_dir, "binary")
         print("save path: " + ckpt_save_dir)
         
     def write_config(self):
@@ -974,10 +979,10 @@ class tabview(ctk.CTkTabview):
         if not config_check:
             messagebox.showinfo("Required", "Please select a config type")
             return
-        if self.data_folder is None:
+        if not self.data_folder:
             messagebox.showinfo("Required", "Please select a folder containing data folder(s)")
             return
-        if ckpt_save_dir is None:
+        if not ckpt_save_dir:
             messagebox.showinfo("Required", "Please select a save directory")
             return
         print("writing config...")
@@ -1012,7 +1017,8 @@ class tabview(ctk.CTkTabview):
             folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
             random_ass_test_files = []
             for folder_path in raw_dir:
-                audio_files = [f[:-4] for f in os.listdir(folder_path + "/wavs") if f.endswith(".wav")]
+                audio_files_prev = os.path.join(folder_path, "wavs")
+                audio_files = [f[:-4] for f in os.listdir(audio_files_prev) if f.endswith(".wav")]
                 folder_name = os.path.basename(folder_path)
                 folder_id = folder_to_id.get(folder_name, -1)
                 prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
@@ -1233,34 +1239,28 @@ class tabview(ctk.CTkTabview):
             self.label.config(text="Please select your config and the checkpoint you would like to export first!")
             return
         export_check = expselect.get()
-        ckpt_main = "Diffsinger\checkpoints"
-        ckpt_dir_rel = os.path.relpath(ckpt_save_dir, ckpt_main)
-        ckpt_dir_rel = repr(ckpt_dir_rel)[1:-1]
-        ckpt_dir_short = ckpt_dir_rel.lstrip("..\checkpoints\\")
-        ckpt_dir_short = repr(ckpt_dir_short)[1:-1]
-        print(ckpt_dir_rel)
-        print(ckpt_dir_short)
-        onnx_folder_dir = ckpt_save_dir + "/onnx"
-        print(onnx_folder_dir)
+        onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
         if os.path.exists(onnx_folder_dir):
-            onnx_bak = ckpt_save_dir + "/onnx_old"
+            onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
             os.rename(onnx_folder_dir, onnx_bak)
             print("backing up existing onnx folder...")
         cmd = [python_exe, 'scripts/export.py']
+        ckpt_save_abs = os.path.abspath(ckpt_save_dir)
+        onnx_folder_abs = os.path.abspath(onnx_folder_dir)
         if export_check == 1:
             print("exporting acoustic...")
             cmd.append('acoustic')
             cmd.append('--exp')
-            cmd.append(ckpt_dir_short)
+            cmd.append(ckpt_save_abs)
             cmd.append('--out')
-            cmd.append(onnx_folder_dir)
+            cmd.append(onnx_folder_abs)
         elif export_check == 2:
             print("exporting variance...")
             cmd.append('variance')
             cmd.append('--exp')
-            cmd.append(ckpt_dir_short)
+            cmd.append(ckpt_save_abs)
             cmd.append('--out')
-            cmd.append(onnx_folder_dir)
+            cmd.append(onnx_folder_abs)
         else:
             messagebox.showinfo("Required", "Please select a config type")
             return
@@ -1276,6 +1276,19 @@ class tabview(ctk.CTkTabview):
         for fileName in nameList:
             rename=fileName.removeprefix(prefix + ".")
             os.rename(fileName,rename)
+
+        #move file cus it export stuff outside the save folder for some reason
+        mv_basename = os.path.dirname(ckpt_save_abs)
+        #for .onnx
+        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+        for filename in os.listdir(mv_basename) if filename.endswith(".onnx")]
+        #for .emb
+        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+        for filename in os.listdir(mv_basename) if filename.endswith(".emb")]
+        #for dict and phonemes txt
+        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+        for filename in os.listdir(mv_basename) if filename.endswith(("dictionary.txt", "phonemes.txt"))]
+
         print("Done!")
         os.chdir(main_path)
 
@@ -1302,17 +1315,17 @@ class tabview(ctk.CTkTabview):
         aco_folder_dir = filedialog.askdirectory(title="Select folder with acoustic checkpoints", initialdir = "DiffSinger/checkpoints/")
         print("Acoustic folder: " + aco_folder_dir)
         global aco_folder_onnx
-        aco_folder_onnx = aco_folder_dir + "/onnx"
+        aco_folder_onnx = os.path.join(aco_folder_dir, "onnx")
         global aco_config
-        aco_config = aco_folder_dir + "/config.yaml"
+        aco_config = os.path.join(aco_folder_dir, "config.yaml")
 
     def get_var_folder(self):
         var_folder_dir = filedialog.askdirectory(title="Select folder with variance checkpoints", initialdir = "DiffSinger/checkpoints/")
         print("Variance folder: " + var_folder_dir)
         global var_folder_onnx
-        var_folder_onnx = var_folder_dir + "/onnx"
+        var_folder_onnx = os.path.join(var_folder_dir, "onnx")
         global var_config
-        var_config = var_folder_dir + "/config.yaml"
+        var_config = os.path.join(var_folder_dir, "config.yaml")
 
     def get_vocoder(self):
         self.vocoder_onnx = filedialog.askopenfilename(title="OPTIONAL: Select custom vocoder onnx", initialdir="DiffSinger/checkpoints/", filetypes=[("ONNX files", "*.onnx")])
@@ -1347,9 +1360,9 @@ class tabview(ctk.CTkTabview):
             ##self.label.config(text="Please select both onnx export folders!")
             ##return
         ou_name = ou_name_var.get()
-        dict_path = aco_folder_dir + "/dictionary.txt"
+        dict_path = os.path.join(aco_folder_dir, "dictionary.txt")
         cmd = [python_exe, 'scripts/build_ou_vb.py', '--acoustic_onnx_folder', aco_folder_onnx, '--acoustic_config', aco_config, '--variance_onnx_folder', var_folder_onnx, '--variance_config', var_config, '--dictionary_path', dict_path, '--save_path', ou_export_location, '--name', ou_name]
-        if self.vocoder_onnx != None:
+        if self.vocoder_onnx:
             cmd.append('--vocoder_onnx_model')
             cmd.append(self.vocoder_onnx)
         else:
