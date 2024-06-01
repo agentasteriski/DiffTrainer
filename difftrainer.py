@@ -6,11 +6,11 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from ezlocalizr import ezlocalizr
-from pyglet import font
+import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.4"
+version = "0.1.5"
 releasedate = "05/31/24"
 
 if os.path.exists(f"{main_path}/python"):
@@ -24,6 +24,8 @@ guisettings = {
     'lang': 'en_US'
 }
 
+pyglet.options['win32_gdi_font'] = True
+
 if os.path.exists(('assets/guisettings.yaml')):
     with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
         try:
@@ -32,14 +34,14 @@ if os.path.exists(('assets/guisettings.yaml')):
         except yaml.YAMLError as exc:
             print("No language choice detected, defaulting to EN_US")
 
-font.add_file('assets/RedHatDisplay-Regular.ttf')
-font_en = font.load('Red Hat Display')
-font.add_file('assets/MPLUS2-Regular.ttf')
-font_jp = font.load('M PLUS 2')
-font.add_file('assets/NotoSansSC-Regular.ttf')
-font_cn = font.load('Noto Sans SC')
-font.add_file('assets/NotoSansTC-Regular.ttf')
-font_tw = font.load('Noto Sans TC')
+pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
+font_en = 'Red Hat Display'
+pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
+font_jp = 'M PLUS 2'
+pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
+font_cn = 'Noto Sans SC'
+pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
+font_tw = 'Noto Sans TC'
 
 class tabview(ctk.CTkTabview):
 
@@ -60,12 +62,16 @@ class tabview(ctk.CTkTabview):
 							default_lang='en_US')
         if self.lang.get() in ['jp-JP']:
             self.font = ctk.CTkFont(family=font_jp, size = 14)
+            self.font_ul = ctk.CTkFont(family=font_jp, size = 14, underline=True)
         elif self.lang.get() in ['zh-CN']:
             self.font = ctk.CTkFont(family=font_cn, size = 16)
+            self.font_ul = ctk.CTkFont(family=font_cn, size = 16, underline=True)
         elif self.lang.get() in ['zh-TW']:
             self.font = ctk.CTkFont(family=font_tw, size = 16)
+            self.font_ul = ctk.CTkFont(family=font_tw, size = 16, underline=True)
         else:
             self.font = ctk.CTkFont(family=font_en)
+            self.font_ul = ctk.CTkFont(family=font_en, underline=True)
 
         # create tabs
         self.add(self.L('tab_ttl_1'))
@@ -93,13 +99,11 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
-        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_front') + " Aster"), font = self.font)
-        self.label.cget("font").configure(underline=True)
+        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_front') + " Aster"), font = self.font_ul)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski"))
         self.label.grid(row=3, column=0, columnspan=2, pady=30)
         self.tooltip = CTkToolTip(self.label, message="owo")
-        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_back') + " Ghin"), font = self.font)
-        self.label.cget("font").configure(underline=True)
+        self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_back') + " Ghin"), font = self.font_ul)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/MLo7Ghinsan"))
         self.label.grid(row=3, column=1, columnspan=2, pady=30)
         self.tooltip = CTkToolTip(self.label, message="uwu")
@@ -719,6 +723,8 @@ class tabview(ctk.CTkTabview):
             zip_ref.extractall(rmvpe_subfolder_name)
         os.remove(rmvpe_zip)
 
+        subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
+
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
 
@@ -964,6 +970,7 @@ class tabview(ctk.CTkTabview):
     def ckpt_folder_save(self):
         global ckpt_save_dir
         ckpt_save_dir = filedialog.askdirectory(title="Select save folder", initialdir = "DiffSinger/checkpoints")
+        ckpt_save_dir = repr(ckpt_save_dir)[1:-1]
         self.binary_save_dir = ckpt_save_dir + "/binary"
         print("save path: " + ckpt_save_dir)
         
@@ -1234,7 +1241,9 @@ class tabview(ctk.CTkTabview):
         export_check = expselect.get()
         ckpt_main = "Diffsinger\checkpoints"
         ckpt_dir_rel = os.path.relpath(ckpt_save_dir, ckpt_main)
+        ckpt_dir_rel = repr(ckpt_dir_rel)[1:-1]
         ckpt_dir_short = ckpt_dir_rel.lstrip("..\checkpoints\\")
+        ckpt_dir_short = repr(ckpt_dir_short)[1:-1]
         print(ckpt_dir_rel)
         print(ckpt_dir_short)
         onnx_folder_dir = ckpt_save_dir + "/onnx"
