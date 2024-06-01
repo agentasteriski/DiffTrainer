@@ -970,7 +970,6 @@ class tabview(ctk.CTkTabview):
     def ckpt_folder_save(self):
         global ckpt_save_dir
         ckpt_save_dir = filedialog.askdirectory(title="Select save folder", initialdir = "DiffSinger/checkpoints")
-        ckpt_save_dir = repr(ckpt_save_dir)[1:-1]
         self.binary_save_dir = os.path.join(ckpt_save_dir, "binary")
         print("save path: " + ckpt_save_dir)
         
@@ -1240,34 +1239,28 @@ class tabview(ctk.CTkTabview):
             self.label.config(text="Please select your config and the checkpoint you would like to export first!")
             return
         export_check = expselect.get()
-        ckpt_main = "Diffsinger\\checkpoints"
-        ckpt_dir_rel = os.path.relpath(ckpt_save_dir, ckpt_main)
-        ckpt_dir_rel = repr(ckpt_dir_rel)[1:-1]
-        ckpt_dir_short = ckpt_dir_rel.lstrip("..\\checkpoints\\")
-        ckpt_dir_short = repr(ckpt_dir_short)[1:-1]
-        print(ckpt_dir_rel)
-        print(ckpt_dir_short)
         onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
-        print(onnx_folder_dir)
         if os.path.exists(onnx_folder_dir):
             onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
             os.rename(onnx_folder_dir, onnx_bak)
             print("backing up existing onnx folder...")
         cmd = [python_exe, 'scripts/export.py']
+        ckpt_save_abs = os.path.abspath(ckpt_save_dir)
+        onnx_folder_abs = os.path.abspath(onnx_folder_dir)
         if export_check == 1:
             print("exporting acoustic...")
             cmd.append('acoustic')
             cmd.append('--exp')
-            cmd.append(ckpt_dir_short)
+            cmd.append(ckpt_save_abs)
             cmd.append('--out')
-            cmd.append(onnx_folder_dir)
+            cmd.append(onnx_folder_abs)
         elif export_check == 2:
             print("exporting variance...")
             cmd.append('variance')
             cmd.append('--exp')
-            cmd.append(ckpt_dir_short)
+            cmd.append(ckpt_save_abs)
             cmd.append('--out')
-            cmd.append(onnx_folder_dir)
+            cmd.append(onnx_folder_abs)
         else:
             messagebox.showinfo("Required", "Please select a config type")
             return
@@ -1283,6 +1276,19 @@ class tabview(ctk.CTkTabview):
         for fileName in nameList:
             rename=fileName.removeprefix(prefix + ".")
             os.rename(fileName,rename)
+
+        #move file cus it export stuff outside the save folder for some reason
+        mv_basename = os.path.dirname(ckpt_save_abs)
+        #for .onnx
+        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+        for filename in os.listdir(mv_basename) if filename.endswith(".onnx")]
+        #for .emb
+        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+        for filename in os.listdir(mv_basename) if filename.endswith(".emb")]
+        #for dict and phonemes txt
+        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+        for filename in os.listdir(mv_basename) if filename.endswith(("dictionary.txt", "phonemes.txt"))]
+
         print("Done!")
         os.chdir(main_path)
 
