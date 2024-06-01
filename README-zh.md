@@ -23,6 +23,7 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 
 ## 已知錯誤
 - 如果您的檢查點資料夾的名稱以 t 或 n 開頭，則匯出 ONNX 會失敗（確實如此）
+- 在非羅馬字母的語言中字符是損壞的
 
 ## 語言支持
 DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) 來允許 GUI 語言選擇。 歡迎所有使用者將 [en_US](/strings/en_US.yaml) 中找到的文字翻譯為其他語言並提交拉取請求。
