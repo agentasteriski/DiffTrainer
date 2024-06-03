@@ -20,7 +20,6 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/) is recommended for users of multiple Python versions.
 
 ## known bugs
-- export ONNX fails if your checkpoint folder's name starts with t or n(yes really)
 - broken characters in non-roman alphabet languages
 
 ## language support
@@ -30,10 +29,9 @@ DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tre
 soon
 - fix fonts!!!
 - better readme
-- use os.path.join instead of combining strings
+- SOME for MIDI estimation
 
 eventually
-- SOME for MIDI estimation
 - fully support .ds training
 - advanced export
 - more translations
