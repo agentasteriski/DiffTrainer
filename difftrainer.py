@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.6"
-releasedate = "06/01/24"
+version = "0.1.7"
+releasedate = "06/03/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -1267,15 +1267,6 @@ class tabview(ctk.CTkTabview):
         print(' '.join(cmd))
         subprocess.check_call(cmd)
         print("Getting the files in order...")
-        prefix = os.path.basename(ckpt_save_dir)
-        os.chdir(onnx_folder_dir)
-        wronnx = prefix + ".onnx"
-        if os.path.exists(wronnx):
-            os.rename(wronnx, "acoustic.onnx")
-        nameList = os.listdir() 
-        for fileName in nameList:
-            rename=fileName.removeprefix(prefix + ".")
-            os.rename(fileName,rename)
 
         #move file cus it export stuff outside the save folder for some reason
         mv_basename = os.path.dirname(ckpt_save_abs)
@@ -1289,6 +1280,17 @@ class tabview(ctk.CTkTabview):
         [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
         for filename in os.listdir(mv_basename) if filename.endswith(("dictionary.txt", "phonemes.txt"))]
 
+        prefix = os.path.basename(ckpt_save_dir)
+        os.chdir(onnx_folder_dir)
+        wronnx = prefix + ".onnx"
+        if os.path.exists(wronnx):
+            os.rename(wronnx, "acoustic.onnx")
+        nameList = os.listdir() 
+        for fileName in nameList:
+            rename=fileName.removeprefix(prefix + ".")
+            os.rename(fileName,rename)
+
+        
         print("Done!")
         os.chdir(main_path)
 
