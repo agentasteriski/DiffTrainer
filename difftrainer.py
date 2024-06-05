@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.7"
-releasedate = "06/03/24"
+version = "0.1.8"
+releasedate = "06/05/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -619,7 +619,7 @@ class tabview(ctk.CTkTabview):
             "pitch-extractor": "parselmouth",
             "write_label": "htk"
         }
-        with open("db_converter_config.yaml", "w") as config:
+        with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
 
         with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
@@ -744,7 +744,7 @@ class tabview(ctk.CTkTabview):
             "pitch-extractor": "parselmouth",
             "write_label": "htk"
         }
-        with open("db_converter_config.yaml", "w") as config:
+        with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
         
         with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
@@ -867,18 +867,18 @@ class tabview(ctk.CTkTabview):
             f.write(" ".join(consonant_data))
 
         # here's a funny json append
-        with open(vowel_txt_path, "r") as f:
+        with open(vowel_txt_path, "r", encoding="utf-8") as f:
             vowel_data = f.read().split()
-        with open(liquid_txt_path, "r") as f:
+        with open(liquid_txt_path, "r", encoding = "utf-8") as f:
             liquid_data = f.read().split()
-        with open(consonant_txt_path, "r") as f:
+        with open(consonant_txt_path, "r", encoding = "utf-8") as f:
             consonant_data = f.read().split()
         liquid_list = {liquid: True for liquid in liquid_data} #temp fix, might need more research about the push in timing'''
         phones4json = {"vowels": vowel_data, "liquids": liquid_list}
-        with open("nnsvs-db-converter/lang.sample.json", "w") as rawr:
+        with open("nnsvs-db-converter/lang.sample.json", "w", encoding = "utf-8") as rawr:
             json.dump(phones4json, rawr, indent=4)
 
-        with open("db_converter_config.yaml", "r") as config:
+        with open("db_converter_config.yaml", "r", encoding = "utf-8") as config:
             converter = yaml.safe_load(config)
 
         max_silence = max_sil.get()
@@ -1040,13 +1040,13 @@ class tabview(ctk.CTkTabview):
         batch = batch_size.get()
         selected_config_type = trainselect.get()
         if selected_config_type == 1:
-            with open("Diffsinger/configs/base.yaml", "r") as baseconfig:
+            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
-            with open("DiffSinger/configs/base.yaml", "w") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
                     yaml.dump(based, baseconfig)
-            with open("DiffSinger/configs/acoustic.yaml", "r") as config:
+            with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config:
                 bitch_ass_config = yaml.safe_load(config)
             bitch_ass_config["speakers"] = spk_names
             bitch_ass_config["test_prefixes"] = random_ass_test_files
@@ -1077,22 +1077,22 @@ class tabview(ctk.CTkTabview):
             if adv_on.get() == "on":
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
-                with open(custom_name, "w") as config:
+                with open(custom_name, "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
                 print("wrote custom acoustic config!")     
             else:
-                with open("DiffSinger/configs/acoustic.yaml", "w") as config:
+                with open("DiffSinger/configs/acoustic.yaml", "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
                 print("wrote acoustic config!")
 
         else:
-            with open("Diffsinger/configs/base.yaml", "r") as baseconfig:
+            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
-            with open("DiffSinger/configs/base.yaml", "w") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
                     yaml.dump(based, baseconfig)
-            with open("DiffSinger/configs/variance.yaml", "r") as config:
+            with open("DiffSinger/configs/variance.yaml", "r", encoding = "utf-8") as config:
                 bitch_ass_config = yaml.safe_load(config)
             bitch_ass_config["speakers"] = spk_names
             bitch_ass_config["test_prefixes"] = random_ass_test_files
@@ -1121,20 +1121,20 @@ class tabview(ctk.CTkTabview):
                 toomanyconfignames = config_name.get()
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
-                with open(custom_name, "w") as config:
+                with open(custom_name, "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
                 print("wrote custom variance config!")
                 
             else:
-                with open("DiffSinger/configs/variance.yaml", "w") as config:
+                with open("DiffSinger/configs/variance.yaml", "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
                 print("wrote variance config!")
 
         new_f0_max=1600
-        with open("DiffSinger/utils/binarizer_utils.py", "r") as f:
+        with open("DiffSinger/utils/binarizer_utils.py", "r", encoding = "utf-8") as f:
             f0_read = f.read()
         up_f0_val = re.sub(r"f0_max\s*=\s*.*", f"f0_max={new_f0_max},", f0_read)
-        with open("DiffSinger/utils/binarizer_utils.py", "w") as f:
+        with open("DiffSinger/utils/binarizer_utils.py", "w", encoding = "utf-8") as f:
             f.write(up_f0_val)
 
     def tensor_patch(self):
