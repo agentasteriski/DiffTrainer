@@ -27,7 +27,6 @@ DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tre
 
 ## to do
 soon
-- fix fonts!!!
 - better readme
 - SOME for MIDI estimation
 
