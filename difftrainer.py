@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.8"
-releasedate = "06/05/24"
+version = "0.1.9"
+releasedate = "06/06/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -1317,7 +1317,7 @@ class tabview(ctk.CTkTabview):
         aco_folder_dir = filedialog.askdirectory(title="Select folder with acoustic checkpoints", initialdir = "DiffSinger/checkpoints/")
         print("Acoustic folder: " + aco_folder_dir)
         global aco_folder_onnx
-        aco_folder_onnx = os.path.join(aco_folder_dir, "onnx")
+        aco_folder_onnx = aco_folder_dir + "/onnx"
         global aco_config
         aco_config = os.path.join(aco_folder_dir, "config.yaml")
 
@@ -1325,7 +1325,7 @@ class tabview(ctk.CTkTabview):
         var_folder_dir = filedialog.askdirectory(title="Select folder with variance checkpoints", initialdir = "DiffSinger/checkpoints/")
         print("Variance folder: " + var_folder_dir)
         global var_folder_onnx
-        var_folder_onnx = os.path.join(var_folder_dir, "onnx")
+        var_folder_onnx = var_folder_dir + "/onnx"
         global var_config
         var_config = os.path.join(var_folder_dir, "config.yaml")
 
