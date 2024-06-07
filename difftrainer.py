@@ -10,7 +10,7 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.9"
+version = "0.1.10"
 releasedate = "06/06/24"
 
 if os.path.exists(f"{main_path}/python"):
@@ -1074,7 +1074,9 @@ class tabview(ctk.CTkTabview):
             #shallow diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
+
             if adv_on.get() == "on":
+                toomanyconfignames = config_name.get()
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
                 with open(custom_name, "w", encoding = "utf-8") as config:
