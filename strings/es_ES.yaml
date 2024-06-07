@@ -43,7 +43,7 @@ adv2: "Desbloquea opciones para seleccionar parámetros individualmente. \nRecom
 datafolder: "Seleccionar carpeta de datos preparados"
 datafolder2: "Seleccione una carpeta que haya sido procesada en la pestaña anterior. \nPuede estar en cualquier lugar, pero se recomienda una subcarpeta de /diffsinger/data."
 savefolder: "Seleccionar carpeta para guardar los puntos de guardado (checkpoint)."
-savefolder2: "Seleccione dónde se guardarán sus puntos de guardado. Debe ser una subcarpeta de /diffsinger/data."
+savefolder2: "Seleccione dónde se guardarán sus puntos de guardado. Debe ser una subcarpeta de /diffsinger/checkpoints."
 confsel: "Seleccionar configuración"
 confsel2: "Seleccione de esta lista de configuraciones preestablecidas.\n Todas las opciones han sido probadas."
 advconfig: "Configuración Avanzada:"

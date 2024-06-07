@@ -43,7 +43,7 @@ adv2: "Unlocks options to individually select parameters. \nOnly recommended for
 datafolder: "Select formatted data folder"
 datafolder2: "Select a folder that has been processed on the previous tab. \nCan be located anywhere, but a subfolder of /diffsinger/data is recommended."
 savefolder: "Select checkpoint save folder"
-savefolder2: "Select where your checkpoints will be saved. Must be a subfolder of /diffsinger/data."
+savefolder2: "Select where your checkpoints will be saved. Must be a subfolder of /diffsinger/checkpoints."
 confsel: "Select configuration:"
 confsel2: "Select from this list of preset configurations.\n All options have been tested."
 advconfig: "Advanced configuration:"
@@ -84,3 +84,6 @@ ousave2: "Select where the final singer folder will be saved.\nIt is recommended
 vocoder: "OPTIONAL: Custom vocoder"
 vocoder2: "If the model has a non-default vocoder, select the ONNX file here."
 ouexport: "Prepare for OpenUtau"
+
+#test
+testingline: "testtesttest"

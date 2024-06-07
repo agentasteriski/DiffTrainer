@@ -43,7 +43,7 @@ adv2: "Ina-unlock ang mga opsyon upang piliin nang paisa-isa ang mga parameter. 
 datafolder: "Piliin ang na-format na data folder"
 datafolder2: "Piliin ang folder na naproseso sa nakaraang tab. \nMaaaring matatagpuan kahit saan, ngunit inirerekomenda ang isang subfolder ng /diffsinger/data."
 savefolder: "Piliin ang checkpoint save folder"
-savefolder2: "Piliin kung saan ise-save ang iyong mga checkpoint. Dapat ay isang subfolder ng /diffsinger/data."
+savefolder2: "Piliin kung saan ise-save ang iyong mga checkpoint. Dapat ay isang subfolder ng /diffsinger/checkpoints."
 confsel: "Piliin ang konfigurasyon:"
 confsel2: "Piliin mula sa listahan ng mga preset na konfigurasyon.\n Ang lahat ng opsyon ay nasubukan na."
 advconfig: "Advanced na konfigurasyon:"

@@ -43,7 +43,7 @@ adv2: "Låser upp alternativ för att individuellt kunna välja parametrar. \Rek
 datafolder: "Välj formatterad datamapp"
 datafolder2: "Välj en mapp som har processats på förra fliken. \nKan ligga var som helst, men en undermapp till /diffsinger/data rekommenderas."
 savefolder: "Välj mapp för sparande av checkpoints"
-savefolder2: "Välj var dina checkpoints ska sparas. Måste vara en undermapp till /diffsinger/data."
+savefolder2: "Välj var dina checkpoints ska sparas. Måste vara en undermapp till /diffsinger/checkpoints."
 confsel: "Välj konfigurering:"
 confsel2: "Välj från denna lista med förinställda konfigurationer.\n Alla alternativ har testats."
 advconfig: "Avancerad konfiguration:"
