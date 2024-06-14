@@ -85,5 +85,15 @@ vocoder: "OPTIONAL: Custom vocoder"
 vocoder2: "If the model has a non-default vocoder, select the ONNX file here."
 ouexport: "Prepare for OpenUtau"
 
+#Quick Inference
+##strings 'getaco' and 'getvar' are reused
+getds: "Select .ds file"
+varckpt: "Variance ckpt folder"
+acockpt: "Acoustic ckpt folder"
+spk: "enter speaker name"
+render: "Render audio"
+replay: "Replay rendered audio"
+
+
 #test
 testingline: "testtesttest"
