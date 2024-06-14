@@ -43,7 +43,7 @@ adv2: "Opções para selecionar parâmetros individualmente. \nRecomendado apena
 datafolder: "Selecione dados formatados"
 datafolder2: "Selecione uma pasta processada na guia anterior. \nPode estar localizado em qualquer lugar, subpasta /diffsinger/data é recomendada."
 savefolder: "Selecione a pasta de checkpoint"
-savefolder2: "Selecione onde seus checkpoints serão salvos. Deve ser uma subpasta de /diffsinger/data."
+savefolder2: "Selecione onde seus checkpoints serão salvos. Deve ser uma subpasta de /diffsinger/checkpoints."
 confsel: "Selecione a configuração:"
 confsel2: "Selecione nesta lista de configurações predefinidas.\n Todas as opções foram testadas"
 advconfig: "Configuração avançada:"
