@@ -70,7 +70,7 @@ def ds():
         global postvar
         postvar = dsname2 + "_var"
         global postvards
-        postvards = postvar + ".ds"
+        postvards = dsloc + "/" + postvar + ".ds"
         print(dsinput)
 def render():
       os.chdir(diffolder)
