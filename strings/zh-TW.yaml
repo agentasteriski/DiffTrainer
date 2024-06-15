@@ -84,3 +84,16 @@ ousave2: "選擇最終歌手資料夾的儲存位置。 \n 建議直接儲存到
 vocoder: "可選: 自定義聲碼器"
 vocoder2: "如果模型具有非預設聲碼器，請在此處選擇 ONNX 檔案。"
 ouexport: "為 OpenUtau 準備"
+
+#Quick Inference
+##strings 'getaco' and 'getvar' are reused
+getds: "Select .ds file"
+varckpt: "Variance ckpt folder"
+acockpt: "Acoustic ckpt folder"
+spk: "enter speaker name"
+render: "Render audio"
+replay: "Replay rendered audio"
+
+
+#test
+testingline: "testtesttest"
