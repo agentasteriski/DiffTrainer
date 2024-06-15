@@ -87,13 +87,13 @@ ouexport: "为 OpenUtau 准备"
 
 #Quick Inference
 ##strings 'getaco' and 'getvar' are reused
-getds: "Select .ds file"
-varckpt: "Variance ckpt folder"
-acockpt: "Acoustic ckpt folder"
-spk: "enter speaker name"
-render: "Render audio"
-replay: "Replay rendered audio"
-
+getds: "选择 .ds 档"
+varckpt: "方差 ckpt 文件夹"
+acockpt: "原声 ckpt 文件夹"
+spk: "输入演说者的名字"
+render: "渲染音频"
+replay: "重播渲染的音频"
 
 #test
-testingline: "testtesttest"
+testingline: "测试测试测试"
+
