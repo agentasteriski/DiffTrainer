@@ -90,7 +90,7 @@ ouexport: "為 OpenUtau 準備"
 getds: "選擇 .ds 檔"
 varckpt: "方差 ckpt 資料夾"
 acockpt: "原聲 ckpt 資料夾"
-spk: "輸入發言者姓名"
+spk: "輸入演說者的名字"
 render: "渲染音訊"
 replay: "重播渲染的音訊"
 
