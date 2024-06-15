@@ -22,7 +22,6 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 - 建議多個Python版本的使用者使用 [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/) 。
 
 ## 已知錯誤
-- 如果您的檢查點資料夾的名稱以 t 或 n 開頭，則匯出 ONNX 會失敗（確實如此）
 - 在非羅馬字母的語言中字符是損壞的
 
 ## 語言支持
@@ -31,10 +30,9 @@ DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/t
 ## 待辦事項
 很快
 - 更好的自述文件
-- 使用 os.path.join 而不是組合字串
+- SOME用於 MIDI 估算
 
 最終
-- SOME用於 MIDI 估算
 - 完全支持 .ds 訓練
 - 高級匯出
 - 更多翻譯

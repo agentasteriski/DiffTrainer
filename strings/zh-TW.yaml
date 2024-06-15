@@ -29,7 +29,7 @@ estmidi: "估算 MIDI"
 estmidi2: "計算每個音素的音高。 訓練音調模型的必須操作。"
 detbre: "偵測呼吸"
 detbre2: "嘗試分段解釋呼吸聲。 結果不會一致。"
-rawdata: "選擇原始資料資料夾"
+rawdata: "選擇原始資料的資料夾"
 rawdata2: "必須位於 raw_data 中。 這應該是整個模型的一個資料夾， \n 每個説話人的子資料夾都應該包含 .wav 和 .lab 檔案。"
 prepdata: "準備數據"
 prepdata2: "運行該過程以準備 Diffsinger 格式的資料。"
@@ -70,6 +70,7 @@ patchtip: "針對較新的 Nvidia GPU。 \n 如果您在訓練開始時收到有
 
 #Export tab
 ##strings 'aco', 'var', and 'step2' are reused
+##字串 'aco' 、 'var' 和 'step2' 被重複使用
 acotip: "將原聲檢查點匯出到 ONNX。"
 vartip: "將方差檢查點匯出到 ONNX。"
 step2-2alt: "選擇儲存檢查點的資料夾。 \n 將使用資料夾中最新的檢查點。"
@@ -84,3 +85,16 @@ ousave2: "選擇最終歌手資料夾的儲存位置。 \n 建議直接儲存到
 vocoder: "可選: 自定義聲碼器"
 vocoder2: "如果模型具有非預設聲碼器，請在此處選擇 ONNX 檔案。"
 ouexport: "為 OpenUtau 準備"
+
+#Quick Inference
+##strings 'getaco' and 'getvar' are reused
+##字串 'getaco' 和 'getvar' 被重複使用
+getds: "選擇 .ds 檔"
+varckpt: "方差 ckpt 資料夾"
+acockpt: "原聲 ckpt 資料夾"
+spk: "請輸入説話人的名字"
+render: "渲染音訊"
+replay: "重播渲染的音訊"
+
+#test
+testingline: "測試測試測試"

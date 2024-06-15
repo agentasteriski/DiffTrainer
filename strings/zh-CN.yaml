@@ -70,6 +70,7 @@ patchtip: "针对较新的 Nvidia GPU \n 如果您在训练开始时收到有关
 
 #Export tab
 ##strings 'aco', 'var', and 'step2' are reused
+##字符串 'aco' 、 'var' 和 'step2' 被重复使用
 acotip: "将原声检查点导出到 ONNX"
 vartip: "将方差检查点导出到 ONNX"
 step2-2alt: "选择储存检查点的文件夹 \n 将使用文件夹中最新的检查点"
@@ -84,3 +85,17 @@ ousave2: "选择最终歌手文件夹的储存位置 \n 建议直接储存到 Op
 vocoder: "可选: 自定义声码器"
 vocoder2: "如果模型具有非预设声码器,请在此处选择 ONNX 档案"
 ouexport: "为 OpenUtau 准备"
+
+#Quick Inference
+##strings 'getaco' and 'getvar' are reused
+##字符串 'getaco' 和 'getvar' 被重复使用
+getds: "选择 .ds 档"
+varckpt: "方差 ckpt 文件夹"
+acockpt: "原声 ckpt 文件夹"
+spk: "输入说话人的名字"
+render: "渲染音频"
+replay: "重播渲染的音频"
+
+#test
+testingline: "测试测试测试"
+
