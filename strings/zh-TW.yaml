@@ -70,6 +70,7 @@ patchtip: "針對較新的 Nvidia GPU。 \n 如果您在訓練開始時收到有
 
 #Export tab
 ##strings 'aco', 'var', and 'step2' are reused
+##字串 'aco' 、 'var' 和 'step2' 被重複使用
 acotip: "將原聲檢查點匯出到 ONNX。"
 vartip: "將方差檢查點匯出到 ONNX。"
 step2-2alt: "選擇儲存檢查點的資料夾。 \n 將使用資料夾中最新的檢查點。"
@@ -87,6 +88,7 @@ ouexport: "為 OpenUtau 準備"
 
 #Quick Inference
 ##strings 'getaco' and 'getvar' are reused
+##字串 'getaco' 和 'getvar'被重複使用
 getds: "選擇 .ds 檔"
 varckpt: "方差 ckpt 資料夾"
 acockpt: "原聲 ckpt 資料夾"
