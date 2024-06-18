@@ -16,6 +16,18 @@ releasedate = "06/06/24"
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
     python_exe = f"{main_path}/python/python.exe"
+elif os.path.exists(f"{main_path}/.env"):
+    pip_exe = f"{main_path}/.env/Scripts/pip"
+    python_exe = f"{main_path}/.env/Scripts/python"
+elif os.path.exists(f"{main_path}/.venv"):
+    pip_exe = f"{main_path}/.venv/Scripts/pip"
+    python_exe = f"{main_path}/.venv/Scripts/python"
+elif os.path.exists(f"{main_path}/env"):
+    pip_exe = f"{main_path}/env/Scripts/pip"
+    python_exe = f"{main_path}/env/Scripts/python"
+elif os.path.exists(f"{main_path}/venv"):
+    pip_exe = f"{main_path}/venv/Scripts/pip"
+    python_exe = f"{main_path}/venv/Scripts/python"
 else:
     pip_exe = "pip"
     python_exe = "python"
