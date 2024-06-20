@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.11"
-releasedate = "06/19/24"
+version = "0.1.12"
+releasedate = "06/20/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -657,11 +657,11 @@ class tabview(ctk.CTkTabview):
         with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
 
-        with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
-            d4cpatch = b.readlines()
-        d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
-        with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
-            b.writelines(d4cpatch)
+        #with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
+            #d4cpatch = b.readlines()
+        #d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
+        #with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
+            #b.writelines(d4cpatch)
 
         print("Setup Complete!")
 
@@ -819,11 +819,11 @@ class tabview(ctk.CTkTabview):
         with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
         
-        with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
-            d4cpatch = b.readlines()
-        d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
-        with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
-            b.writelines(d4cpatch)
+        #with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
+            #d4cpatch = b.readlines()
+        #d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
+        #with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
+            #b.writelines(d4cpatch)
 
         print("Setup Complete!")
 
