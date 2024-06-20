@@ -496,6 +496,17 @@ class tabview(ctk.CTkTabview):
         rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
+        vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
+        vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])  # current scripts dir to avoid issues
+        vr_folder = "DiffSinger/checkpoints"
+        vr_subfolder_name = "Diffsinger/checkpoints"
+        os.makedirs(vr_subfolder_name, exist_ok = True)
+
+        SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
+        SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])  # current scripts dir to avoid issues
+        SOME_folder = "DiffSinger/checkpoints"
+        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
+        os.makedirs(SOME_subfolder_name, exist_ok = True)
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
@@ -567,6 +578,30 @@ class tabview(ctk.CTkTabview):
         with zipfile.ZipFile(rmvpe_zip, "r") as zip_ref:
             zip_ref.extractall(rmvpe_subfolder_name)
         os.remove(rmvpe_zip)
+
+        response = requests.get(vr_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading VR") as progress_bar:
+            with open("hnsep_240512.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(vr_zip, "r") as zip_ref:
+            zip_ref.extractall(vr_subfolder_name)
+        os.remove(vr_zip)
+
+        response = requests.get(SOME_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME") as progress_bar:
+            with open("0119_continuous128_5spk.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(SOME_zip, "r") as zip_ref:
+            zip_ref.extractall(SOME_subfolder_name)
+        os.remove(SOME_zip)
 
         try:
             output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
@@ -652,6 +687,18 @@ class tabview(ctk.CTkTabview):
         rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
+        vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
+        vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])  # current scripts dir to avoid issues
+        vr_folder = "DiffSinger/checkpoints"
+        vr_subfolder_name = "Diffsinger/checkpoints"
+        os.makedirs(vr_subfolder_name, exist_ok = True)
+
+        SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
+        SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])  # current scripts dir to avoid issues
+        SOME_folder = "DiffSinger/checkpoints"
+        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
+        os.makedirs(SOME_subfolder_name, exist_ok = True)
+
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
             if not user_response:
@@ -722,6 +769,31 @@ class tabview(ctk.CTkTabview):
         with zipfile.ZipFile(rmvpe_zip, "r") as zip_ref:
             zip_ref.extractall(rmvpe_subfolder_name)
         os.remove(rmvpe_zip)
+
+        response = requests.get(vr_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading VR") as progress_bar:
+            with open("hnsep_240512.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(vr_zip, "r") as zip_ref:
+            zip_ref.extractall(vr_subfolder_name)
+        os.remove(vr_zip)
+
+        response = requests.get(SOME_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME") as progress_bar:
+            with open("0119_continuous128_5spk.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(SOME_zip, "r") as zip_ref:
+            zip_ref.extractall(SOME_subfolder_name)
+        os.remove(SOME_zip)
+
 
         subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
 
@@ -1074,6 +1146,9 @@ class tabview(ctk.CTkTabview):
             #shallow diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
+            #vr stuff please update it when you add a button that toggle it
+            bitch_ass_config["hnsep"] = "vr"
+            bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
@@ -1118,6 +1193,9 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["tension_logit_max"] = 6
             bitch_ass_config["tension_logit_min"] = -6
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
+            #vr stuff please update it when you add a button that toggle it v2
+            bitch_ass_config["hnsep"] = "vr"
+            bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
