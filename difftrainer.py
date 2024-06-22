@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.12"
-releasedate = "06/20/24"
+version = "0.1.13"
+releasedate = "06/22/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -1075,42 +1075,6 @@ class tabview(ctk.CTkTabview):
         spk_names = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
         num_spk = len(spk_name)
         raw_dir = []
-        for folder_name in spk_name:
-            folder_path = os.path.join(self.data_folder, folder_name)
-            raw_dir.append(folder_path)
-        if num_spk == 1:
-            singer_type = "SINGLE-SPEAKER"
-            diff_loss_type = "l1"
-            f0_maxx = 1600
-            use_spk_id = False
-            all_wav_files = []
-            for root, dirs, files in os.walk(self.data_folder):
-                for file in files:
-                    if file.endswith(".wav"):
-                        full_path = os.path.join(root, file)
-                        all_wav_files.append(full_path)
-            random.shuffle(all_wav_files)
-            random_ass_wavs = all_wav_files[:3]
-            random_ass_test_files = [os.path.splitext(os.path.basename(file))[0] for file in random_ass_wavs]
-
-        else:
-            singer_type = "MULTI-SPEAKER"
-            diff_loss_type = "l1"
-            f0_maxx = 1600
-            use_spk_id = True
-            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
-            random_ass_test_files = []
-            for folder_path in raw_dir:
-                audio_files_prev = os.path.join(folder_path, "wavs")
-                audio_files = [f[:-4] for f in os.listdir(audio_files_prev) if f.endswith(".wav")]
-                folder_name = os.path.basename(folder_path)
-                folder_id = folder_to_id.get(folder_name, -1)
-                prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
-                random_ass_test_files.extend(prefixed_audio_files[:3])
-        spk_id = []
-        for i, spk_name in enumerate(spk_name):
-            spk_id_format = f"{i}:{spk_name}"
-            spk_id.append(spk_id_format)
         enable_random_aug = randaug.get()
         enable_stretch_aug = stretchaug.get()
         duration = traindur.get()
@@ -1123,6 +1087,63 @@ class tabview(ctk.CTkTabview):
         save_interval = save_int.get()
         batch = batch_size.get()
         selected_config_type = trainselect.get()
+        for folder_name in spk_name:
+            folder_path = os.path.join(self.data_folder, folder_name)
+            raw_dir.append(folder_path)
+        if num_spk == 1:
+            singer_type = "SINGLE-SPEAKER"
+            diff_loss_type = "l1"
+            f0_maxx = 1600
+            use_spk_id = False
+            all_wav_files = []
+            all_ds_files = []
+            if ds == False:
+                for root, dirs, files in os.walk(self.data_folder):
+                    for file in files:
+                        if file.endswith(".wav"):
+                            full_path = os.path.join(root, file)
+                            all_wav_files.append(full_path)
+                random.shuffle(all_wav_files)
+                random_ass_wavs = all_wav_files[:3]
+                random_ass_test_files = [os.path.splitext(os.path.basename(file))[0] for file in random_ass_wavs]
+            else:
+                for root, dirs, files in os.walk(self.data_folder):
+                    for file in files:
+                        if file.endswith(".ds"):
+                            full_path = os.path.join(root, file)
+                            all_ds_files.append(full_path)
+                random.shuffle(all_ds_files)
+                random_ass_ds = all_ds_files[:3]
+                random_ass_test_files = [os.path.splitext(os.path.basename(file))[0] for file in random_ass_ds]
+
+        else:
+            singer_type = "MULTI-SPEAKER"
+            diff_loss_type = "l1"
+            f0_maxx = 1600
+            use_spk_id = True
+            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
+            random_ass_test_files = []
+            if ds == False:
+                for folder_path in raw_dir:
+                    audio_files_prev = os.path.join(folder_path, "wavs")
+                    audio_files = [f[:-4] for f in os.listdir(audio_files_prev) if f.endswith(".wav")]
+                    folder_name = os.path.basename(folder_path)
+                    folder_id = folder_to_id.get(folder_name, -1)
+                    prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
+                    random_ass_test_files.extend(prefixed_audio_files[:3])
+            else:
+                for folder_path in raw_dir:
+                    audio_files_prev = os.path.join(folder_path, "ds")
+                    audio_files = [f[:-3] for f in os.listdir(audio_files_prev) if f.endswith(".ds")]
+                    folder_name = os.path.basename(folder_path)
+                    folder_id = folder_to_id.get(folder_name, -1)
+                    prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
+                    random_ass_test_files.extend(prefixed_audio_files[:3])
+        spk_id = []
+        for i, spk_name in enumerate(spk_name):
+            spk_id_format = f"{i}:{spk_name}"
+            spk_id.append(spk_id_format)
+        
         if selected_config_type == 1:
             with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
