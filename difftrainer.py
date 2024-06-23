@@ -10,12 +10,24 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.10"
-releasedate = "06/06/24"
+version = "0.1.13"
+releasedate = "06/22/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
     python_exe = f"{main_path}/python/python.exe"
+elif os.path.exists(f"{main_path}/.env"):
+    pip_exe = f"{main_path}/.env/Scripts/pip"
+    python_exe = f"{main_path}/.env/Scripts/python"
+elif os.path.exists(f"{main_path}/.venv"):
+    pip_exe = f"{main_path}/.venv/Scripts/pip"
+    python_exe = f"{main_path}/.venv/Scripts/python"
+elif os.path.exists(f"{main_path}/env"):
+    pip_exe = f"{main_path}/env/Scripts/pip"
+    python_exe = f"{main_path}/env/Scripts/python"
+elif os.path.exists(f"{main_path}/venv"):
+    pip_exe = f"{main_path}/venv/Scripts/pip"
+    python_exe = f"{main_path}/venv/Scripts/python"
 else:
     pip_exe = "pip"
     python_exe = "python"
@@ -496,6 +508,17 @@ class tabview(ctk.CTkTabview):
         rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
+        vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
+        vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])  # current scripts dir to avoid issues
+        vr_folder = "DiffSinger/checkpoints"
+        vr_subfolder_name = "Diffsinger/checkpoints"
+        os.makedirs(vr_subfolder_name, exist_ok = True)
+
+        SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
+        SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])  # current scripts dir to avoid issues
+        SOME_folder = "DiffSinger/checkpoints"
+        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
+        os.makedirs(SOME_subfolder_name, exist_ok = True)
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
@@ -567,6 +590,30 @@ class tabview(ctk.CTkTabview):
         with zipfile.ZipFile(rmvpe_zip, "r") as zip_ref:
             zip_ref.extractall(rmvpe_subfolder_name)
         os.remove(rmvpe_zip)
+
+        response = requests.get(vr_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading VR") as progress_bar:
+            with open("hnsep_240512.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(vr_zip, "r") as zip_ref:
+            zip_ref.extractall(vr_subfolder_name)
+        os.remove(vr_zip)
+
+        response = requests.get(SOME_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME") as progress_bar:
+            with open("0119_continuous128_5spk.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(SOME_zip, "r") as zip_ref:
+            zip_ref.extractall(SOME_subfolder_name)
+        os.remove(SOME_zip)
 
         try:
             output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
@@ -622,11 +669,11 @@ class tabview(ctk.CTkTabview):
         with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
 
-        with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
-            d4cpatch = b.readlines()
-        d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
-        with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
-            b.writelines(d4cpatch)
+        #with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
+            #d4cpatch = b.readlines()
+        #d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
+        #with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
+            #b.writelines(d4cpatch)
 
         print("Setup Complete!")
 
@@ -651,6 +698,18 @@ class tabview(ctk.CTkTabview):
         rmvpe_folder = "DiffSinger/checkpoints"
         rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
+
+        vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
+        vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])  # current scripts dir to avoid issues
+        vr_folder = "DiffSinger/checkpoints"
+        vr_subfolder_name = "Diffsinger/checkpoints"
+        os.makedirs(vr_subfolder_name, exist_ok = True)
+
+        SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
+        SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])  # current scripts dir to avoid issues
+        SOME_folder = "DiffSinger/checkpoints"
+        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
+        os.makedirs(SOME_subfolder_name, exist_ok = True)
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
@@ -723,6 +782,31 @@ class tabview(ctk.CTkTabview):
             zip_ref.extractall(rmvpe_subfolder_name)
         os.remove(rmvpe_zip)
 
+        response = requests.get(vr_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading VR") as progress_bar:
+            with open("hnsep_240512.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(vr_zip, "r") as zip_ref:
+            zip_ref.extractall(vr_subfolder_name)
+        os.remove(vr_zip)
+
+        response = requests.get(SOME_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME") as progress_bar:
+            with open("0119_continuous128_5spk.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(SOME_zip, "r") as zip_ref:
+            zip_ref.extractall(SOME_subfolder_name)
+        os.remove(SOME_zip)
+
+
         subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
 
         if os.path.exists("db_converter_config.yaml"):
@@ -747,11 +831,11 @@ class tabview(ctk.CTkTabview):
         with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
         
-        with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
-            d4cpatch = b.readlines()
-        d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
-        with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
-            b.writelines(d4cpatch)
+        #with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
+            #d4cpatch = b.readlines()
+        #d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
+        #with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
+            #b.writelines(d4cpatch)
 
         print("Setup Complete!")
 
@@ -991,42 +1075,6 @@ class tabview(ctk.CTkTabview):
         spk_names = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
         num_spk = len(spk_name)
         raw_dir = []
-        for folder_name in spk_name:
-            folder_path = os.path.join(self.data_folder, folder_name)
-            raw_dir.append(folder_path)
-        if num_spk == 1:
-            singer_type = "SINGLE-SPEAKER"
-            diff_loss_type = "l1"
-            f0_maxx = 1600
-            use_spk_id = False
-            all_wav_files = []
-            for root, dirs, files in os.walk(self.data_folder):
-                for file in files:
-                    if file.endswith(".wav"):
-                        full_path = os.path.join(root, file)
-                        all_wav_files.append(full_path)
-            random.shuffle(all_wav_files)
-            random_ass_wavs = all_wav_files[:3]
-            random_ass_test_files = [os.path.splitext(os.path.basename(file))[0] for file in random_ass_wavs]
-
-        else:
-            singer_type = "MULTI-SPEAKER"
-            diff_loss_type = "l1"
-            f0_maxx = 1600
-            use_spk_id = True
-            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
-            random_ass_test_files = []
-            for folder_path in raw_dir:
-                audio_files_prev = os.path.join(folder_path, "wavs")
-                audio_files = [f[:-4] for f in os.listdir(audio_files_prev) if f.endswith(".wav")]
-                folder_name = os.path.basename(folder_path)
-                folder_id = folder_to_id.get(folder_name, -1)
-                prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
-                random_ass_test_files.extend(prefixed_audio_files[:3])
-        spk_id = []
-        for i, spk_name in enumerate(spk_name):
-            spk_id_format = f"{i}:{spk_name}"
-            spk_id.append(spk_id_format)
         enable_random_aug = randaug.get()
         enable_stretch_aug = stretchaug.get()
         duration = traindur.get()
@@ -1039,6 +1087,63 @@ class tabview(ctk.CTkTabview):
         save_interval = save_int.get()
         batch = batch_size.get()
         selected_config_type = trainselect.get()
+        for folder_name in spk_name:
+            folder_path = os.path.join(self.data_folder, folder_name)
+            raw_dir.append(folder_path)
+        if num_spk == 1:
+            singer_type = "SINGLE-SPEAKER"
+            diff_loss_type = "l1"
+            f0_maxx = 1600
+            use_spk_id = False
+            all_wav_files = []
+            all_ds_files = []
+            if ds == False:
+                for root, dirs, files in os.walk(self.data_folder):
+                    for file in files:
+                        if file.endswith(".wav"):
+                            full_path = os.path.join(root, file)
+                            all_wav_files.append(full_path)
+                random.shuffle(all_wav_files)
+                random_ass_wavs = all_wav_files[:3]
+                random_ass_test_files = [os.path.splitext(os.path.basename(file))[0] for file in random_ass_wavs]
+            else:
+                for root, dirs, files in os.walk(self.data_folder):
+                    for file in files:
+                        if file.endswith(".ds"):
+                            full_path = os.path.join(root, file)
+                            all_ds_files.append(full_path)
+                random.shuffle(all_ds_files)
+                random_ass_ds = all_ds_files[:3]
+                random_ass_test_files = [os.path.splitext(os.path.basename(file))[0] for file in random_ass_ds]
+
+        else:
+            singer_type = "MULTI-SPEAKER"
+            diff_loss_type = "l1"
+            f0_maxx = 1600
+            use_spk_id = True
+            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
+            random_ass_test_files = []
+            if ds == False:
+                for folder_path in raw_dir:
+                    audio_files_prev = os.path.join(folder_path, "wavs")
+                    audio_files = [f[:-4] for f in os.listdir(audio_files_prev) if f.endswith(".wav")]
+                    folder_name = os.path.basename(folder_path)
+                    folder_id = folder_to_id.get(folder_name, -1)
+                    prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
+                    random_ass_test_files.extend(prefixed_audio_files[:3])
+            else:
+                for folder_path in raw_dir:
+                    audio_files_prev = os.path.join(folder_path, "ds")
+                    audio_files = [f[:-3] for f in os.listdir(audio_files_prev) if f.endswith(".ds")]
+                    folder_name = os.path.basename(folder_path)
+                    folder_id = folder_to_id.get(folder_name, -1)
+                    prefixed_audio_files = [f"{folder_id}:{audio_file}" for audio_file in audio_files]
+                    random_ass_test_files.extend(prefixed_audio_files[:3])
+        spk_id = []
+        for i, spk_name in enumerate(spk_name):
+            spk_id_format = f"{i}:{spk_name}"
+            spk_id.append(spk_id_format)
+        
         if selected_config_type == 1:
             with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
@@ -1074,6 +1179,9 @@ class tabview(ctk.CTkTabview):
             #shallow diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
+            #vr stuff please update it when you add a button that toggle it
+            bitch_ass_config["hnsep"] = "vr"
+            bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
@@ -1118,6 +1226,9 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["tension_logit_max"] = 6
             bitch_ass_config["tension_logit_min"] = -6
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
+            #vr stuff please update it when you add a button that toggle it v2
+            bitch_ass_config["hnsep"] = "vr"
+            bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
