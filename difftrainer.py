@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.13"
-releasedate = "06/22/24"
+version = "0.1.14"
+releasedate = "07/07/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -142,8 +142,8 @@ class tabview(ctk.CTkTabview):
 
         self.frame2 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
         self.frame2.grid(row=0, column=2, pady=(10, 0))
-        self.label = ctk.CTkLabel(master=self.frame2, text = (self.L('length_sil')), font = self.font)
-        self.tooltip = CTkToolTip(self.label, message=(self.L('length_sil2')), font = self.font)
+        self.label = ctk.CTkLabel(master=self.frame2, text = ("useless slider"), font = self.font)
+        self.tooltip = CTkToolTip(self.label, message=("to be removed"), font = self.font)
         self.label.grid(row=0, column=0)
         global max_sil_ln
         max_sil_ln = tk.DoubleVar()
@@ -975,7 +975,7 @@ class tabview(ctk.CTkTabview):
             if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                 print("segmenting data...")
                 #dear god please work
-                cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-S', str(max_silence_length), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                 if self.estimatemidivar.get() == True:
                     cmd.append('-mD')
                     cmd.append('-f')
@@ -1021,7 +1021,6 @@ class tabview(ctk.CTkTabview):
                     "##### Converter Settings #####\n",
                     f"max audio segment length: {str(max_wav_length)}\n",
                     f"max silence amount: {str(max_silence)}\n",
-                    f"max silence length: {str(max_silence_length)}\n",
                     f"estimate midi: {estimate_midi_print}\n",
                     f"detect off cents: {use_cents_print}\n",
                     f"detect breath: {detect_breath_print}\n",
