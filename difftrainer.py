@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.14"
-releasedate = "07/07/24"
+version = "0.1.14a"
+releasedate = "07/08/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -140,20 +140,6 @@ class tabview(ctk.CTkTabview):
         self.maxsil_slider.set(2)
         self.maxsil_slider.grid(row=1)
 
-        self.frame2 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
-        self.frame2.grid(row=0, column=2, pady=(10, 0))
-        self.label = ctk.CTkLabel(master=self.frame2, text = ("useless slider"), font = self.font)
-        self.tooltip = CTkToolTip(self.label, message=("to be removed"), font = self.font)
-        self.label.grid(row=0, column=0)
-        global max_sil_ln
-        max_sil_ln = tk.DoubleVar()
-        self.maxsil_box = ctk.CTkEntry(master=self.frame2, textvariable = max_sil_ln, width = 40, font = self.font)
-        self.maxsil_box.insert(0, "2")
-        self.maxsil_box.grid(row=2)
-        self.maxsil_slider = ctk.CTkSlider(master=self.frame2, from_=0.1, to=10, number_of_steps=99, variable=max_sil_ln)
-        self.maxsil_slider.set(2)
-        self.maxsil_slider.grid(row=1)
-
         self.frame3 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
         self.frame3.grid(row=1, column=0, padx=(35, 10), pady=(40, 20))
         self.label = ctk.CTkLabel(master=self.frame3, text = (self.L('length_seg')), font = self.font)
@@ -169,26 +155,33 @@ class tabview(ctk.CTkTabview):
         self.maxseg_slider.grid(row=1)
 
         self.frame4 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
-        self.frame4.grid(row=1, column=2, padx=(10, 35), pady=(20, 10))
-        self.estimatemidivar = tk.BooleanVar()
-        self.estimatemidi = ctk.CTkCheckBox(master=self.frame4, text = (self.L('estmidi')), variable = self.estimatemidivar, font = self.font)
-        self.estimatemidi.select()
-        self.estimatemidi.grid(row=0)
+        self.frame4.grid(row=0, column=2, padx=(10, 35), pady=(20, 10), rowspan=2)
+        self.estimatemidi = ctk.CTkLabel(master=self.frame4, text = (self.L('estmidi')), font = self.font)
+        self.estimatemidi.grid(row=0, column=0, padx=5)
+        self.midiframe = ctk.CTkFrame(master=self.frame4)
+        self.midiframe.grid(row=0, column=1)
+        self.estimatemidivar = tk.StringVar()
+        self.estimatemidiA = ctk.CTkRadioButton(master=self.midiframe, text = (self.L('estmidiA')), value = 'default', variable = self.estimatemidivar, font = self.font)
+        self.estimatemidiA.grid(row=0, sticky="w", padx=10)
+        self.estimatemidiB = ctk.CTkRadioButton(master=self.midiframe, text = (self.L('estmidiB')), value = 'some', variable = self.estimatemidivar, font = self.font)
+        self.estimatemidiB.grid(row=1, sticky="w", padx=10)
+        self.estimatemidiC = ctk.CTkRadioButton(master=self.midiframe, text = (self.L('estmidiC')), value = 'off', variable = self.estimatemidivar, font = self.font)
+        self.estimatemidiC.grid(row=2, sticky="w", padx=10)
         self.tooltip = CTkToolTip(self.estimatemidi, message=(self.L('estmidi2')), font = self.font)
         global estimate_midi
         estimate_midi = self.estimatemidivar
         self.detectbreathvar = tk.BooleanVar()
         self.detectbreath = ctk.CTkCheckBox(master=self.frame4, text = (self.L('detbre')), variable = self.detectbreathvar, font = self.font)
         self.detectbreath.deselect()
-        self.detectbreath.grid(row=1, pady=10)
+        self.detectbreath.grid(row=3, column=0, columnspan=2, pady=10)
         self.tooltip = CTkToolTip(self.detectbreath, message=(self.L('detbre2')), font = self.font)
         global detectbreath
         detectbreath = self.detectbreathvar
         self.button = ctk.CTkButton(master=self.frame4, text = (self.L('rawdata')), command = self.grab_raw_data, font = self.font)
-        self.button.grid(row=2)
+        self.button.grid(row=4, column=0, columnspan=2)
         self.tooltip = CTkToolTip(self.button, message=(self.L('rawdata2')), font = self.font)
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_2')), text = (self.L('prepdata')), command = self.run_segment, font = self.font)
-        self.button.grid(row=2, column=1, pady=(5, 15))
+        self.button.grid(row=4, column=1, pady=(5, 15))
         self.tooltip = CTkToolTip(self.button, message=(self.L('prepdata2')), font = self.font)
 
         ##CONFIG
@@ -520,6 +513,9 @@ class tabview(ctk.CTkTabview):
         SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
         os.makedirs(SOME_subfolder_name, exist_ok = True)
 
+        SOME_url2 = "https://github.com/agentasteriski/SOME-lite/archive/refs/heads/main.zip"
+        SOME_zip2 = os.path.join(os.getcwd(), SOME_url2.split("/")[-1])
+
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
             if not user_response:
@@ -605,7 +601,7 @@ class tabview(ctk.CTkTabview):
 
         response = requests.get(SOME_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME") as progress_bar:
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME model") as progress_bar:
             with open("0119_continuous128_5spk.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
@@ -614,6 +610,22 @@ class tabview(ctk.CTkTabview):
         with zipfile.ZipFile(SOME_zip, "r") as zip_ref:
             zip_ref.extractall(SOME_subfolder_name)
         os.remove(SOME_zip)
+
+        response = requests.get(SOME_url2, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME scripts") as progress_bar:
+            with open("main.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(SOME_zip2, "r") as zip_ref:
+            zip_ref.extractall()
+        os.remove(SOME_zip2)
+        if os.path.exists("SOME-lite-main"):
+            os.rename("SOME-lite-main", "SOME") #this beech too
+        
+        subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
 
         try:
             output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
@@ -626,6 +638,7 @@ class tabview(ctk.CTkTabview):
                     subprocess.check_call([pip_exe, "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117", "--no-warn-script-location"])
                     subprocess.check_call([pip_exe, "install", "protobuf", "--no-warn-script-location"])
                     subprocess.check_call([pip_exe, "install", "onnxruntime", "--no-warn-script-location"])
+                    subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
                     subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
                     break
             else:
@@ -636,6 +649,7 @@ class tabview(ctk.CTkTabview):
                 subprocess.check_call([pip_exe, "install", "torchaudio==0.13.0", "--no-warn-script-location"])
                 subprocess.check_call([pip_exe, "install", "protobuf", "--no-warn-script-location"])
                 subprocess.check_call([pip_exe, "install", "onnxruntime", "--no-warn-script-location"])
+                subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
                 subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
         except (FileNotFoundError, subprocess.CalledProcessError):
             print("CUDA is not available")
@@ -645,6 +659,7 @@ class tabview(ctk.CTkTabview):
             subprocess.check_call([pip_exe, "install", "torchaudio==0.13.0", "--no-warn-script-location"])
             subprocess.check_call([pip_exe, "install", "protobuf", "--no-warn-script-location"])
             subprocess.check_call([pip_exe, "install", "onnxruntime", "--no-warn-script-location"])
+            subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
 
         if os.path.exists("db_converter_config.yaml"):
@@ -681,35 +696,38 @@ class tabview(ctk.CTkTabview):
         if not os.path.exists(all_shits_not_wav_n_lab):
           os.makedirs(all_shits_not_wav_n_lab)
         uta_url = "https://github.com/UtaUtaUtau/nnsvs-db-converter/archive/refs/heads/main.zip"
-        uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])  # current scripts dir to avoid issues
+        uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
         uta_script_folder_name = "nnsvs-db-converter-main"
 
         diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/main.zip"
-        diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])  # current scripts dir to avoid issues
+        diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
         diffsinger_script_folder_name = "DiffSinger-main"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
-        vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])  # current scripts dir to avoid issues
+        vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
         vocoder_folder = "DiffSinger/checkpoints"
         vocoder_subfolder_name = "Diffsinger/checkpoints/nsf_hifigan_44.1k_hop512_128bin_2024.02"
 
         rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
-        rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])  # current scripts dir to avoid issues
+        rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])
         rmvpe_folder = "DiffSinger/checkpoints"
         rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
         vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
-        vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])  # current scripts dir to avoid issues
+        vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])
         vr_folder = "DiffSinger/checkpoints"
         vr_subfolder_name = "Diffsinger/checkpoints"
         os.makedirs(vr_subfolder_name, exist_ok = True)
 
         SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
-        SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])  # current scripts dir to avoid issues
+        SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])
         SOME_folder = "DiffSinger/checkpoints"
         SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
         os.makedirs(SOME_subfolder_name, exist_ok = True)
+
+        SOME_url2 = "https://github.com/agentasteriski/SOME-lite/archive/refs/heads/main.zip"
+        SOME_zip2 = os.path.join(os.getcwd(), SOME_url2.split("/")[-1])
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
@@ -727,6 +745,11 @@ class tabview(ctk.CTkTabview):
                     shutil.rmtree("DiffSinger")
                 except Exception as e:
                     print(f"Error deleting the existing 'DiffSinger' folder: {e}")
+            if os.path.exists("SOME"):
+                try:
+                    shutil.rmtree("SOME")
+                except Exception as e:
+                    print(f"Error deleting the existing 'SOME' folder: {e}")
 
         response = requests.get(uta_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
@@ -796,7 +819,7 @@ class tabview(ctk.CTkTabview):
 
         response = requests.get(SOME_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME") as progress_bar:
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME model") as progress_bar:
             with open("0119_continuous128_5spk.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
@@ -806,6 +829,21 @@ class tabview(ctk.CTkTabview):
             zip_ref.extractall(SOME_subfolder_name)
         os.remove(SOME_zip)
 
+        response = requests.get(SOME_url2, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME scripts") as progress_bar:
+            with open("main.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(SOME_zip2, "r") as zip_ref:
+            zip_ref.extractall()
+        os.remove(SOME_zip2)
+        if os.path.exists("SOME-lite-main"):
+            os.rename("SOME-lite-main", "SOME") #this beech too
+        
+        subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
 
         subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
 
@@ -966,7 +1004,6 @@ class tabview(ctk.CTkTabview):
             converter = yaml.safe_load(config)
 
         max_silence = max_sil.get()
-        max_silence_length = max_sil_ln.get()
         max_wav_length = max_seg_ln.get()
         
         for raw_folder_name in os.listdir(self.all_shits):
@@ -976,22 +1013,15 @@ class tabview(ctk.CTkTabview):
                 print("segmenting data...")
                 #dear god please work
                 cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
-                if self.estimatemidivar.get() == True:
-                    cmd.append('-mD')
-                    cmd.append('-f')
-                    cmd.append(str(converter["f0_min"]))
-                    cmd.append('-F')
-                    cmd.append(str(converter["f0_max"]))
-                    cmd.append("-V")
-                    cmd.append(str(converter["voicing_treshold_midi"]))
-                    estimate_midi_print = "True"
-                else:
-                    estimate_midi_print = "False"
-                if converter["use_cents"] == True:
+                if self.estimatemidivar.get() == "default":
+                    estimate_midi_print = "Default"
+                    cmd.append("-m")
+                    cmd.append("-D")
                     cmd.append("-c")
-                    use_cents_print = "True"
+                elif self.estimatemidivar.get() == "some":
+                    estimate_midi_print = "SOME"
                 else:
-                    use_cents_print = "False"
+                    estimate_midi_print = "Off"
                 if self.detectbreathvar.get() == True:
                     cmd.append('-B')
                     cmd.append("-v")
@@ -1022,7 +1052,6 @@ class tabview(ctk.CTkTabview):
                     f"max audio segment length: {str(max_wav_length)}\n",
                     f"max silence amount: {str(max_silence)}\n",
                     f"estimate midi: {estimate_midi_print}\n",
-                    f"detect off cents: {use_cents_print}\n",
                     f"detect breath: {detect_breath_print}\n",
                     f"export label: {write_label_print}\n"
                      )
@@ -1044,6 +1073,15 @@ class tabview(ctk.CTkTabview):
                     elif os.path.isdir(stuff_path):
                         shutil.move(stuff_path, singer_folder_dat_main)
                 shutil.rmtree(diff_singer_db_path)
+
+                if self.estimatemidivar.get() == "some":
+                    print("loading SOME...")
+                    cmd2 = [python_exe, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", raw_folder_path, "--overwrite"]
+                    output = subprocess.check_output(cmd2, universal_newlines=True)
+                    print(output)
+                else:
+                    pass
+
         print("data segmentation complete!")
 
     def grab_data_folder(self):
