@@ -26,7 +26,7 @@ length_sil2: "每次沉默允許持續多久。 \n 較長的沉默將會被分�
 length_seg: "片段的最大長度(秒)"
 length_seg2: "每個片段允許多長。 較長的段落將被分割。 \n 這不是一個精確值，如果需要，可以更短或更長。 \n 建議值：至少 5 個，但非常弱的 GPU 可能只能處理 2-4 個。 1 不推薦。"
 estmidi: "估算 MIDI:"
-estmidiA: "預設方式"
+estmidiA: "預設方法"
 estmidiB: "SOME"
 estmidiC: "關閉"
 estmidi2: "計算每個音素的音高。 訓練音調模型的必須操作。"
