@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.14"
-releasedate = "07/07/24"
+version = "0.1.15"
+releasedate = "07/14/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -489,7 +489,7 @@ class tabview(ctk.CTkTabview):
     def dl_scripts_github(self):
         if not os.path.exists(all_shits_not_wav_n_lab):
           os.makedirs(all_shits_not_wav_n_lab)
-        uta_url = "https://github.com/UtaUtaUtau/nnsvs-db-converter/archive/refs/heads/main.zip"
+        uta_url = "https://github.com/agentasteriski/nnsvs-db-converter/archive/refs/heads/branch2.zip"
         uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])  # current scripts dir to avoid issues
         uta_script_folder_name = "nnsvs-db-converter-main"
 
@@ -540,7 +540,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(uta_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading nnsvs-db-converter") as progress_bar:
-            with open("main.zip", "wb") as f:
+            with open("branch2.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
