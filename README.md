@@ -9,18 +9,19 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - OpenUtau export scripts
 ## setup options
 ### If you have never used Python:
-- run python_installer.bat, go through the installer
+- run conda_installer.bat
 - run setup.bat
-- use run_gui.bat to launch after that
+- use run_guiA.bat for preprocessing and training
+- use run_guiB.bat for exporting onnx
 
 ### If you have used Python:
-- requires Python 3.10 specifically: [direct download for installer](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
-- if you would like a copy specifically installed in the DiffTrainer folder, you can use python_installer.bat instead
-- once Python 3.10 is installed, setup.bat can be run to download the requirements, or do the usual `pip install -r requirements.txt`
-- [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/) is recommended for users of multiple Python versions.
+- DiffTrainer by default uses Miniconda to manage conflicting package requirements.
+- To use an existing conda installation:
+  - run setup.bat to automatically create the required environments
+  - OR create two environments using the requirements files in /assets/
+    - run torchdropA.py in one and torchdropB.py in the other
+  - run_guiA.bat and run_guiB.bat launch Difftrainer in environments DifftrainerA and DifftrainerB respectively
 
-## known bugs
-- broken characters in non-roman alphabet languages
 
 ## language support
 DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) to allow GUI language selection. All users are welcome to translate the text found in [en_US](/strings/en_US.yaml) to other languages and submit a pull request.
@@ -28,7 +29,6 @@ DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tre
 ## to do
 soon
 - better readme
-- SOME for MIDI estimation
 
 eventually
 - advanced export
