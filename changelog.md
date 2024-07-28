@@ -5,3 +5,5 @@
 	- switch all users to conda or self-management
  	- implement split environments
 	- implement SOME for pitch estimation
+ 	- revert to main fork of Uta's converter
+  	- CONVERTER: all labels MUST begin and end with [SP] (sorry for the inconvenience)
