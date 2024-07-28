@@ -21,6 +21,8 @@ dependencies:
     - ctktooltip
     - ez-localizr
     - pyglet
+    - mido
+    - "einops==0.6.1"
     - "librosa<0.10.0"
     - "lightning~=2.3.0"
     - MonkeyType==23.3.0
