@@ -3,6 +3,18 @@
 if exist "%cd%\python" (
     set "pip_exe=%cd%\python\Scripts\pip"
     set "python_exe=%cd%\python\python.exe"
+) else if exist "%cd%\.env" (
+    set "pip_exe=%cd%\.env\Scripts\pip"
+    set "python_exe=%cd%\.env\Scripts\python"
+) else if exist "%cd%\.venv" (
+    set "pip_exe=%cd%\.venv\Scripts\pip"
+    set "python_exe=%cd%\.venv\Scripts\python"
+) else if exist "%cd%\env" (
+    set "pip_exe=%cd%\env\Scripts\pip"
+    set "python_exe=%cd%\env\Scripts\python"
+) else if exist "%cd%\venv" (
+    set "pip_exe=%cd%\venv\Scripts\pip"
+    set "python_exe=%cd%\venv\Scripts\python"
 ) else (
     set "pip_exe=pip"
     set "python_exe=python"
@@ -10,16 +22,10 @@ if exist "%cd%\python" (
 
 %python_exe% -m pip install --upgrade pip --no-warn-script-location
 %pip_exe% install -r requirements.txt --no-warn-script-location
-call conda env create -f assets\environmentA.yml
-call conda env create -f assets\environmentB.yml
-call conda activate difftrainerA
-%python_exe% torchdropA.py
-call conda activate difftrainerB
-%python_exe% torchdropB.py
 
 echo Setup complete!
 echo Launching gui...
-%python_exe% check_update.py
+call run_gui.bat
 
 
 
