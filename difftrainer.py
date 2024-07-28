@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.14a"
-releasedate = "07/08/24"
+version = "0.2.0"
+releasedate = "07/28/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -33,7 +33,7 @@ else:
     python_exe = "python"
 
 guisettings = {
-    'lang': 'en_US'
+    'lang': 'en_US',
 }
 
 pyglet.options['win32_gdi_font'] = True
@@ -44,7 +44,7 @@ if os.path.exists(('assets/guisettings.yaml')):
             guisettings.update(yaml.safe_load(c))
             c.close()
         except yaml.YAMLError as exc:
-            print("No language choice detected, defaulting to EN_US")
+            print("No settings detected, defaulting to EN_US")
 
 pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
 font_en = 'Red Hat Display'
@@ -105,9 +105,9 @@ class tabview(ctk.CTkTabview):
         self.label.grid(row=0, column=0, ipady=10, columnspan = 3)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = f"{self.L('vers')} {version}({releasedate})", font = self.font)
         self.label.grid(row=1, column=1)
-        self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('install'), command = self.dl_scripts_github, font = self.font)
+        self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('changelog'), font = self.font)
         self.button.grid(row=2, column=0, padx=50)
-        self.tooltip = CTkToolTip(self.button, message=self.L('install2'), font = self.font)
+        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/SOME/changelog.md"))
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
@@ -479,219 +479,6 @@ class tabview(ctk.CTkTabview):
     def credit(self, url):
         webbrowser.open_new(url)
 
-    def dl_scripts_github(self):
-        if not os.path.exists(all_shits_not_wav_n_lab):
-          os.makedirs(all_shits_not_wav_n_lab)
-        uta_url = "https://github.com/UtaUtaUtau/nnsvs-db-converter/archive/refs/heads/main.zip"
-        uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])  # current scripts dir to avoid issues
-        uta_script_folder_name = "nnsvs-db-converter-main"
-
-        diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/main.zip"
-        diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])  # current scripts dir to avoid issues
-        diffsinger_script_folder_name = "DiffSinger-main"
-
-        vocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
-        vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])  # current scripts dir to avoid issues
-        vocoder_folder = "DiffSinger/checkpoints"
-        vocoder_subfolder_name = "Diffsinger/checkpoints/nsf_hifigan_44.1k_hop512_128bin_2024.02"
-
-        rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
-        rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])  # current scripts dir to avoid issues
-        rmvpe_folder = "DiffSinger/checkpoints"
-        rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
-        os.makedirs(rmvpe_subfolder_name, exist_ok = True)
-
-        vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
-        vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])  # current scripts dir to avoid issues
-        vr_folder = "DiffSinger/checkpoints"
-        vr_subfolder_name = "Diffsinger/checkpoints"
-        os.makedirs(vr_subfolder_name, exist_ok = True)
-
-        SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
-        SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])  # current scripts dir to avoid issues
-        SOME_folder = "DiffSinger/checkpoints"
-        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
-        os.makedirs(SOME_subfolder_name, exist_ok = True)
-
-        SOME_url2 = "https://github.com/agentasteriski/SOME-lite/archive/refs/heads/main.zip"
-        SOME_zip2 = os.path.join(os.getcwd(), SOME_url2.split("/")[-1])
-
-        if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
-            user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
-            if not user_response:
-                return
-
-            if os.path.exists("nnsvs-db-converter"):
-                try:
-                    shutil.rmtree("nnsvs-db-converter")
-                except Exception as e:
-                    print(f"Error deleting the existing 'nnsvs-db-converter' folder: {e}")
-
-            if os.path.exists("DiffSinger"):
-                try:
-                    shutil.rmtree("DiffSinger")
-                except Exception as e:
-                    print(f"Error deleting the existing 'DiffSinger' folder: {e}")
-
-        response = requests.get(uta_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading nnsvs-db-converter") as progress_bar:
-            with open("main.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-
-        with zipfile.ZipFile(uta_zip, "r") as zip_ref:
-            zip_ref.extractall()
-        os.remove(uta_zip)
-        if os.path.exists(uta_script_folder_name):
-            os.rename(uta_script_folder_name, "nnsvs-db-converter") #renaming stuff cus i dont wanna change my path from the nb much
-
-        response = requests.get(diffsinger_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("main.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-
-        with zipfile.ZipFile(diffsinger_zip, "r") as zip_ref:
-            zip_ref.extractall()
-        os.remove(diffsinger_zip)
-        if os.path.exists(diffsinger_script_folder_name):
-            os.rename(diffsinger_script_folder_name, "DiffSinger") #this beech too
-
-        response = requests.get(vocoder_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading NSF-HifiGAN") as progress_bar:
-            with open("nsf_hifigan_44.1k_hop512_128bin_2024.02.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-        with zipfile.ZipFile(vocoder_zip, "r") as zip_ref:
-            zip_ref.extractall(vocoder_folder)
-        os.remove(vocoder_zip)
-
-        response = requests.get(rmvpe_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading RMVPE") as progress_bar:
-            with open("rmvpe.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-        with zipfile.ZipFile(rmvpe_zip, "r") as zip_ref:
-            zip_ref.extractall(rmvpe_subfolder_name)
-        os.remove(rmvpe_zip)
-
-        response = requests.get(vr_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading VR") as progress_bar:
-            with open("hnsep_240512.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-        with zipfile.ZipFile(vr_zip, "r") as zip_ref:
-            zip_ref.extractall(vr_subfolder_name)
-        os.remove(vr_zip)
-
-        response = requests.get(SOME_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME model") as progress_bar:
-            with open("0119_continuous128_5spk.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-        with zipfile.ZipFile(SOME_zip, "r") as zip_ref:
-            zip_ref.extractall(SOME_subfolder_name)
-        os.remove(SOME_zip)
-
-        response = requests.get(SOME_url2, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading SOME scripts") as progress_bar:
-            with open("main.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-        with zipfile.ZipFile(SOME_zip2, "r") as zip_ref:
-            zip_ref.extractall()
-        os.remove(SOME_zip2)
-        if os.path.exists("SOME-lite-main"):
-            os.rename("SOME-lite-main", "SOME") #this beech too
-        
-        subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
-
-        try:
-            output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
-            lines = output.split("\n")
-            for line in lines:
-                if "release" in line.lower():
-                    version = line.split()[-1]
-                    print("CUDA version:", version)
-                    subprocess.check_call([pip_exe, "install", "-r", "DiffSinger/requirements.txt", "--no-warn-script-location"])
-                    subprocess.check_call([pip_exe, "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117", "--no-warn-script-location"])
-                    subprocess.check_call([pip_exe, "install", "protobuf", "--no-warn-script-location"])
-                    subprocess.check_call([pip_exe, "install", "onnxruntime", "--no-warn-script-location"])
-                    subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
-                    subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
-                    break
-            else:
-                print("CUDA version not found")
-                subprocess.check_call([pip_exe, "install", "-r", "DiffSinger/requirements.txt", "--no-warn-script-location"])
-                subprocess.check_call([pip_exe, "install", "torch==1.13.0", "--no-warn-script-location"])
-                subprocess.check_call([pip_exe, "install", "torchvision==0.14.0", "--no-warn-script-location"])
-                subprocess.check_call([pip_exe, "install", "torchaudio==0.13.0", "--no-warn-script-location"])
-                subprocess.check_call([pip_exe, "install", "protobuf", "--no-warn-script-location"])
-                subprocess.check_call([pip_exe, "install", "onnxruntime", "--no-warn-script-location"])
-                subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
-                subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            print("CUDA is not available")
-            subprocess.check_call([pip_exe, "install", "-r", "DiffSinger/requirements.txt", "--no-warn-script-location"])
-            subprocess.check_call([pip_exe, "install", "torch==1.13.0", "--no-warn-script-location"])
-            subprocess.check_call([pip_exe, "install", "torchvision==0.14.0", "--no-warn-script-location"])
-            subprocess.check_call([pip_exe, "install", "torchaudio==0.13.0", "--no-warn-script-location"])
-            subprocess.check_call([pip_exe, "install", "protobuf", "--no-warn-script-location"])
-            subprocess.check_call([pip_exe, "install", "onnxruntime", "--no-warn-script-location"])
-            subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
-            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
-
-        if os.path.exists("db_converter_config.yaml"):
-            os.remove("db_converter_config.yaml")
-
-        converter_config = {
-            "use_cents": True,
-            "time_step": 0.005,
-            "f0_min": 40,
-            "f0_max": 1200,
-            "audio_sample_rate": 44100,
-            "voicing_treshold_midi": 0.45,
-            "voicing_treshold_breath": 0.6,
-            "breath_window_size": 0.05,
-            "breath_min_length": 0.1,
-            "breath_db_threshold": -60,
-            "breath_centroid_treshold": 2000,
-            "max-length-relaxation-factor": 0.1,
-            "pitch-extractor": "parselmouth",
-            "write_label": "htk"
-        }
-        with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
-            yaml.dump(converter_config, config)
-
-        #with open("DiffSinger/utils/binarizer_utils.py", "r") as b:
-            #d4cpatch = b.readlines()
-        #d4cpatch[152] = "        self._ap = pw.d4c(x, f0, t, samplerate, fft_size=fft_size, threshold=0.25)  # extract aperiodicity"
-        #with open("DiffSinger/utils/binarizer_utils.py", "w") as b:
-            #b.writelines(d4cpatch)
-
-        print("Setup Complete!")
-
     def dl_update(self):
         if not os.path.exists(all_shits_not_wav_n_lab):
           os.makedirs(all_shits_not_wav_n_lab)
@@ -879,208 +666,224 @@ class tabview(ctk.CTkTabview):
 
     def grab_raw_data(self):
         self.all_shits = filedialog.askdirectory(title="Select raw data folder", initialdir = "raw_data")
+        if not os.path.exists(all_shits_not_wav_n_lab):
+            os.makedirs(all_shits_not_wav_n_lab)
         print("raw data path: " + self.all_shits)
 
         
     def run_segment(self):
-        if not self.all_shits:
-            messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
-            return
-        messagebox.showinfo("Warning", 'This process will remove the original .wav and .lab files, please be sure to make a backup for your data before pressing "OK" or closing this window')
-        print("\n")
-        print("process running...")
-        print("editing necessary phonemes for db converter...")
-        # incase if user labeled SP as pau but i think utas script already account SP so meh
-        for root, dirs, files in os.walk(self.all_shits):
-            for filename in files:
-                if filename.endswith(".lab"):
-                    file_path = os.path.join(root, filename)
-                    with open(file_path, "r", encoding = "utf-8") as file:
-                        file_data = file.read()
-                    file_data = file_data.replace("SP", "pau")
-                    file_data = file_data.replace("br", "AP") #it needs AP instead of br, but if users didnt label breath then whoop their lost
-                    with open(file_path, "w", encoding = "utf-8") as file:
-                        file.write(file_data)
-        # for funny auto dict generator lmao
-        print("generating dictionary from phonemes...")
-        out = "DiffSinger/dictionaries/custom_dict.txt"
+        try:
+            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
+            lines = output.split("\n")
+            for line in lines:
+                if "1.13.1+cu117" in line:
+                    print("Error: wrong environment")
+                    break
+                elif "1.13.1" in line:
+                    print("Error: wrong environment")
+                    break
+            else:
+                pass
+            if not self.all_shits:
+                messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
+                return
+            messagebox.showinfo("Warning", 'This process will remove the original .wav and .lab files, please be sure to make a backup for your data before pressing "OK" or closing this window')
+            print("\n")
+            print("process running...")
+            print("editing necessary phonemes for db converter...")
+            # incase if user labeled SP as pau but i think utas script already account SP so meh
+            for root, dirs, files in os.walk(self.all_shits):
+                for filename in files:
+                    if filename.endswith(".lab"):
+                        file_path = os.path.join(root, filename)
+                        with open(file_path, "r", encoding = "utf-8") as file:
+                            file_data = file.read()
+                        file_data = file_data.replace("SP", "pau")
+                        file_data = file_data.replace("br", "AP") #it needs AP instead of br, but if users didnt label breath then whoop their lost
+                        with open(file_path, "w", encoding = "utf-8") as file:
+                            file.write(file_data)
+            # for funny auto dict generator lmao
+            print("generating dictionary from phonemes...")
+            out = "DiffSinger/dictionaries/custom_dict.txt"
 
-        phonemes = set()
+            phonemes = set()
 
-        def is_excluded(phoneme):
-            return phoneme in ["pau", "AP", "SP", "sil"]
+            def is_excluded(phoneme):
+                return phoneme in ["pau", "AP", "SP", "sil"]
 
-        phoneme_folder_path = self.all_shits
-        for root, dirs, files in os.walk(phoneme_folder_path):
-            for file in files:
-                if file.endswith(".lab"):
-                    fpath = os.path.join(root, file)
-                    with open(fpath, "r", encoding = "utf-8") as lab_file:
-                        for line in lab_file:
-                            line = line.strip()
-                            if line:
-                                phoneme = line.split()[2]
-                                if not is_excluded(phoneme):
-                                    phonemes.add(phoneme)
-        phoneme_folder_path = all_shits_not_wav_n_lab
-        for root, dirs, files in os.walk(phoneme_folder_path):
-            for file in files:
-                if file.endswith(".csv"):
-                    fpath = os.path.join(root, file)
-                    with open(fpath, "r", newline="", encoding = "utf-8") as csv_file:
-                        csv_reader = csv.DictReader(csv_file)
-                        for row in csv_reader:
-                            if "ph_seq" in row:
-                                ph_seq = row["ph_seq"].strip()
-                                for phoneme in ph_seq.split():
+            phoneme_folder_path = self.all_shits
+            for root, dirs, files in os.walk(phoneme_folder_path):
+                for file in files:
+                    if file.endswith(".lab"):
+                        fpath = os.path.join(root, file)
+                        with open(fpath, "r", encoding = "utf-8") as lab_file:
+                            for line in lab_file:
+                                line = line.strip()
+                                if line:
+                                    phoneme = line.split()[2]
                                     if not is_excluded(phoneme):
                                         phonemes.add(phoneme)
-        phoneme_folder_path = self.all_shits
-        for root, dirs, files in os.walk(phoneme_folder_path):
-            for file in files:
-                if file.endswith(".json"):
-                    fpath = os.path.join(root, file)
-                    with open(fpath, "r", encoding = "utf-8") as json_file:
-                        row = json.load(json_file)
-                        ph_seq = row["ph_seq"]
-                        for phoneme in ph_seq.split():
-                            if not is_excluded(phoneme):
-                                phonemes.add(phoneme)
+            phoneme_folder_path = all_shits_not_wav_n_lab
+            for root, dirs, files in os.walk(phoneme_folder_path):
+                for file in files:
+                    if file.endswith(".csv"):
+                        fpath = os.path.join(root, file)
+                        with open(fpath, "r", newline="", encoding = "utf-8") as csv_file:
+                            csv_reader = csv.DictReader(csv_file)
+                            for row in csv_reader:
+                                if "ph_seq" in row:
+                                    ph_seq = row["ph_seq"].strip()
+                                    for phoneme in ph_seq.split():
+                                        if not is_excluded(phoneme):
+                                            phonemes.add(phoneme)
+            phoneme_folder_path = self.all_shits
+            for root, dirs, files in os.walk(phoneme_folder_path):
+                for file in files:
+                    if file.endswith(".json"):
+                        fpath = os.path.join(root, file)
+                        with open(fpath, "r", encoding = "utf-8") as json_file:
+                            row = json.load(json_file)
+                            ph_seq = row["ph_seq"]
+                            for phoneme in ph_seq.split():
+                                if not is_excluded(phoneme):
+                                    phonemes.add(phoneme)
 
-        with open(out, "w", encoding = "utf-8") as f:
-            for phoneme in sorted(phonemes):
-                f.write(phoneme + "\t" + phoneme + "\n")
+            with open(out, "w", encoding = "utf-8") as f:
+                for phoneme in sorted(phonemes):
+                    f.write(phoneme + "\t" + phoneme + "\n")
 
-        # for vowels and consonants.txt.... well adding luquid type for uta's script
-        dict_path = out
-        vowel_types = {"a", "i", "u", "e", "o", "N", "M", "NG"}
-        liquid_types = {"y", "w", "l", "r"} # r for english labels, it should be fine with jp too
-        vowel_data = []
-        consonant_data = []
-        liquid_data = []
+            # for vowels and consonants.txt.... well adding luquid type for uta's script
+            dict_path = out
+            vowel_types = {"a", "i", "u", "e", "o", "N", "M", "NG"}
+            liquid_types = {"y", "w", "l", "r"} # r for english labels, it should be fine with jp too
+            vowel_data = []
+            consonant_data = []
+            liquid_data = []
 
-        with open(dict_path, "r", encoding = "utf-8") as f:
-            for line in f:
-                phoneme, _ = line.strip().split("\t")
-                if phoneme[0] in vowel_types:
-                    vowel_data.append(phoneme)
-                elif phoneme[0] in liquid_types:
-                    liquid_data.append(phoneme)
-                else:
-                    consonant_data.append(phoneme)
+            with open(dict_path, "r", encoding = "utf-8") as f:
+                for line in f:
+                    phoneme, _ = line.strip().split("\t")
+                    if phoneme[0] in vowel_types:
+                        vowel_data.append(phoneme)
+                    elif phoneme[0] in liquid_types:
+                        liquid_data.append(phoneme)
+                    else:
+                        consonant_data.append(phoneme)
 
-        vowel_data.sort()
-        liquid_data.sort()
-        consonant_data.sort()
-        directory = os.path.dirname(dict_path)
+            vowel_data.sort()
+            liquid_data.sort()
+            consonant_data.sort()
+            directory = os.path.dirname(dict_path)
 
-        # make txt for language json file
-        print("writing vowels.txt...")
-        vowel_txt_path = os.path.join(directory, "vowels.txt")
-        with open(vowel_txt_path, "w", encoding = "utf-8") as f:
-            f.write(" ".join(vowel_data))
-        print("writing liquids.txt...")
-        liquid_txt_path = os.path.join(directory, "liquids.txt")
-        with open(liquid_txt_path, "w", encoding = "utf-8") as f:
-            f.write(" ".join(liquid_data))
-        print("writing consonants.txt...")
-        consonant_txt_path = os.path.join(directory, "consonants.txt")
-        with open(consonant_txt_path, "w", encoding = "utf-8") as f:
-            f.write(" ".join(consonant_data))
+            # make txt for language json file
+            print("writing vowels.txt...")
+            vowel_txt_path = os.path.join(directory, "vowels.txt")
+            with open(vowel_txt_path, "w", encoding = "utf-8") as f:
+                f.write(" ".join(vowel_data))
+            print("writing liquids.txt...")
+            liquid_txt_path = os.path.join(directory, "liquids.txt")
+            with open(liquid_txt_path, "w", encoding = "utf-8") as f:
+                f.write(" ".join(liquid_data))
+            print("writing consonants.txt...")
+            consonant_txt_path = os.path.join(directory, "consonants.txt")
+            with open(consonant_txt_path, "w", encoding = "utf-8") as f:
+                f.write(" ".join(consonant_data))
 
-        # here's a funny json append
-        with open(vowel_txt_path, "r", encoding="utf-8") as f:
-            vowel_data = f.read().split()
-        with open(liquid_txt_path, "r", encoding = "utf-8") as f:
-            liquid_data = f.read().split()
-        with open(consonant_txt_path, "r", encoding = "utf-8") as f:
-            consonant_data = f.read().split()
-        liquid_list = {liquid: True for liquid in liquid_data} #temp fix, might need more research about the push in timing'''
-        phones4json = {"vowels": vowel_data, "liquids": liquid_list}
-        with open("nnsvs-db-converter/lang.sample.json", "w", encoding = "utf-8") as rawr:
-            json.dump(phones4json, rawr, indent=4)
+            # here's a funny json append
+            with open(vowel_txt_path, "r", encoding="utf-8") as f:
+                vowel_data = f.read().split()
+            with open(liquid_txt_path, "r", encoding = "utf-8") as f:
+                liquid_data = f.read().split()
+            with open(consonant_txt_path, "r", encoding = "utf-8") as f:
+                consonant_data = f.read().split()
+            liquid_list = {liquid: True for liquid in liquid_data} #temp fix, might need more research about the push in timing'''
+            phones4json = {"vowels": vowel_data, "liquids": liquid_list}
+            with open("nnsvs-db-converter/lang.sample.json", "w", encoding = "utf-8") as rawr:
+                json.dump(phones4json, rawr, indent=4)
 
-        with open("db_converter_config.yaml", "r", encoding = "utf-8") as config:
-            converter = yaml.safe_load(config)
+            with open("db_converter_config.yaml", "r", encoding = "utf-8") as config:
+                converter = yaml.safe_load(config)
 
-        max_silence = max_sil.get()
-        max_wav_length = max_seg_ln.get()
-        
-        for raw_folder_name in os.listdir(self.all_shits):
-            raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
-            raw_folder_path = os.path.normpath(raw_folder_path)
-            if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
-                print("segmenting data...")
-                #dear god please work
-                cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
-                if self.estimatemidivar.get() == "default":
-                    estimate_midi_print = "Default"
-                    cmd.append("-m")
-                    cmd.append("-D")
-                    cmd.append("-c")
-                elif self.estimatemidivar.get() == "some":
-                    estimate_midi_print = "SOME"
-                else:
-                    estimate_midi_print = "Off"
-                if self.detectbreathvar.get() == True:
-                    cmd.append('-B')
-                    cmd.append("-v")
-                    cmd.append(str(converter["voicing_treshold_breath"]))
-                    cmd.append("-W")
-                    cmd.append(str(converter["breath_window_size"]))
-                    cmd.append("-b")
-                    cmd.append(str(converter["breath_min_length"]))
-                    cmd.append("-e")
-                    cmd.append(str(converter["breath_db_threshold"]))
-                    cmd.append("-C")
-                    cmd.append(str(converter["breath_centroid_treshold"]))
-                    detect_breath_print = "True"
-                else:
-                    detect_breath_print = "False"
-                if converter["write_label"] == False:
-                    write_label_print = "Not writing labels"
-                elif converter["write_label"] == "htk":
-                    cmd.append("-w htk")
-                    write_label_print = "Write HTK labels"
-                elif converter["write_label"] == "aud":
-                    cmd.append("-w aud")
-                    write_label_print = "Write Audacity labels"
-                else:
-                    write_label_print = "unknown value, not writing labels"
-                print("\n",
-                    "##### Converter Settings #####\n",
-                    f"max audio segment length: {str(max_wav_length)}\n",
-                    f"max silence amount: {str(max_silence)}\n",
-                    f"estimate midi: {estimate_midi_print}\n",
-                    f"detect breath: {detect_breath_print}\n",
-                    f"export label: {write_label_print}\n"
-                     )
+            max_silence = max_sil.get()
+            max_wav_length = max_seg_ln.get()
+            
+            for raw_folder_name in os.listdir(self.all_shits):
+                raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
+                raw_folder_path = os.path.normpath(raw_folder_path)
+                if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
+                    print("segmenting data...")
+                    #dear god please work
+                    cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                    if self.estimatemidivar.get() == "default":
+                        estimate_midi_print = "Default"
+                        cmd.append("-m")
+                        cmd.append("-D")
+                        cmd.append("-c")
+                    elif self.estimatemidivar.get() == "some":
+                        estimate_midi_print = "SOME"
+                    else:
+                        estimate_midi_print = "Off"
+                    if self.detectbreathvar.get() == True:
+                        cmd.append('-B')
+                        cmd.append("-v")
+                        cmd.append(str(converter["voicing_treshold_breath"]))
+                        cmd.append("-W")
+                        cmd.append(str(converter["breath_window_size"]))
+                        cmd.append("-b")
+                        cmd.append(str(converter["breath_min_length"]))
+                        cmd.append("-e")
+                        cmd.append(str(converter["breath_db_threshold"]))
+                        cmd.append("-C")
+                        cmd.append(str(converter["breath_centroid_treshold"]))
+                        detect_breath_print = "True"
+                    else:
+                        detect_breath_print = "False"
+                    if converter["write_label"] == False:
+                        write_label_print = "Not writing labels"
+                    elif converter["write_label"] == "htk":
+                        cmd.append("-w htk")
+                        write_label_print = "Write HTK labels"
+                    elif converter["write_label"] == "aud":
+                        cmd.append("-w aud")
+                        write_label_print = "Write Audacity labels"
+                    else:
+                        write_label_print = "unknown value, not writing labels"
+                    print("\n",
+                        "##### Converter Settings #####\n",
+                        f"max audio segment length: {str(max_wav_length)}\n",
+                        f"max silence amount: {str(max_silence)}\n",
+                        f"estimate midi: {estimate_midi_print}\n",
+                        f"detect breath: {detect_breath_print}\n",
+                        f"export label: {write_label_print}\n"
+                        )
 
 
-                output = subprocess.check_output(cmd, universal_newlines=True)
-                print(output)
-
-                #this for folder organization / raw data cleanup
-                for filename in os.listdir(raw_folder_path):
-                    if filename.endswith(".wav") or filename.endswith(".lab"):
-                        os.remove(os.path.join(raw_folder_path, filename))
-                diff_singer_db_path = os.path.join(raw_folder_path, "diffsinger_db")
-                for stuff in os.listdir(diff_singer_db_path):
-                    stuff_path = os.path.join(diff_singer_db_path, stuff)
-                    singer_folder_dat_main = os.path.join(raw_folder_path, stuff)
-                    if os.path.isfile(stuff_path):
-                        shutil.move(stuff_path, singer_folder_dat_main)
-                    elif os.path.isdir(stuff_path):
-                        shutil.move(stuff_path, singer_folder_dat_main)
-                shutil.rmtree(diff_singer_db_path)
-
-                if self.estimatemidivar.get() == "some":
-                    print("loading SOME...")
-                    cmd2 = [python_exe, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", raw_folder_path, "--overwrite"]
-                    output = subprocess.check_output(cmd2, universal_newlines=True)
+                    output = subprocess.check_output(cmd, universal_newlines=True)
                     print(output)
-                else:
-                    pass
+
+                    #this for folder organization / raw data cleanup
+                    for filename in os.listdir(raw_folder_path):
+                        if filename.endswith(".wav") or filename.endswith(".lab"):
+                            os.remove(os.path.join(raw_folder_path, filename))
+                    diff_singer_db_path = os.path.join(raw_folder_path, "diffsinger_db")
+                    for stuff in os.listdir(diff_singer_db_path):
+                        stuff_path = os.path.join(diff_singer_db_path, stuff)
+                        singer_folder_dat_main = os.path.join(raw_folder_path, stuff)
+                        if os.path.isfile(stuff_path):
+                            shutil.move(stuff_path, singer_folder_dat_main)
+                        elif os.path.isdir(stuff_path):
+                            shutil.move(stuff_path, singer_folder_dat_main)
+                    shutil.rmtree(diff_singer_db_path)
+
+                    if self.estimatemidivar.get() == "some":
+                        print("loading SOME...")
+                        cmd2 = [python_exe, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", raw_folder_path, "--overwrite"]
+                        output = subprocess.check_output(cmd2, universal_newlines=True)
+                        print(output)
+                    else:
+                        pass
+        except Exception as e:
+                    print(f"Error checking Torch version: {e}")
 
         print("data segmentation complete!")
 
@@ -1213,9 +1016,10 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_breathiness_embed"] = energy
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
-            #shallow diff stuff
+            #diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
+            bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it
             bitch_ass_config["hnsep"] = "vr"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
@@ -1263,6 +1067,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["tension_logit_max"] = 6
             bitch_ass_config["tension_logit_min"] = -6
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
+            bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it v2
             bitch_ass_config["hnsep"] = "vr"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
@@ -1337,28 +1142,42 @@ class tabview(ctk.CTkTabview):
 
     def train_function(self):
         try:
-            output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
+            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
             lines = output.split("\n")
             for line in lines:
-                if "release" in line.lower():
-                    version = line.split()[-1]
-                    print("CUDA version:", version)
-                    cuda = "0"
+                if "1.13.1+cu117" in line:
+                    print("Error: wrong environment")
+                    break
+                elif "1.13.1" in line:
+                    print("Error: wrong environment")
                     break
             else:
-                print("CUDA version not found")
+                pass
+            try:
+                output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
+                lines = output.split("\n")
+                for line in lines:
+                    if "release" in line.lower():
+                        version = line.split()[-1]
+                        print("CUDA version:", version)
+                        cuda = "0"
+                        break
+                else:
+                    print("CUDA version not found")
+                    cuda = "-1"
+            except (FileNotFoundError, subprocess.CalledProcessError):
+                print("CUDA is not available")
                 cuda = "-1"
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            print("CUDA is not available")
-            cuda = "-1"
-        os.chdir(main_path)
-        os.chdir("DiffSinger")
-        os.environ["PYTHONPATH"] = "."
-        os.environ["CUDA_VISIBLE_DEVICES"] = cuda
-        if not configpath or not ckpt_save_dir:
-            self.label.config(text="Please select your config and the data you would like to train first!")
-            return
-        subprocess.check_call([python_exe, 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
+            os.chdir(main_path)
+            os.chdir("DiffSinger")
+            os.environ["PYTHONPATH"] = "."
+            os.environ["CUDA_VISIBLE_DEVICES"] = cuda
+            if not configpath or not ckpt_save_dir:
+                self.label.config(text="Please select your config and the data you would like to train first!")
+                return
+            subprocess.check_call([python_exe, 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
+        except Exception as e:
+                    print(f"Error checking Torch version: {e}")
 
     def onnx_folder_save(self):
         global onnx_folder_dir
@@ -1367,82 +1186,79 @@ class tabview(ctk.CTkTabview):
 
     def run_onnx_export(self):
         try:
-            output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
+            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
             lines = output.split("\n")
             for line in lines:
-                if "release" in line.lower():
-                    version = line.split()[-1]
-                    print("CUDA version:", version)
-                    cuda = "0"
+                if "2.3.1+cu118" in line:
+                    print("Error: wrong environment")
+                    break
+                elif "2.3.1" in line:
+                    print("Error: wrong environment")
                     break
             else:
-                print("CUDA version not found")
-                cuda = "-1"
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            print("CUDA is not available")
-            cuda = "-1"
-        os.chdir(main_path)
-        os.chdir("DiffSinger")
-        os.environ["PYTHONPATH"] = "."
-        os.environ["CUDA_VISIBLE_DEVICES"] = cuda
-        if not ckpt_save_dir:
-            self.label.config(text="Please select your config and the checkpoint you would like to export first!")
-            return
-        export_check = expselect.get()
-        onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
-        if os.path.exists(onnx_folder_dir):
-            onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
-            os.rename(onnx_folder_dir, onnx_bak)
-            print("backing up existing onnx folder...")
-        cmd = [python_exe, 'scripts/export.py']
-        ckpt_save_abs = os.path.abspath(ckpt_save_dir)
-        onnx_folder_abs = os.path.abspath(onnx_folder_dir)
-        if export_check == 1:
-            print("exporting acoustic...")
-            cmd.append('acoustic')
-            cmd.append('--exp')
-            cmd.append(ckpt_save_abs)
-            cmd.append('--out')
-            cmd.append(onnx_folder_abs)
-        elif export_check == 2:
-            print("exporting variance...")
-            cmd.append('variance')
-            cmd.append('--exp')
-            cmd.append(ckpt_save_abs)
-            cmd.append('--out')
-            cmd.append(onnx_folder_abs)
-        else:
-            messagebox.showinfo("Required", "Please select a config type")
-            return
-        print(' '.join(cmd))
-        subprocess.check_call(cmd)
-        print("Getting the files in order...")
+                pass
+            os.chdir(main_path)
+            os.chdir("DiffSinger")
+            os.environ["PYTHONPATH"] = "."
+            if not ckpt_save_dir:
+                self.label.config(text="Please select your config and the checkpoint you would like to export first!")
+                return
+            export_check = expselect.get()
+            onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
+            if os.path.exists(onnx_folder_dir):
+                onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
+                os.rename(onnx_folder_dir, onnx_bak)
+                print("backing up existing onnx folder...")
+            cmd = [python_exe, 'scripts/export.py']
+            ckpt_save_abs = os.path.abspath(ckpt_save_dir)
+            onnx_folder_abs = os.path.abspath(onnx_folder_dir)
+            if export_check == 1:
+                print("exporting acoustic...")
+                cmd.append('acoustic')
+                cmd.append('--exp')
+                cmd.append(ckpt_save_abs)
+                cmd.append('--out')
+                cmd.append(onnx_folder_abs)
+            elif export_check == 2:
+                print("exporting variance...")
+                cmd.append('variance')
+                cmd.append('--exp')
+                cmd.append(ckpt_save_abs)
+                cmd.append('--out')
+                cmd.append(onnx_folder_abs)
+            else:
+                messagebox.showinfo("Required", "Please select a config type")
+                return
+            print(' '.join(cmd))
+            subprocess.check_call(cmd)
+            print("Getting the files in order...")
 
-        #move file cus it export stuff outside the save folder for some reason
-        mv_basename = os.path.dirname(ckpt_save_abs)
-        #for .onnx
-        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
-        for filename in os.listdir(mv_basename) if filename.endswith(".onnx")]
-        #for .emb
-        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
-        for filename in os.listdir(mv_basename) if filename.endswith(".emb")]
-        #for dict and phonemes txt
-        [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
-        for filename in os.listdir(mv_basename) if filename.endswith(("dictionary.txt", "phonemes.txt"))]
+            #move file cus it export stuff outside the save folder for some reason
+            mv_basename = os.path.dirname(ckpt_save_abs)
+            #for .onnx
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(".onnx")]
+            #for .emb
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(".emb")]
+            #for dict and phonemes txt
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(("dictionary.txt", "phonemes.txt"))]
 
-        prefix = os.path.basename(ckpt_save_dir)
-        os.chdir(onnx_folder_dir)
-        wronnx = prefix + ".onnx"
-        if os.path.exists(wronnx):
-            os.rename(wronnx, "acoustic.onnx")
-        nameList = os.listdir() 
-        for fileName in nameList:
-            rename=fileName.removeprefix(prefix + ".")
-            os.rename(fileName,rename)
+            prefix = os.path.basename(ckpt_save_dir)
+            os.chdir(onnx_folder_dir)
+            wronnx = prefix + ".onnx"
+            if os.path.exists(wronnx):
+                os.rename(wronnx, "acoustic.onnx")
+            nameList = os.listdir() 
+            for fileName in nameList:
+                rename=fileName.removeprefix(prefix + ".")
+                os.rename(fileName,rename)
 
-        
-        print("Done!")
-        os.chdir(main_path)
+            print("Done!")
+            os.chdir(main_path)
+        except Exception as e:
+                    print(f"Error checking Torch version: {e}")
 
     def dl_ou_patch(self):
         patch_url = "https://github.com/agentasteriski/DiffSinger_colab_notebook_MLo7/releases/download/patches/temp_build_ou_vb.zip"
