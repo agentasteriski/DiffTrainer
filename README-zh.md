@@ -11,9 +11,10 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 - OpenUtau匯出腳本
 ## 安裝選項
 ### 如果你從未用過Python：
-- 執行 python_installer.bat ，完成安裝程序
+- 執行 conda_installer.bat
 - 執行 setup.bat
-- 之後使用 run_gui.bat 啟動
+- 使用 run_guiA.bat 進行預處理和訓練
+- 使用 run_guiB.bat 匯出 onnx
 
 ### 如果你用過Python：
 - 特別需要Python 3.10： [直接下載安裝程式](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
