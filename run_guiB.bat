@@ -20,6 +20,7 @@ if exist "%cd%\python" (
     set "python_exe=python"
 )
 
+call conda activate difftrainerB
 %python_exe% check_update.py
 
 pause
