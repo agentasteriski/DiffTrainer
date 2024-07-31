@@ -22,7 +22,7 @@ dependencies:
     - ez-localizr
     - pyglet
     - "librosa<0.10.0"
-    - "lightning~=2.3.0"
+    - "lightning~=2.1.0"
     - MonkeyType==23.3.0
     - "onnxsim~=0.4.36"
     - praat-parselmouth==0.4.3
