@@ -11,18 +11,18 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 - OpenUtau匯出腳本
 ## 安裝選項
 ### 如果你從未用過Python：
-- 執行 python_installer.bat ，完成安裝程序
+- 執行 conda_installer.bat
 - 執行 setup.bat
-- 之後使用 run_gui.bat 啟動
+- 使用 run_guiA.bat 進行預處理和訓練
+- 使用 run_guiB.bat 匯出 onnx
 
 ### 如果你用過Python：
-- 特別需要Python 3.10： [直接下載安裝程式](https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe)
-- 如果您想要專門安裝在 DiffTrainer 資料夾中的副本，您可以使用 python_installer.bat
-- 一旦安裝了Python 3.10，就可以執行 setup.bat 來下載需求組件，或執行通常的 `pip install -r requirements.txt`
-- 建議多個Python版本的使用者使用 [Miniconda](https://docs.anaconda.com/free/miniconda/miniconda-other-installer-links/) 。
-
-## 已知錯誤
-- 在非羅馬字母的語言中字符是損壞的
+- DiffTrainer 預設使用 Miniconda 來管理衝突的套件要求。
+- 要使用現有的 conda 安裝：
+ - 執行setup.bat自動建立所需的環境
+ - 或使用 /assets/ 中的需求文件建立兩個環境
+ - 在一個中執行 torchdropA.py，在另一個中執行 torchdropB.py
+ - run_guiA.bat 和 run_guiB.bat 分別在環境 DifftrainerA 和 DifftrainerB 中啟動 Difftrainer
 
 ## 語言支持
 DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) 來允許 GUI 語言選擇。 歡迎所有使用者將 [en_US](/strings/en_US.yaml) 中找到的文字翻譯為其他語言並提交拉取請求。
@@ -30,7 +30,6 @@ DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/t
 ## 待辦事項
 很快
 - 更好的自述文件
-- SOME用於 MIDI 估算
 
 最終
 - 完全支持 .ds 訓練
