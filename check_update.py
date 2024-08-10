@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 main_path = os.getcwd()
 
-gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/main/difftrainer.py")
+gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/SOME/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
 github_version = github_version.group(1)
 
@@ -19,9 +19,9 @@ if local_version == github_version:
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest difftrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update difftrainer?")
 	if update_prompt:
-		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/main.zip"
+		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/SOME.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
-		folder = "difftrainer-main"
+		folder = "difftrainer-SOME"
 
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
@@ -52,10 +52,6 @@ else:
 			os.remove("quickinference.py")
 			shutil.move(f"{folder}/difftrainer.py", main_path)
 			shutil.move(f"{folder}/quickinference.py", main_path)
-			os.remove("torchdropA.py")
-			os.remove("torchdropB.py")
-			shutil.move(f"{folder}/torchdropA.py", main_path)
-			shutil.move(f"{folder}/torchdropB.py", main_path)
 			shutil.rmtree(folder)
 
 	else:
