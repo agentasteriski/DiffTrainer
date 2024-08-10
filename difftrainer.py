@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.1.15"
-releasedate = "07/14/24"
+version = "0.1.16"
+releasedate = "08/09/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -369,6 +369,49 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')), font = self.font)
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('ouexport')), command=self.run_OU_config, font = self.font)
         self.button.grid(row=2, column=1, padx=10, pady=10)
+
+    ##EXPORT 2 ELECTRIC BOOGALOO
+        self.frame15 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
+        self.frame15.grid(column=0, row=0, padx=90, pady=10)
+        self.expselect_option = tk.IntVar(value=0)
+        self.acobutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('aco')), variable=self.expselect_option, value=1, font = self.font)
+        self.acobutton.grid(row=0, column=0, padx=10)
+        self.tooltip = CTkToolTip(self.acobutton, message=(self.L('acotip')), font = self.font)
+        self.varbutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('var')), variable=self.expselect_option, value=2, font = self.font)
+        self.varbutton.grid(row=1, column=0, padx=10)
+        self.tooltip = CTkToolTip(self.varbutton, message=(self.L('vartip')), font = self.font)
+        expselect = self.expselect_option
+        self.button = ctk.CTkButton(master=self.frame15, text=(self.L('step2')), command=self.ckpt_folder_save, font = self.font)
+        self.button.grid(row=0, column=1, rowspan=2, padx=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('step2-2alt')), font = self.font)
+        onnx_folder = self.onnx_folder_save
+        self.button = ctk.CTkButton(master=self.frame15, text=(self.L('onnx')), command=self.run_onnx_export, font = self.font)
+        self.button.grid(row=0, column=2, rowspan=2, padx=10)
+        self.frame16 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
+        self.frame16.grid(row=3, column=0, pady=10)
+        self.button = ctk.CTkButton(master=self.frame16, text=(self.L('aco')), command=self.get_aco_folder, font = self.font)
+        self.button.grid(row=0, column=0, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
+        self.button = ctk.CTkButton(master=self.frame16, text=(self.L('var')), command=self.get_var_folder, font = self.font)
+        self.button.grid(row=0, column=2, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
+        self.button = ctk.CTkButton(master=self.frame16, text=(self.L('dur')), command=self.get_dur_folder, font = self.font)
+        self.button.grid(row=0, column=1, padx=10, pady=10)
+        self.button = ctk.CTkButton(master=self.frame16, text=(self.L('pit')), command=self.get_pitch_folder, font = self.font)
+        self.button.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
+        ou_name_var = tk.StringVar(value="enter_singer_name")
+        self.namebox = ctk.CTkEntry(master=self.frame16, textvariable=ou_name_var, font = self.font)
+        self.namebox.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.namebox, message=(self.L('namebox')), font = self.font)
+        self.button = ctk.CTkButton(master=self.frame16, text=(self.L('vocoder_adv')), command=self.get_vocoder, font = self.font)
+        self.button.grid(row=1, column=1, columnspan=2, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('vocoder2')), font = self.font)
+        self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ousave')), command=self.get_OU_folder, font = self.font)
+        self.button.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')), font = self.font)
+        self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ouexport')), command=self.run_adv_config, font = self.font)
+        self.button.grid(row=3, column=1, padx=10, pady=10)
 
 
     def changeState(self):
@@ -1441,6 +1484,22 @@ class tabview(ctk.CTkTabview):
         global var_config
         var_config = os.path.join(var_folder_dir, "config.yaml")
 
+    def get_dur_folder(self):
+        dur_folder_dir = filedialog.askdirectory(title="Select folder with duration checkpoints", initialdir = "DiffSinger/checkpoints/")
+        print("Duration folder: " + dur_folder_dir)
+        global dur_folder_onnx
+        dur_folder_onnx = dur_folder_dir + "/onnx"
+        global dur_config
+        dur_config = os.path.join(dur_folder_dir, "config.yaml")
+
+    def get_pitch_folder(self):
+        pitch_folder_dir = filedialog.askdirectory(title="Select folder with pitch checkpoints", initialdir = "DiffSinger/checkpoints/")
+        print("Pitch folder: " + pitch_folder_dir)
+        global pitch_folder_onnx
+        pitch_folder_onnx = pitch_folder_dir + "/onnx"
+        global pitch_config
+        pitch_config = os.path.join(pitch_folder_dir, "config.yaml")
+
     def get_vocoder(self):
         self.vocoder_onnx = filedialog.askopenfilename(title="OPTIONAL: Select custom vocoder onnx", initialdir="DiffSinger/checkpoints/", filetypes=[("ONNX files", "*.onnx")])
         print("Custom vocoder:" + self.vocoder_onnx)
@@ -1484,6 +1543,244 @@ class tabview(ctk.CTkTabview):
         print(' '.join(cmd))
         subprocess.check_call(cmd)
         os.chdir(main_path)
+    
+    def run_adv_config(self):
+        os.chdir(main_path)
+        os.chdir("DiffSinger")
+        os.environ["PYTHONPATH"] = "."
+        
+        print("\nmaking directories...")
+        try:
+            ou_name = ou_name_var.get()
+            main_stuff = f"{ou_export_location}/{ou_name}"
+            if not os.path.exists(main_stuff):
+                os.makedirs(main_stuff)
+            if not os.path.exists(f"{main_stuff}/dsmain"):
+                os.makedirs(f"{main_stuff}/dsmain/embeds/acoustic")
+                os.makedirs(f"{main_stuff}/dsmain/embeds/duration")
+                os.makedirs(f"{main_stuff}/dsdur")
+                if var_folder_onnx:
+                    os.makedirs(f"{main_stuff}/dsmain/embeds/variance")
+                    os.makedirs(f"{main_stuff}/dsvariance")
+                if pitch_folder_onnx:
+                    os.makedirs(f"{main_stuff}/dsmain/embeds/pitch")
+                    os.makedirs(f"{main_stuff}/dspitch")
+            with open(f"{main_stuff}/character.txt", "w", encoding = "utf-8") as file:
+                file.write(f"name={ou_name}\n")
+            with open(f"{main_stuff}/character.yaml", "w", encoding = "utf-8") as file: #create initial yaml
+                file.write("default_phonemizer: OpenUtau.Core.DiffSinger.DiffSingerPhonemizer\n")
+                file.write("singer_type: diffsinger\n")
+        except Exception as e:
+            print(f"Error creating directories: {e}")
+        print("\nmoving core files...")
+        try:
+            shutil.copy(f"{aco_folder_onnx}/acoustic.onnx", f"{main_stuff}/dsmain")
+            shutil.copy(f"{aco_folder_onnx}/phonemes.txt", f"{main_stuff}/dsmain")
+            shutil.copy(f"{aco_folder_onnx}/dsconfig.yaml", main_stuff)
+            shutil.copy(f"{dur_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsmain")
+        except Exception as e:
+            print(f"Error moving core files: {e}")
+        
+        print("\nmoving acoustic embeds...")
+        try:
+            acoustic_emb_files = [file for file in os.listdir(aco_folder_onnx) if file.endswith(".emb")]
+            for emb_file in acoustic_emb_files:
+                shutil.copy(f"{aco_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/acoustic")
+            acoustic_emb_files = os.listdir(aco_folder_onnx)
+            acoustic_embeds = []
+            acoustic_color_suffix = []
+            for file in acoustic_emb_files:
+                if file.endswith(".emb"):
+                    acoustic_emb = os.path.splitext(file)[0]
+                    acoustic_embeds.append("dsmain/embeds/acoustic/" + acoustic_emb)
+                    acoustic_color_suffix.append(acoustic_emb)
+        except Exception as e:
+                    print(f"Error moving acoustic embeds: {e}")
+
+        print("\nmoving duration files...")
+        try:
+            dur_emb_files = [file for file in os.listdir(dur_folder_onnx) if file.endswith(".emb")]
+            for emb_file in dur_emb_files:
+                shutil.copy(f"{dur_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/duration")
+            shutil.copy(f"{dur_folder_onnx}/dur.onnx", f"{main_stuff}/dsdur")
+            duration_emb_files = os.listdir(dur_folder_onnx)
+            duration_embeds = []
+            duration_color_suffix = []
+            for file in duration_emb_files:
+                if file.endswith(".emb"):
+                    duration_emb = os.path.splitext(file)[0]
+                    duration_embeds.append("../dsmain/embeds/duration/" + duration_emb)
+                    duration_color_suffix.append(duration_emb)
+        except Exception as e:
+            print(f"Error moving duration files: {e}")
+                
+
+        print("\nmoving variance files...")
+        try:
+            var_emb_files = [file for file in os.listdir(var_folder_onnx) if file.endswith(".emb")]
+            for emb_file in var_emb_files:
+                shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/variance")
+            shutil.copy(f"{var_folder_onnx}/variance.onnx", f"{main_stuff}/dsvariance")
+            shutil.copy(f"{var_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsvariance")
+            variance_emb_files = os.listdir(var_folder_onnx)
+            variance_embeds = []
+            variance_color_suffix = []
+            for file in variance_emb_files:
+                if file.endswith(".emb"):
+                    variance_emb = os.path.splitext(file)[0]
+                    variance_embeds.append("../dsmain/embeds/variance/" + variance_emb)
+                    variance_color_suffix.append(variance_emb)
+        except Exception as e:
+            print(f"Error moving variance files: {e}")
+
+        print("\nmoving pitch files...")
+        try:
+            pitch_emb_files = [file for file in os.listdir(pitch_folder_onnx) if file.endswith(".emb")]
+            for emb_file in pitch_emb_files:
+                shutil.copy(f"{pitch_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/pitch")
+            shutil.copy(f"{pitch_folder_onnx}/pitch.onnx", f"{main_stuff}/dspitch")
+            shutil.copy(f"{pitch_folder_onnx}/linguistic.onnx", f"{main_stuff}/dspitch")
+            pitch_emb_files = os.listdir(pitch_folder_onnx)
+            pitch_embeds = []
+            pitch_color_suffix = []
+            for file in pitch_emb_files:
+                if file.endswith(".emb"):
+                    pitch_emb = os.path.splitext(file)[0]
+                    pitch_embeds.append("../dsmain/embeds/pitch/" + pitch_emb)
+                    pitch_color_suffix.append(pitch_emb)
+        except Exception as e:
+            print(f"Error moving pitch files: {e}")
+
+        print("writing main configs...")
+        try:
+            subbanks = []
+            for i, (acoustic_embed_color, acoustic_embed_suffix) in enumerate(zip(acoustic_color_suffix, acoustic_embeds), start=1):
+                color = f"{i:02}: {acoustic_embed_color}"
+                suffix = f"{acoustic_embed_suffix}"
+                subbanks.append({"color": color, "suffix": suffix})
+            if subbanks:
+                with open(f"{main_stuff}/character.yaml", "r", encoding = "utf-8") as config:
+                    character_config = yaml.safe_load(config)
+                character_config["subbanks"] = subbanks
+                with open(f"{main_stuff}/character.yaml", "w", encoding = "utf-8") as config:
+                    yaml.dump(character_config, config)
+            #image, portrait, and portrait opacity can be manually edited
+            with open(f"{main_stuff}/character.yaml", "a", encoding = "utf-8") as file:
+                file.write("\n")
+                file.write("text_file_encoding: utf-8\n")
+                file.write("\n")
+                file.write("image:\n")
+                file.write("portrait:\n")
+                file.write("portrait_opacity: 0.45\n")
+            with open(f"{main_stuff}/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                dsconfig_data = yaml.safe_load(config)
+            dsconfig_data["acoustic"] = "dsmain/acoustic.onnx"
+            dsconfig_data["phonemes"] = "dsmain/phonemes.txt"
+            dsconfig_data["vocoder"] = "nsf_hifigan"
+            dsconfig_data["singer_type"] = "diffsinger"
+            if subbanks:
+                dsconfig_data["speakers"] = acoustic_embeds
+            with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
+                yaml.dump(dsconfig_data, config)
+        except Exception as e:
+                    print(f"Error writing OU main configs: {e}")
+
+        print("writing sub-configs...")
+        try:
+            with open(aco_config, "r", encoding = "utf-8") as config:
+                acoustic_config_data = yaml.safe_load(config)
+            sample_rate = acoustic_config_data.get("audio_sample_rate")
+            hop_size = acoustic_config_data.get("hop_size")
+            with open(f"{dur_folder_onnx}/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                variance_config_data = yaml.safe_load(config)
+            sample_rate2 = variance_config_data.get("sample_rate")
+            hop_size2 = variance_config_data.get("hop_size")
+            use_note_rest = variance_config_data.get("use_note_rest")
+            use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
+
+            with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as file:
+                file.write("phonemes: ../dsmain/phonemes.txt\n")
+                file.write("linguistic: ../dsmain/linguistic.onnx\n")
+                file.write("dur: dur.onnx\n")
+            with open(f"{main_stuff}/dsdur/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                dsdur_config = yaml.safe_load(config)
+            dsdur_config["use_continuous_acceleration"] = use_continuous_acceleration
+            dsdur_config["sample_rate"] = sample_rate2
+            dsdur_config["hop_size"] = hop_size2
+            dsdur_config["predict_dur"] = "true"
+            if subbanks:
+                dsdur_config["speakers"] = duration_embeds
+            with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
+                yaml.dump(dsdur_config, config)
+
+            if var_folder_onnx:
+                with open(var_config, "r", encoding = "utf-8") as config:
+                    var_config_data = yaml.safe_load(config)
+                predict_voicing = var_config_data.get("predict_voicing")
+                predict_tension = var_config_data.get("predict_tension")
+                predict_energy = var_config_data.get("predict_energy")
+                predict_breathiness = var_config_data.get("predict_breathiness")
+                predict_dur = var_config_data.get("predict_dur")
+                with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
+                    file.write("phonemes: ../dsmain/phonemes.txt\n")
+                    file.write("linguistic: linguistic.onnx\n")
+                    file.write("variance: variance.onnx\n")
+                with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                    dsvariance_config = yaml.safe_load(config)
+                dsvariance_config["use_continuous_acceleration"] = use_continuous_acceleration
+                dsvariance_config["sample_rate"] = sample_rate
+                dsvariance_config["hop_size"] = hop_size
+                dsvariance_config["predict_dur"] = predict_dur
+                dsvariance_config["predict_voicing"] = predict_voicing
+                dsvariance_config["predict_tension"] = predict_tension
+                dsvariance_config["predict_energy"] = predict_energy
+                dsvariance_config["predict_breathiness"] = predict_breathiness
+                if subbanks:
+                    dsvariance_config["speakers"] = variance_embeds
+                with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
+                    yaml.dump(dsvariance_config, config)
+            else:
+                print("No variance selected")
+
+            if pitch_folder_onnx:
+                with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as file:
+                    file.write("phonemes: ../dsmain/phonemes.txt\n")
+                    file.write("linguistic: linguistic.onnx\n")
+                    file.write("pitch: pitch.onnx\n")
+                    file.write("use_expr: true\n")
+                with open(f"{main_stuff}/dspitch/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                    dspitch_config = yaml.safe_load(config)
+                dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
+                dspitch_config["sample_rate"] = sample_rate
+                dspitch_config["hop_size"] = hop_size
+                dspitch_config["predict_dur"] = True
+                if subbanks:
+                    dspitch_config["speakers"] = variance_embeds
+                dspitch_config["use_note_rest"] = use_note_rest
+                with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as config:
+                    yaml.dump(dspitch_config, config)
+            else:
+                print("No pitch selected")
+        except Exception as e:
+                    print(f"Error editing sub-configs: {e}")
+
+        if self.vocoder_onnx:
+            print("making dsvocoder directory and necessary files...")
+            try:
+                os.makedirs(f"{main_stuff}/dsvocoder")
+                vocoder_folder = os.path.dirname(self.vocoder_onnx)
+                vocoder_file = os.path.basename(self.vocoder_onnx)
+                vocoder_name = os.path.splitext(vocoder_file)[0]
+                shutil.copy(self.vocoder_onnx, os.path.join(main_stuff, "dsvocoder"))
+                shutil.copy(f"{vocoder_folder}/vocoder.yaml", f"{main_stuff}/dsvocoder")
+                with open(f"{main_stuff}/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                    dsconfig_data2 = yaml.safe_load(config)
+                dsconfig_data2["vocoder"] = vocoder_name
+                with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
+                    yaml.dump(dsconfig_data2, config)
+            except Exception as e:
+                    print(f"Error adding custom vocoder: {e}")
+        print("OU setup complete! Please manually import dsdicts")
 
 
         
