@@ -94,6 +94,8 @@ namebox: "输入歌手的名字,不要包含空格或特殊字元"
 getaco: "选择原声检查点文件夹"
 getaco2: "这应该是用于保存检查点的相同文件夹,而不是 onnx 文件夹"
 getvar: "选择方差检查点文件夹"
+dur: "持续时间"
+pit: "音高"
 ousave: "选择保存路径"
 ousave2: "选择最终歌手文件夹的储存位置 \n 建议直接储存到 OpenUTAU/Singers 文件夹中"
 vocoder: "可选: 自定义声码器"
@@ -113,4 +115,3 @@ replay: "重播渲染的音频"
 
 #test
 testingline: "测试测试测试"
-
