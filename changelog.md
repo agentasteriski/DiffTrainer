@@ -8,3 +8,4 @@
 - revert to main fork of Uta's converter
 - CONVERTER: all labels MUST begin and end with [SP] (sorry for the inconvenience)
 - switch default diff_accelerator to unipc
+- implement advanced export(buggy)
