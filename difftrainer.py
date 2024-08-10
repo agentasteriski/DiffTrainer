@@ -1452,12 +1452,20 @@ class tabview(ctk.CTkTabview):
                 os.makedirs(f"{main_stuff}/dsmain/embeds/acoustic")
                 os.makedirs(f"{main_stuff}/dsmain/embeds/duration")
                 os.makedirs(f"{main_stuff}/dsdur")
-                if var_folder_onnx:
-                    os.makedirs(f"{main_stuff}/dsmain/embeds/variance")
-                    os.makedirs(f"{main_stuff}/dsvariance")
-                if pitch_folder_onnx:
-                    os.makedirs(f"{main_stuff}/dsmain/embeds/pitch")
-                    os.makedirs(f"{main_stuff}/dspitch")
+                try:
+                    if var_folder_onnx:
+                        os.makedirs(f"{main_stuff}/dsmain/embeds/variance")
+                        os.makedirs(f"{main_stuff}/dsvariance")
+                    else: pass
+                except Exception as e:
+                    print(f"Error creating directories: {e}")
+                try:
+                    if pitch_folder_onnx:
+                        os.makedirs(f"{main_stuff}/dsmain/embeds/pitch")
+                        os.makedirs(f"{main_stuff}/dspitch")
+                    else: pass
+                except Exception as e:
+                    print(f"Error creating directories: {e}")
             with open(f"{main_stuff}/character.txt", "w", encoding = "utf-8") as file:
                 file.write(f"name={ou_name}\n")
             with open(f"{main_stuff}/character.yaml", "w", encoding = "utf-8") as file: #create initial yaml
@@ -1600,62 +1608,68 @@ class tabview(ctk.CTkTabview):
             dsdur_config["use_continuous_acceleration"] = use_continuous_acceleration
             dsdur_config["sample_rate"] = sample_rate2
             dsdur_config["hop_size"] = hop_size2
-            dsdur_config["predict_dur"] = "true"
+            dsdur_config["predict_dur"] = True
             if subbanks:
                 dsdur_config["speakers"] = duration_embeds
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
                 yaml.dump(dsdur_config, config)
 
-            if var_folder_onnx:
-                with open(var_config, "r", encoding = "utf-8") as config:
-                    var_config_data = yaml.safe_load(config)
-                predict_voicing = var_config_data.get("predict_voicing")
-                predict_tension = var_config_data.get("predict_tension")
-                predict_energy = var_config_data.get("predict_energy")
-                predict_breathiness = var_config_data.get("predict_breathiness")
-                predict_dur = var_config_data.get("predict_dur")
-                with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                    file.write("phonemes: ../dsmain/phonemes.txt\n")
-                    file.write("linguistic: linguistic.onnx\n")
-                    file.write("variance: variance.onnx\n")
-                with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "r", encoding = "utf-8") as config:
-                    dsvariance_config = yaml.safe_load(config)
-                dsvariance_config["use_continuous_acceleration"] = use_continuous_acceleration
-                dsvariance_config["sample_rate"] = sample_rate
-                dsvariance_config["hop_size"] = hop_size
-                dsvariance_config["predict_dur"] = predict_dur
-                dsvariance_config["predict_voicing"] = predict_voicing
-                dsvariance_config["predict_tension"] = predict_tension
-                dsvariance_config["predict_energy"] = predict_energy
-                dsvariance_config["predict_breathiness"] = predict_breathiness
-                if subbanks:
-                    dsvariance_config["speakers"] = variance_embeds
-                with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(dsvariance_config, config)
-            else:
-                print("No variance selected")
+            try:
+                if var_folder_onnx:
+                    with open(var_config, "r", encoding = "utf-8") as config:
+                        var_config_data = yaml.safe_load(config)
+                    predict_voicing = var_config_data.get("predict_voicing")
+                    predict_tension = var_config_data.get("predict_tension")
+                    predict_energy = var_config_data.get("predict_energy")
+                    predict_breathiness = var_config_data.get("predict_breathiness")
+                    predict_dur = var_config_data.get("predict_dur")
+                    with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
+                        file.write("phonemes: ../dsmain/phonemes.txt\n")
+                        file.write("linguistic: linguistic.onnx\n")
+                        file.write("variance: variance.onnx\n")
+                    with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                        dsvariance_config = yaml.safe_load(config)
+                    dsvariance_config["use_continuous_acceleration"] = use_continuous_acceleration
+                    dsvariance_config["sample_rate"] = sample_rate
+                    dsvariance_config["hop_size"] = hop_size
+                    dsvariance_config["predict_dur"] = predict_dur
+                    dsvariance_config["predict_voicing"] = predict_voicing
+                    dsvariance_config["predict_tension"] = predict_tension
+                    dsvariance_config["predict_energy"] = predict_energy
+                    dsvariance_config["predict_breathiness"] = predict_breathiness
+                    if subbanks:
+                        dsvariance_config["speakers"] = variance_embeds
+                    with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
+                        yaml.dump(dsvariance_config, config)
+                else:
+                    print("No variance selected")
+            except Exception as e:
+                print(f"Error editing variance config: {e}")
 
-            if pitch_folder_onnx:
-                with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                    file.write("phonemes: ../dsmain/phonemes.txt\n")
-                    file.write("linguistic: linguistic.onnx\n")
-                    file.write("pitch: pitch.onnx\n")
-                    file.write("use_expr: true\n")
-                with open(f"{main_stuff}/dspitch/dsconfig.yaml", "r", encoding = "utf-8") as config:
-                    dspitch_config = yaml.safe_load(config)
-                dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
-                dspitch_config["sample_rate"] = sample_rate
-                dspitch_config["hop_size"] = hop_size
-                dspitch_config["predict_dur"] = True
-                if subbanks:
-                    dspitch_config["speakers"] = variance_embeds
-                dspitch_config["use_note_rest"] = use_note_rest
-                with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(dspitch_config, config)
-            else:
-                print("No pitch selected")
+            try:
+                if pitch_folder_onnx:
+                    with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as file:
+                        file.write("phonemes: ../dsmain/phonemes.txt\n")
+                        file.write("linguistic: linguistic.onnx\n")
+                        file.write("pitch: pitch.onnx\n")
+                        file.write("use_expr: true\n")
+                    with open(f"{main_stuff}/dspitch/dsconfig.yaml", "r", encoding = "utf-8") as config:
+                        dspitch_config = yaml.safe_load(config)
+                    dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
+                    dspitch_config["sample_rate"] = sample_rate
+                    dspitch_config["hop_size"] = hop_size
+                    dspitch_config["predict_dur"] = True
+                    if subbanks:
+                        dspitch_config["speakers"] = variance_embeds
+                    dspitch_config["use_note_rest"] = use_note_rest
+                    with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as config:
+                        yaml.dump(dspitch_config, config)
+                else:
+                    print("No pitch selected")
+            except Exception as e:
+                print(f"Error editing pitch config: {e}")
         except Exception as e:
-                    print(f"Error editing sub-configs: {e}")
+            print(f"Error editing sub-configs: {e}")
 
         if self.vocoder_onnx:
             print("making dsvocoder directory and necessary files...")
