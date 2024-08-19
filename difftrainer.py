@@ -265,6 +265,11 @@ class tabview(ctk.CTkTabview):
         preferds = tk.BooleanVar()
         self.confbox9 = ctk.CTkCheckBox(master=self.subframe, text="prefer_ds", variable=preferds, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox9.grid(row=4, column=3, pady=5)
+        global vr
+        vr = tk.StringVar()
+        self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = "vr", offvalue = "world", font = self.font)
+        self.confbox10.grid(row=3, column=0, columnspan=2, pady=15)
+        self.tooltip = CTkToolTip(self.confbox10, message=(self.L('vr2')), font = self.font)
 
         self.frame14 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -727,18 +732,7 @@ class tabview(ctk.CTkTabview):
 
         
     def run_segment(self):
-        try:
-            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
-            lines = output.split("\n")
-            for line in lines:
-                if "1.13.1+cu117" in line:
-                    print("Error: wrong environment")
-                    break
-                elif "1.13.1" in line:
-                    print("Error: wrong environment")
-                    break
-            else:
-                pass
+
             if not self.all_shits:
                 messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
                 return
@@ -958,10 +952,7 @@ class tabview(ctk.CTkTabview):
                         pass
             except Exception as e:
                     print(f"Error during SOME pitch generation: {e}") 
-        except Exception as e:
-                    print(f"Error checking Torch version: {e}")
-
-        print("data segmentation complete!")
+            print("data segmentation complete!")
 
     def grab_data_folder(self):
         self.data_folder = filedialog.askdirectory(title="Select data folder", initialdir = "DiffSinger")
@@ -1113,12 +1104,14 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_breathiness_embed"] = energy
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
+            bitch_ass_config["tension_logit_max"] = 8
+            bitch_ass_config["tension_logit_min"] = -8
             #diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it
-            bitch_ass_config["hnsep"] = "vr"
+            bitch_ass_config["hnsep"] = vr
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
@@ -1161,12 +1154,12 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["predict_tension"] = tension
             bitch_ass_config["predict_voicing"] = voicing
             bitch_ass_config["use_melody_encoder"] = pitch
-            bitch_ass_config["tension_logit_max"] = 6
-            bitch_ass_config["tension_logit_min"] = -6
+            bitch_ass_config["tension_logit_max"] = 8
+            bitch_ass_config["tension_logit_min"] = -8
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it v2
-            bitch_ass_config["hnsep"] = "vr"
+            bitch_ass_config["hnsep"] = vr
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
@@ -1238,18 +1231,7 @@ class tabview(ctk.CTkTabview):
         print(configpath)
 
     def train_function(self):
-        try:
-            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
-            lines = output.split("\n")
-            for line in lines:
-                if "1.13.1+cu117" in line:
-                    print("Error: wrong environment")
-                    break
-                elif "1.13.1" in line:
-                    print("Error: wrong environment")
-                    break
-            else:
-                pass
+
             try:
                 output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
                 lines = output.split("\n")
@@ -1273,8 +1255,7 @@ class tabview(ctk.CTkTabview):
                 self.label.config(text="Please select your config and the data you would like to train first!")
                 return
             subprocess.check_call([python_exe, 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
-        except Exception as e:
-                    print(f"Error checking Torch version: {e}")
+
 
     def onnx_folder_save(self):
         global onnx_folder_dir
@@ -1282,18 +1263,6 @@ class tabview(ctk.CTkTabview):
         print("export path: " + onnx_folder_dir)
 
     def run_onnx_export(self):
-        try:
-            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
-            lines = output.split("\n")
-            for line in lines:
-                if "2.3.1+cu118" in line:
-                    print("Error: wrong environment")
-                    break
-                elif "2.3.1" in line:
-                    print("Error: wrong environment")
-                    break
-            else:
-                pass
             os.chdir(main_path)
             os.chdir("DiffSinger")
             os.environ["PYTHONPATH"] = "."
@@ -1354,8 +1323,7 @@ class tabview(ctk.CTkTabview):
 
             print("Done!")
             os.chdir(main_path)
-        except Exception as e:
-                    print(f"Error checking Torch version: {e}")
+
 
     def dl_ou_patch(self):
         patch_url = "https://github.com/agentasteriski/DiffSinger_colab_notebook_MLo7/releases/download/patches/temp_build_ou_vb.zip"
@@ -1653,12 +1621,15 @@ class tabview(ctk.CTkTabview):
                         file.write("linguistic: linguistic.onnx\n")
                         file.write("pitch: pitch.onnx\n")
                         file.write("use_expr: true\n")
+                    with open(pitch_config, "r", encoding = "utf-8") as config:
+                        pitch_config_data = yaml.safe_load(config)
+                    predict_dur = pitch_config_data.get("predict_dur")
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         dspitch_config = yaml.safe_load(config)
                     dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
                     dspitch_config["sample_rate"] = sample_rate
                     dspitch_config["hop_size"] = hop_size
-                    dspitch_config["predict_dur"] = True
+                    dspitch_config["predict_dur"] = predict_dur
                     if subbanks:
                         dspitch_config["speakers"] = variance_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
