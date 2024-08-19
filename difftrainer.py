@@ -960,11 +960,11 @@ class tabview(ctk.CTkTabview):
         raw_dir = []
         self.spk_lang = []
         print("data path: " + self.data_folder)
-        spk_name = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
-        for folder_name in spk_name:
+        spk_name_list = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
+        for folder_name in spk_name_list:
             folder_path = os.path.join(self.data_folder, folder_name)
             raw_dir.append(folder_path)
-            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
+            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name_list)}
             folder_name = os.path.basename(folder_path)
             folder_id = folder_to_id.get(folder_name, -1)
             spk_rows.append(ctk.CTkFrame(master=self.subframe2, width=340))
@@ -1011,6 +1011,7 @@ class tabview(ctk.CTkTabview):
         tension = trainten.get()
         voicing = trainvoc.get()
         shallow = shallow_diff.get()
+        pre_type = vr.get()
         ds = preferds.get()
         save_interval = save_int.get()
         batch = batch_size.get()
@@ -1111,7 +1112,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it
-            bitch_ass_config["hnsep"] = vr
+            bitch_ass_config["hnsep"] = pre_type
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
@@ -1159,7 +1160,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it v2
-            bitch_ass_config["hnsep"] = vr
+            bitch_ass_config["hnsep"] = pre_type
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
