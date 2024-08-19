@@ -23,6 +23,11 @@ else:
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
 		folder = "difftrainer-main"
 
+		if os.path.exists("DiffTrainer-main"):
+			try:
+				shutil.rmtree("DiffTrainer-main")
+			except Exception as e:
+				print(f"Error deleting the existing 'DiffTrainer-main' folder: {e}")
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
 		with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffTrainer...") as progress_bar:
@@ -40,22 +45,31 @@ else:
 			shutil.move(f"{folder}/strings", main_path)
 			shutil.rmtree("assets")
 			shutil.move(f"{folder}/assets", main_path)
-			[os.remove(filename)
-			for filename in os.listdir(main_path) if filename.endswith(".bat")]
-			[shutil.move(os.path.join(folder, filename), main_path)
-        	for filename in os.listdir(folder) if filename.endswith(".bat")]
-			[os.remove(filename)
-			for filename in os.listdir(main_path) if filename.endswith(".txt")]
-			[shutil.move(os.path.join(folder, filename), main_path)
-        	for filename in os.listdir(folder) if filename.endswith(".txt")]
+			for filename in os.listdir(main_path):
+				if filename.endswith(".bat"):
+					os.remove(filename)
+			for filename in os.listdir(folder):
+				if filename.endswith(".bat"):
+					shutil.move(os.path.join(folder, filename), main_path)
+			for filename in os.listdir(main_path):
+				if filename.endswith(".txt"):
+					os.remove(filename)
+			for filename in os.listdir(main_path):
+				if filename.endswith(".txt"):
+					shutil.move(os.path.join(folder, filename), main_path)
 			os.remove("difftrainer.py")
 			os.remove("quickinference.py")
 			shutil.move(f"{folder}/difftrainer.py", main_path)
 			shutil.move(f"{folder}/quickinference.py", main_path)
-			os.remove("torchdropA.py")
-			os.remove("torchdropB.py")
-			shutil.move(f"{folder}/torchdropA.py", main_path)
-			shutil.move(f"{folder}/torchdropB.py", main_path)
+			if os.path.isfile("torchdropA.py"):
+				os.remove("torchdropA.py")
+				if os.path.isfile(f"{folder}/torchdropA.py"):
+					shutil.move(f"{folder}/torchdropA.py", main_path)
+			if os.path.isfile("torchdropB.py"):
+				os.remove("torchdropB.py")
+				if os.path.isfile(f"{folder}/torchdropB.py"):
+					shutil.move(f"{folder}/torchdropB.py", main_path)
+
 			shutil.rmtree(folder)
 
 	else:
