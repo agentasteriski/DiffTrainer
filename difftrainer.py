@@ -266,8 +266,8 @@ class tabview(ctk.CTkTabview):
         self.confbox9 = ctk.CTkCheckBox(master=self.subframe, text="prefer_ds", variable=preferds, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox9.grid(row=4, column=3, pady=5)
         global vr
-        vr = tk.StringVar()
-        self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = "vr", offvalue = "world", font = self.font)
+        vr = tk.BooleanVar()
+        self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = True, offvalue = False, font = self.font)
         self.confbox10.grid(row=3, column=0, columnspan=2, pady=15)
         self.tooltip = CTkToolTip(self.confbox10, message=(self.L('vr2')), font = self.font)
 
@@ -1112,7 +1112,10 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it
-            bitch_ass_config["hnsep"] = pre_type
+            if pre_type==True:
+                bitch_ass_config["hnsep"] = "vr"
+            else:
+                bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
@@ -1160,7 +1163,10 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it v2
-            bitch_ass_config["hnsep"] = pre_type
+            if pre_type==True:
+                bitch_ass_config["hnsep"] = "vr"
+            else:
+                bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
