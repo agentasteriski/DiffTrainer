@@ -389,19 +389,20 @@ class tabview(ctk.CTkTabview):
         ##EXPORT 2 ELECTRIC BOOGALOO
         self.frame15 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
         self.frame15.grid(column=0, row=0, padx=90, pady=10)
-        self.expselect_option = tk.IntVar(value=0)
-        self.acobutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('aco')), variable=self.expselect_option, value=1, font = self.font)
+        self.expselect_option2 = tk.IntVar(value=0)
+        self.acobutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('aco')), variable=self.expselect_option2, value=1, font = self.font)
         self.acobutton.grid(row=0, column=0, padx=10)
         self.tooltip = CTkToolTip(self.acobutton, message=(self.L('acotip')), font = self.font)
-        self.varbutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('var')), variable=self.expselect_option, value=2, font = self.font)
+        self.varbutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('var')), variable=self.expselect_option2, value=2, font = self.font)
         self.varbutton.grid(row=1, column=0, padx=10)
         self.tooltip = CTkToolTip(self.varbutton, message=(self.L('vartip')), font = self.font)
-        expselect = self.expselect_option
+        global expselect2
+        expselect2 = self.expselect_option2
         self.button = ctk.CTkButton(master=self.frame15, text=(self.L('step2')), command=self.ckpt_folder_save, font = self.font)
         self.button.grid(row=0, column=1, rowspan=2, padx=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('step2-2alt')), font = self.font)
         onnx_folder = self.onnx_folder_save
-        self.button = ctk.CTkButton(master=self.frame15, text=(self.L('onnx')), command=self.run_onnx_export, font = self.font)
+        self.button = ctk.CTkButton(master=self.frame15, text=(self.L('onnx')), command=self.run_onnx_export2, font = self.font)
         self.button.grid(row=0, column=2, rowspan=2, padx=10)
         self.frame16 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
         self.frame16.grid(row=3, column=0, pady=10)
@@ -416,8 +417,9 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('pit')), command=self.get_pitch_folder, font = self.font)
         self.button.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
-        ou_name_var = tk.StringVar(value="enter_singer_name")
-        self.namebox = ctk.CTkEntry(master=self.frame16, textvariable=ou_name_var, font = self.font)
+        global ou_name_var2
+        ou_name_var2 = tk.StringVar(value="enter_singer_name")
+        self.namebox = ctk.CTkEntry(master=self.frame16, textvariable=ou_name_var2, font = self.font)
         self.namebox.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.namebox, message=(self.L('namebox')), font = self.font)
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('vocoder_adv')), command=self.get_vocoder, font = self.font)
@@ -1331,6 +1333,68 @@ class tabview(ctk.CTkTabview):
             print("Done!")
             os.chdir(main_path)
 
+    def run_onnx_export2(self):
+            os.chdir(main_path)
+            os.chdir("DiffSinger")
+            os.environ["PYTHONPATH"] = "."
+            if not ckpt_save_dir:
+                self.label.config(text="Please select your config and the checkpoint you would like to export first!")
+                return
+            export_check = expselect2.get()
+            onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
+            if os.path.exists(onnx_folder_dir):
+                onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
+                os.rename(onnx_folder_dir, onnx_bak)
+                print("backing up existing onnx folder...")
+            cmd = [python_exe, 'scripts/export.py']
+            ckpt_save_abs = os.path.abspath(ckpt_save_dir)
+            onnx_folder_abs = os.path.abspath(onnx_folder_dir)
+            if export_check == 1:
+                print("exporting acoustic...")
+                cmd.append('acoustic')
+                cmd.append('--exp')
+                cmd.append(ckpt_save_abs)
+                cmd.append('--out')
+                cmd.append(onnx_folder_abs)
+            elif export_check == 2:
+                print("exporting variance...")
+                cmd.append('variance')
+                cmd.append('--exp')
+                cmd.append(ckpt_save_abs)
+                cmd.append('--out')
+                cmd.append(onnx_folder_abs)
+            else:
+                messagebox.showinfo("Required", "Please select a config type")
+                return
+            print(' '.join(cmd))
+            subprocess.check_call(cmd)
+            print("Getting the files in order...")
+
+            #move file cus it export stuff outside the save folder for some reason
+            mv_basename = os.path.dirname(ckpt_save_abs)
+            #for .onnx
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(".onnx")]
+            #for .emb
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(".emb")]
+            #for dict and phonemes txt
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(("dictionary.txt", "phonemes.txt"))]
+
+            prefix = os.path.basename(ckpt_save_dir)
+            os.chdir(onnx_folder_dir)
+            wronnx = prefix + ".onnx"
+            if os.path.exists(wronnx):
+                os.rename(wronnx, "acoustic.onnx")
+            nameList = os.listdir() 
+            for fileName in nameList:
+                rename=fileName.removeprefix(prefix + ".")
+                os.rename(fileName,rename)
+
+            print("Done!")
+            os.chdir(main_path)
+
 
     def dl_ou_patch(self):
         patch_url = "https://github.com/agentasteriski/DiffSinger_colab_notebook_MLo7/releases/download/patches/temp_build_ou_vb.zip"
@@ -1419,7 +1483,7 @@ class tabview(ctk.CTkTabview):
         
         print("\nmaking directories...")
         try:
-            ou_name = ou_name_var.get()
+            ou_name = ou_name_var2.get()
             main_stuff = f"{ou_export_location}/{ou_name}"
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
