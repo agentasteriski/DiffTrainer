@@ -9,6 +9,6 @@ for /f "tokens=*" %%a in ('whoami') do set current=%%a
 icacls "%dir%" /grant "%current%:(oi)(ci)f" /t
 
 echo Installing Miniconda....
-assets\Miniconda3-py310_24.5.0-0-Windows-x86_64.exe /S /D=%cd%\python
+assets\Miniconda3-py310_24.5.0-0-Windows-x86_64.exe /S
 
 pause

@@ -1,26 +1,19 @@
 @echo off
-
 if exist "%cd%\python" (
-    set "pip_exe=%cd%\python\Scripts\pip"
-    set "python_exe=%cd%\python\python.exe"
-) else if exist "%cd%\.env" (
-    set "pip_exe=%cd%\.env\Scripts\pip"
-    set "python_exe=%cd%\.env\Scripts\python"
-) else if exist "%cd%\.venv" (
-    set "pip_exe=%cd%\.venv\Scripts\pip"
-    set "python_exe=%cd%\.venv\Scripts\python"
-) else if exist "%cd%\env" (
-    set "pip_exe=%cd%\env\Scripts\pip"
-    set "python_exe=%cd%\env\Scripts\python"
-) else if exist "%cd%\venv" (
-    set "pip_exe=%cd%\venv\Scripts\pip"
-    set "python_exe=%cd%\venv\Scripts\python"
+	set "conda_hook=%cd%\condabin\conda_hook.bat"
+) else if exist "C:\Users\%username%\anaconda3" (
+	set "conda_hook=C:\Users\%username%\anaconda3\condabin\conda_hook.bat"
+) else if exist "C:\Users\%username%\miniconda3" (
+	set "conda_hook=C:\Users\%username%\miniconda3\condabin\conda_hook.bat"
+) else if exist "C:\ProgramData\anaconda3" (
+	set "conda_hook=C:\ProgramData\anaconda3\condabin\conda_hook.bat"
+) else if exist "C:\ProgramData\miniconda3" (
+	set "conda_hook=C:\ProgramData\miniconda3\condabin\conda_hook.bat"
 ) else (
-    set "pip_exe=pip"
-    set "python_exe=python"
+	echo Conda not located, proceeding anyways...
 )
 
+call %conda_hook%
 call conda activate difftrainerB
-%python_exe% check_update.py
-
-pause
+echo Activating environment B...
+python check_update.py

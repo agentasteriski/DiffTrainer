@@ -265,6 +265,11 @@ class tabview(ctk.CTkTabview):
         preferds = tk.BooleanVar()
         self.confbox9 = ctk.CTkCheckBox(master=self.subframe, text="prefer_ds", variable=preferds, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox9.grid(row=4, column=3, pady=5)
+        global vr
+        vr = tk.BooleanVar()
+        self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = True, offvalue = False, font = self.font)
+        self.confbox10.grid(row=3, column=0, columnspan=2, pady=15)
+        self.tooltip = CTkToolTip(self.confbox10, message=(self.L('vr2')), font = self.font)
 
         self.frame14 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -384,19 +389,20 @@ class tabview(ctk.CTkTabview):
         ##EXPORT 2 ELECTRIC BOOGALOO
         self.frame15 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
         self.frame15.grid(column=0, row=0, padx=90, pady=10)
-        self.expselect_option = tk.IntVar(value=0)
-        self.acobutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('aco')), variable=self.expselect_option, value=1, font = self.font)
+        self.expselect_option2 = tk.IntVar(value=0)
+        self.acobutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('aco')), variable=self.expselect_option2, value=1, font = self.font)
         self.acobutton.grid(row=0, column=0, padx=10)
         self.tooltip = CTkToolTip(self.acobutton, message=(self.L('acotip')), font = self.font)
-        self.varbutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('var')), variable=self.expselect_option, value=2, font = self.font)
+        self.varbutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('var')), variable=self.expselect_option2, value=2, font = self.font)
         self.varbutton.grid(row=1, column=0, padx=10)
         self.tooltip = CTkToolTip(self.varbutton, message=(self.L('vartip')), font = self.font)
-        expselect = self.expselect_option
+        global expselect2
+        expselect2 = self.expselect_option2
         self.button = ctk.CTkButton(master=self.frame15, text=(self.L('step2')), command=self.ckpt_folder_save, font = self.font)
         self.button.grid(row=0, column=1, rowspan=2, padx=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('step2-2alt')), font = self.font)
         onnx_folder = self.onnx_folder_save
-        self.button = ctk.CTkButton(master=self.frame15, text=(self.L('onnx')), command=self.run_onnx_export, font = self.font)
+        self.button = ctk.CTkButton(master=self.frame15, text=(self.L('onnx')), command=self.run_onnx_export2, font = self.font)
         self.button.grid(row=0, column=2, rowspan=2, padx=10)
         self.frame16 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
         self.frame16.grid(row=3, column=0, pady=10)
@@ -411,8 +417,9 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('pit')), command=self.get_pitch_folder, font = self.font)
         self.button.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
-        ou_name_var = tk.StringVar(value="enter_singer_name")
-        self.namebox = ctk.CTkEntry(master=self.frame16, textvariable=ou_name_var, font = self.font)
+        global ou_name_var2
+        ou_name_var2 = tk.StringVar(value="enter_singer_name")
+        self.namebox = ctk.CTkEntry(master=self.frame16, textvariable=ou_name_var2, font = self.font)
         self.namebox.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.namebox, message=(self.L('namebox')), font = self.font)
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('vocoder_adv')), command=self.get_vocoder, font = self.font)
@@ -727,18 +734,7 @@ class tabview(ctk.CTkTabview):
 
         
     def run_segment(self):
-        try:
-            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
-            lines = output.split("\n")
-            for line in lines:
-                if "1.13.1+cu117" in line:
-                    print("Error: wrong environment")
-                    break
-                elif "1.13.1" in line:
-                    print("Error: wrong environment")
-                    break
-            else:
-                pass
+
             if not self.all_shits:
                 messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
                 return
@@ -958,10 +954,7 @@ class tabview(ctk.CTkTabview):
                         pass
             except Exception as e:
                     print(f"Error during SOME pitch generation: {e}") 
-        except Exception as e:
-                    print(f"Error checking Torch version: {e}")
-
-        print("data segmentation complete!")
+            print("data segmentation complete!")
 
     def grab_data_folder(self):
         self.data_folder = filedialog.askdirectory(title="Select data folder", initialdir = "DiffSinger")
@@ -969,11 +962,11 @@ class tabview(ctk.CTkTabview):
         raw_dir = []
         self.spk_lang = []
         print("data path: " + self.data_folder)
-        spk_name = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
-        for folder_name in spk_name:
+        spk_name_list = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
+        for folder_name in spk_name_list:
             folder_path = os.path.join(self.data_folder, folder_name)
             raw_dir.append(folder_path)
-            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name)}
+            folder_to_id = {folder_name: i for i, folder_name in enumerate(spk_name_list)}
             folder_name = os.path.basename(folder_path)
             folder_id = folder_to_id.get(folder_name, -1)
             spk_rows.append(ctk.CTkFrame(master=self.subframe2, width=340))
@@ -1020,6 +1013,7 @@ class tabview(ctk.CTkTabview):
         tension = trainten.get()
         voicing = trainvoc.get()
         shallow = shallow_diff.get()
+        pre_type = vr.get()
         ds = preferds.get()
         save_interval = save_int.get()
         batch = batch_size.get()
@@ -1113,12 +1107,17 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_breathiness_embed"] = energy
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
+            bitch_ass_config["tension_logit_max"] = 8
+            bitch_ass_config["tension_logit_min"] = -8
             #diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it
-            bitch_ass_config["hnsep"] = "vr"
+            if pre_type==True:
+                bitch_ass_config["hnsep"] = "vr"
+            else:
+                bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
@@ -1161,12 +1160,15 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["predict_tension"] = tension
             bitch_ass_config["predict_voicing"] = voicing
             bitch_ass_config["use_melody_encoder"] = pitch
-            bitch_ass_config["tension_logit_max"] = 6
-            bitch_ass_config["tension_logit_min"] = -6
+            bitch_ass_config["tension_logit_max"] = 8
+            bitch_ass_config["tension_logit_min"] = -8
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it v2
-            bitch_ass_config["hnsep"] = "vr"
+            if pre_type==True:
+                bitch_ass_config["hnsep"] = "vr"
+            else:
+                bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
 
             if adv_on.get() == "on":
@@ -1238,18 +1240,7 @@ class tabview(ctk.CTkTabview):
         print(configpath)
 
     def train_function(self):
-        try:
-            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
-            lines = output.split("\n")
-            for line in lines:
-                if "1.13.1+cu117" in line:
-                    print("Error: wrong environment")
-                    break
-                elif "1.13.1" in line:
-                    print("Error: wrong environment")
-                    break
-            else:
-                pass
+
             try:
                 output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
                 lines = output.split("\n")
@@ -1273,8 +1264,7 @@ class tabview(ctk.CTkTabview):
                 self.label.config(text="Please select your config and the data you would like to train first!")
                 return
             subprocess.check_call([python_exe, 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
-        except Exception as e:
-                    print(f"Error checking Torch version: {e}")
+
 
     def onnx_folder_save(self):
         global onnx_folder_dir
@@ -1282,18 +1272,6 @@ class tabview(ctk.CTkTabview):
         print("export path: " + onnx_folder_dir)
 
     def run_onnx_export(self):
-        try:
-            output = subprocess.check_output(["conda", "list", "-f", "pytorch"], stderr=subprocess.STDOUT).decode()
-            lines = output.split("\n")
-            for line in lines:
-                if "2.3.1+cu118" in line:
-                    print("Error: wrong environment")
-                    break
-                elif "2.3.1" in line:
-                    print("Error: wrong environment")
-                    break
-            else:
-                pass
             os.chdir(main_path)
             os.chdir("DiffSinger")
             os.environ["PYTHONPATH"] = "."
@@ -1354,8 +1332,69 @@ class tabview(ctk.CTkTabview):
 
             print("Done!")
             os.chdir(main_path)
-        except Exception as e:
-                    print(f"Error checking Torch version: {e}")
+
+    def run_onnx_export2(self):
+            os.chdir(main_path)
+            os.chdir("DiffSinger")
+            os.environ["PYTHONPATH"] = "."
+            if not ckpt_save_dir:
+                self.label.config(text="Please select your config and the checkpoint you would like to export first!")
+                return
+            export_check = expselect2.get()
+            onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
+            if os.path.exists(onnx_folder_dir):
+                onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
+                os.rename(onnx_folder_dir, onnx_bak)
+                print("backing up existing onnx folder...")
+            cmd = [python_exe, 'scripts/export.py']
+            ckpt_save_abs = os.path.abspath(ckpt_save_dir)
+            onnx_folder_abs = os.path.abspath(onnx_folder_dir)
+            if export_check == 1:
+                print("exporting acoustic...")
+                cmd.append('acoustic')
+                cmd.append('--exp')
+                cmd.append(ckpt_save_abs)
+                cmd.append('--out')
+                cmd.append(onnx_folder_abs)
+            elif export_check == 2:
+                print("exporting variance...")
+                cmd.append('variance')
+                cmd.append('--exp')
+                cmd.append(ckpt_save_abs)
+                cmd.append('--out')
+                cmd.append(onnx_folder_abs)
+            else:
+                messagebox.showinfo("Required", "Please select a config type")
+                return
+            print(' '.join(cmd))
+            subprocess.check_call(cmd)
+            print("Getting the files in order...")
+
+            #move file cus it export stuff outside the save folder for some reason
+            mv_basename = os.path.dirname(ckpt_save_abs)
+            #for .onnx
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(".onnx")]
+            #for .emb
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(".emb")]
+            #for dict and phonemes txt
+            [shutil.move(os.path.join(mv_basename, filename), onnx_folder_abs)
+            for filename in os.listdir(mv_basename) if filename.endswith(("dictionary.txt", "phonemes.txt"))]
+
+            prefix = os.path.basename(ckpt_save_dir)
+            os.chdir(onnx_folder_dir)
+            wronnx = prefix + ".onnx"
+            if os.path.exists(wronnx):
+                os.rename(wronnx, "acoustic.onnx")
+            nameList = os.listdir() 
+            for fileName in nameList:
+                rename=fileName.removeprefix(prefix + ".")
+                os.rename(fileName,rename)
+
+            print("Done!")
+            os.chdir(main_path)
+
 
     def dl_ou_patch(self):
         patch_url = "https://github.com/agentasteriski/DiffSinger_colab_notebook_MLo7/releases/download/patches/temp_build_ou_vb.zip"
@@ -1444,7 +1483,7 @@ class tabview(ctk.CTkTabview):
         
         print("\nmaking directories...")
         try:
-            ou_name = ou_name_var.get()
+            ou_name = ou_name_var2.get()
             main_stuff = f"{ou_export_location}/{ou_name}"
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
@@ -1653,12 +1692,15 @@ class tabview(ctk.CTkTabview):
                         file.write("linguistic: linguistic.onnx\n")
                         file.write("pitch: pitch.onnx\n")
                         file.write("use_expr: true\n")
+                    with open(pitch_config, "r", encoding = "utf-8") as config:
+                        pitch_config_data = yaml.safe_load(config)
+                    predict_dur = pitch_config_data.get("predict_dur")
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         dspitch_config = yaml.safe_load(config)
                     dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
                     dspitch_config["sample_rate"] = sample_rate
                     dspitch_config["hop_size"] = hop_size
-                    dspitch_config["predict_dur"] = True
+                    dspitch_config["predict_dur"] = predict_dur
                     if subbanks:
                         dspitch_config["speakers"] = variance_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
