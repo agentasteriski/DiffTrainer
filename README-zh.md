@@ -1,4 +1,4 @@
-# [重要更新資訊](https://github.com/agentasteriski/DiffTrainer/blob/main/ANNOUNCEMENT.md)
+# [重要更新資訊](https://github.com/agentasteriski/DiffTrainer/blob/main/ANNOUNCEMENT-zh.md)
 ![DiffTrainer](https://github.com/agentasteriski/DiffTrainer/blob/main/assets/difftrainerlogo.png?raw=true)
 
 *[English](./README.md)* **中文（正體）**
