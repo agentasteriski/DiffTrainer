@@ -970,14 +970,15 @@ class tabview(ctk.CTkTabview):
             folder_name = os.path.basename(folder_path)
             folder_id = folder_to_id.get(folder_name, -1)
             spk_rows.append(ctk.CTkFrame(master=self.subframe2, width=340))
-            spk_rows[folder_id].grid(row=folder_id)
+            spk_rows[folder_id].grid(row=folder_id, sticky="EW", pady=3)
             spk_name_box = ctk.CTkEntry(master=spk_rows[folder_id], width=100)
             spk_name_box.insert(0, folder_name)
-            spk_name_box.grid(column=0, padx=15)
+            spk_name_box.grid(column=0, row=0, padx=15, pady=3)
             spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "EN", "JA", "ZH/CMN", "ZH/YUE", "KO", "ES", "PT", "SV", "TL"])
-            spk_lang_select.grid(column=1)
-            spk_id_select = ctk.CTkOptionMenu(master=spk_rows[folder_id], values = ["a"], width = 20)
-            spk_id_select.grid(column=2, padx=15)
+            spk_lang_select.grid(column=1, row=0, padx=10)
+            spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20)
+            spk_id_select.insert(0, folder_id)
+            spk_id_select.grid(column=2, row=0, padx=15)
 
 
 
@@ -1089,7 +1090,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["raw_data_dir"] = raw_dir
             bitch_ass_config["num_spk"] = num_spk
             bitch_ass_config["use_spk_id"] = use_spk_id
-            #bitch_ass_config["spk_ids"] = spk_id
+            bitch_ass_config["spk_ids"] = spk_id
             bitch_ass_config["diff_loss_type"] = diff_loss_type
             bitch_ass_config["main_loss_type"] = "l1"
             bitch_ass_config["f0_max"] = f0_maxx
