@@ -1090,7 +1090,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["raw_data_dir"] = raw_dir
             bitch_ass_config["num_spk"] = num_spk
             bitch_ass_config["use_spk_id"] = use_spk_id
-            bitch_ass_config["spk_ids"] = spk_id
+            #bitch_ass_config["spk_ids"] = spk_id
             bitch_ass_config["diff_loss_type"] = diff_loss_type
             bitch_ass_config["main_loss_type"] = "l1"
             bitch_ass_config["f0_max"] = f0_maxx
