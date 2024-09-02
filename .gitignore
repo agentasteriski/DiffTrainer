@@ -162,3 +162,5 @@ cython_debug/
 
 # Custom gitignore items for this repo
 */guisettings.yaml
+ANNOUNCEMENT.md
+ANNOUNCEMENT-zh.md
