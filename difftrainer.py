@@ -613,7 +613,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(uta_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading nnsvs-db-converter") as progress_bar:
-            with open("branch2.zip", "wb") as f:
+            with open("main.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
