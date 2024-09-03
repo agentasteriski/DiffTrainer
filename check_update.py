@@ -14,7 +14,7 @@ with open("difftrainer.py", "r", encoding = "utf-8") as gui_local:
 local_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_local)
 local_version = local_version.group(1)
 
-if local_version == github_version:
+if local_version >= github_version:
 	pass
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest difftrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update difftrainer?")

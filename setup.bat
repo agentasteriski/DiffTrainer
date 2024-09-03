@@ -1,31 +1,47 @@
 @echo off
 
 if exist "%cd%\python" (
-    set "pip_exe=%cd%\python\Scripts\pip"
-    set "python_exe=%cd%\python\python.exe"
-) else if exist "%cd%\.env" (
-    set "pip_exe=%cd%\.env\Scripts\pip"
-    set "python_exe=%cd%\.env\Scripts\python"
-) else if exist "%cd%\.venv" (
-    set "pip_exe=%cd%\.venv\Scripts\pip"
-    set "python_exe=%cd%\.venv\Scripts\python"
-) else if exist "%cd%\env" (
-    set "pip_exe=%cd%\env\Scripts\pip"
-    set "python_exe=%cd%\env\Scripts\python"
-) else if exist "%cd%\venv" (
-    set "pip_exe=%cd%\venv\Scripts\pip"
-    set "python_exe=%cd%\venv\Scripts\python"
+	set "conda_hook=%cd%\condabin\conda_hook.bat"
+	set "pip_exe=%cd%\python\Scripts\pip"
+	set "python_exe=%cd%\python\python.exe"
+) else if exist "C:\Users\%username%\anaconda3" (
+	set "conda_hook=C:\Users\%username%\anaconda3\condabin\conda_hook.bat"
+	set "pip_exe=C:\Users\%username%\anaconda3\Scripts\pip"
+	set "python_exe=C:\Users\%username%\anaconda3\python.exe"
+) else if exist "C:\Users\%username%\miniconda3" (
+	set "conda_hook=C:\Users\%username%\miniconda3\condabin\conda_hook.bat"
+	set "pip_exe=C:\Users\%username%\miniconda3\Scripts\pip"
+	set "python_exe=C:\Users\%username%\miniconda3\python.exe"
+) else if exist "C:\ProgramData\anaconda3" (
+	set "conda_hook=C:\ProgramData\anaconda3\condabin\conda_hook.bat"
+	set "pip_exe=C:\ProgramData\anaconda3\Scripts\pip"
+	set "python_exe=C:\ProgramData\anaconda3\python.exe"
+) else if exist "C:\ProgramData\miniconda3" (
+	set "conda_hook=C:\ProgramData\miniconda3\condabin\conda_hook.bat"
+	set "pip_exe=C:\ProgramData\miniconda3\Scripts\pip"
+	set "python_exe=C:\ProgramData\miniconda3\python.exe"
 ) else (
-    set "pip_exe=pip"
-    set "python_exe=python"
+	echo Conda not located, proceeding anyways...
+	set "pip_exe=pip"
+	set "python_exe=python"
 )
 
-%python_exe% -m pip install --upgrade pip --no-warn-script-location
+%python_exe% -m pip install --upgrade pip==23.0.1 --no-warn-script-location
+echo Installing base requirements...
 %pip_exe% install -r requirements.txt --no-warn-script-location
+call %conda_hook%
+echo Creating environments...
+call conda env create -f assets\environmentA.yml
+call conda env create -f assets\environmentB.yml
+call conda activate difftrainerA
+python torchdropA.py
+call conda activate difftrainerB
+python torchdropB.py
+call conda activate difftrainerA
 
 echo Setup complete!
-echo Launching gui...
-call run_gui.bat
+echo Launching GUI in environment A...
+python check_update.py
 
 
 
