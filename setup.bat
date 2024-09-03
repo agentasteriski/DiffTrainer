@@ -26,7 +26,7 @@ if exist "%cd%\python" (
 	set "python_exe=python"
 )
 
-%python_exe% -m pip install --upgrade pip --no-warn-script-location
+%python_exe% -m pip install --upgrade pip==23.0.1 --no-warn-script-location
 echo Installing base requirements...
 %pip_exe% install -r requirements.txt --no-warn-script-location
 call %conda_hook%
