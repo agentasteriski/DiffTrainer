@@ -1,5 +1,9 @@
-# [IMPORTANT UPDATE INFORMATION](https://github.com/agentasteriski/DiffTrainer/blob/main/ANNOUNCEMENT.md)
-![DiffTrainer](https://github.com/agentasteriski/DiffTrainer/blob/main/assets/difftrainerlogo.png?raw=true)
+# MULTIDICT BETA
+Very rough. 
+Known issues:
+- user needs to manually replace regular diffsinger with beta diffsinger(might fix later, or just ignore it until it merges)
+- user needs to manually enter num_lang (just haven't gotten to it yet)
+- user needs to manually set use_lang_id (need to research behavior)
 
 **English** *[中文（正體）](./README-zh.md)*
 
