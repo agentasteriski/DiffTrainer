@@ -2,6 +2,7 @@
 Very rough. 
 Known issues:
 - user needs to manually replace regular diffsinger with beta diffsinger(might fix later, or just ignore it until it merges)
+- user needs to manually merge /dictionaries/ in this repo into /diffsinger/dictionaries (haven't decided if the file location is permanent)
 - user needs to manually enter num_lang (just haven't gotten to it yet)
 - user needs to manually set use_lang_id (need to research behavior)
 - localization and tooltips not added
