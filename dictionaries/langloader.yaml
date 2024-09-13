@@ -1,0 +1,12 @@
+dictionaries:
+  en: dictionaries/en-phonemes.txt
+  ja: dictionaries/ja-phonemes.txt
+  zh: dictionaries/zh-phonemes.txt
+extra_phonemes: []
+merge_list: DiffSinger/dictionaries/merged.yaml
+
+#all formatting is entirely subject to change
+
+
+
+
