@@ -1066,6 +1066,11 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["f0_max"] = 1600
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
+            bitch_ass_config["num_lang"] = len(lang["dictionaries"])
+            if len(lang["dictionaries"]) == 1:
+                bitch_ass_config["use_lang_id"] = False
+            else:
+                bitch_ass_config["Use_lang_id"] = True
             bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
             bitch_ass_config["merged_phoneme_groups"] = merges["merged_phoneme_groups"]
             bitch_ass_config["augmentation_args"]["random_pitch_shifting"]["enabled"] = enable_random_aug
@@ -1125,6 +1130,11 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
             bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
             bitch_ass_config["merged_phoneme_groups"] = merges["merged_phoneme_groups"]
+            bitch_ass_config["num_lang"] = len(lang["dictionaries"])
+            if len(lang["dictionaries"]) == 1:
+                bitch_ass_config["use_lang_id"] = False
+            else:
+                bitch_ass_config["Use_lang_id"] = True
             bitch_ass_config["f0_max"] = 1600
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["max_batch_size"] = int(batch) #ive never tried reaching the limit so ill trust kei's setting for this
