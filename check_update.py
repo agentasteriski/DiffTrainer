@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 main_path = os.getcwd()
 
-gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/main/difftrainer.py")
+gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/multidict/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
 github_version = github_version.group(1)
 
@@ -19,19 +19,19 @@ if local_version >= github_version:
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest difftrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update difftrainer?")
 	if update_prompt:
-		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/main.zip"
+		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/multidict.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
-		folder = "difftrainer-main"
+		folder = "difftrainer-multidict"
 
-		if os.path.exists("DiffTrainer-main"):
+		if os.path.exists("DiffTrainer-multidict"):
 			try:
-				shutil.rmtree("DiffTrainer-main")
+				shutil.rmtree("DiffTrainer-multidict")
 			except Exception as e:
-				print(f"Error deleting the existing 'DiffTrainer-main' folder: {e}")
+				print(f"Error deleting the existing 'DiffTrainer-multidict' folder: {e}")
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
 		with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffTrainer...") as progress_bar:
-			with open("main.zip", "wb") as f:
+			with open("multidict.zip", "wb") as f:
 				for chunk in response.iter_content(chunk_size = 1024):
 					if chunk:
 						f.write(chunk)
@@ -45,6 +45,8 @@ else:
 			shutil.move(f"{folder}/strings", main_path)
 			shutil.rmtree("assets")
 			shutil.move(f"{folder}/assets", main_path)
+			shutil.rmtree("dictionaries")
+			shutil.move(f"{folder}/dictionaries", main_path)
 			for filename in os.listdir(main_path):
 				if filename.endswith(".bat"):
 					os.remove(filename)
