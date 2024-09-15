@@ -10,8 +10,8 @@ import pyglet
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.0"
-releasedate = "09/13/24"
+version = "0.3.1"
+releasedate = "09/14/24"
 
 if os.path.exists(f"{main_path}/python"):
     pip_exe = f"{main_path}/python/Scripts/pip"
@@ -1527,11 +1527,14 @@ class tabview(ctk.CTkTabview):
         except Exception as e:
             print(f"Error creating directories: {e}")
         print("\nmoving core files...")
+
         try:
             shutil.copy(f"{aco_folder_onnx}/acoustic.onnx", f"{main_stuff}/dsmain")
-            shutil.copy(f"{aco_folder_onnx}/phonemes.txt", f"{main_stuff}/dsmain")
+            shutil.copy(f"{aco_folder_onnx}/phonemes.json", f"{main_stuff}/dsmain")
+            shutil.copy(f"{aco_folder_onnx}/languages.json", f"{main_stuff}/dsmain")
             shutil.copy(f"{aco_folder_onnx}/dsconfig.yaml", main_stuff)
             shutil.copy(f"{dur_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsmain")
+
         except Exception as e:
             print(f"Error moving core files: {e}")
         
@@ -1629,7 +1632,8 @@ class tabview(ctk.CTkTabview):
             with open(f"{main_stuff}/dsconfig.yaml", "r", encoding = "utf-8") as config:
                 dsconfig_data = yaml.safe_load(config)
             dsconfig_data["acoustic"] = "dsmain/acoustic.onnx"
-            dsconfig_data["phonemes"] = "dsmain/phonemes.txt"
+            dsconfig_data["phonemes"] = "dsmain/phonemes.json"
+            dsconfig_data["languages"] = "dsmain/languages.json"
             dsconfig_data["vocoder"] = "nsf_hifigan"
             dsconfig_data["singer_type"] = "diffsinger"
             if subbanks:
@@ -1651,9 +1655,11 @@ class tabview(ctk.CTkTabview):
             hop_size2 = variance_config_data.get("hop_size")
             use_note_rest = variance_config_data.get("use_note_rest")
             use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
+            use_lang_id = acoustic_config_data.get("use_lang_id")
 
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                file.write("phonemes: ../dsmain/phonemes.txt\n")
+                file.write("phonemes: ../dsmain/phonemes.json\n")
+                file.write("languages: ../dsmain/languages.json\n")
                 file.write("linguistic: ../dsmain/linguistic.onnx\n")
                 file.write("dur: dur.onnx\n")
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "r", encoding = "utf-8") as config:
@@ -1662,6 +1668,7 @@ class tabview(ctk.CTkTabview):
             dsdur_config["sample_rate"] = sample_rate2
             dsdur_config["hop_size"] = hop_size2
             dsdur_config["predict_dur"] = True
+            dsdur_config["use_lang_id"] = use_lang_id
             if subbanks:
                 dsdur_config["speakers"] = duration_embeds
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
@@ -1677,7 +1684,8 @@ class tabview(ctk.CTkTabview):
                     predict_breathiness = var_config_data.get("predict_breathiness")
                     predict_dur = var_config_data.get("predict_dur")
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                        file.write("phonemes: ../dsmain/phonemes.txt\n")
+                        file.write("phonemes: ../dsmain/phonemes.json\n")
+                        file.write("languages: ../dsmain/languages.json\n")
                         file.write("linguistic: linguistic.onnx\n")
                         file.write("variance: variance.onnx\n")
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "r", encoding = "utf-8") as config:
@@ -1690,6 +1698,7 @@ class tabview(ctk.CTkTabview):
                     dsvariance_config["predict_tension"] = predict_tension
                     dsvariance_config["predict_energy"] = predict_energy
                     dsvariance_config["predict_breathiness"] = predict_breathiness
+                    dsvariance_config["use_lang_id"] = use_lang_id
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
@@ -1702,7 +1711,8 @@ class tabview(ctk.CTkTabview):
             try:
                 if pitch_folder_onnx:
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                        file.write("phonemes: ../dsmain/phonemes.txt\n")
+                        file.write("phonemes: ../dsmain/phonemes.json\n")
+                        file.write("languages: ../dsmain/languages.json\n")
                         file.write("linguistic: linguistic.onnx\n")
                         file.write("pitch: pitch.onnx\n")
                         file.write("use_expr: true\n")
@@ -1715,6 +1725,7 @@ class tabview(ctk.CTkTabview):
                     dspitch_config["sample_rate"] = sample_rate
                     dspitch_config["hop_size"] = hop_size
                     dspitch_config["predict_dur"] = predict_dur
+                    dspitch_config["use_lang_id"] = use_lang_id
                     if subbanks:
                         dspitch_config["speakers"] = variance_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
