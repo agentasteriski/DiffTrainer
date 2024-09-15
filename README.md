@@ -1,8 +1,8 @@
 # MULTIDICT BETA
 Very rough. 
 Known issues:
-- localization and tooltips not added
 - not even sure we're doing this right
+- langloader editor usually hides behind main window
 
 **English** *[中文（正體）](./README-zh.md)*
 
