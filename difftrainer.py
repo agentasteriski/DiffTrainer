@@ -556,9 +556,9 @@ class tabview(ctk.CTkTabview):
         uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
         uta_script_folder_name = "nnsvs-db-converter-main"
 
-        diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/main.zip"
+        diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/multi-dict.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-main"
+        diffsinger_script_folder_name = "DiffSinger-multi-dict"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
@@ -626,7 +626,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("main.zip", "wb") as f:
+            with open("multi-dict.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -637,6 +637,12 @@ class tabview(ctk.CTkTabview):
         os.remove(diffsinger_zip)
         if os.path.exists(diffsinger_script_folder_name):
             os.rename(diffsinger_script_folder_name, "DiffSinger") #this beech too
+        
+        for filename in os.listdir("dictionaries"):
+            if filename.endswith(".yaml") or filename.endswith(".txt"):
+                filepath = os.path.join("dictionaries", filename)
+        if os.path.isfile(filepath):
+            shutil.move(filepath, "Diffsinger/dictionaries")
 
         response = requests.get(vocoder_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
@@ -727,6 +733,8 @@ class tabview(ctk.CTkTabview):
             yaml.dump(converter_config, config)
         
         print("Setup Complete!")
+    
+
 
     def grab_raw_data(self):
         self.all_shits = filedialog.askdirectory(title="Select raw data folder", initialdir = "raw_data")
