@@ -59,18 +59,12 @@ else:
 			for filename in os.listdir(main_path):
 				if filename.endswith(".txt"):
 					shutil.move(os.path.join(folder, filename), main_path)
-			os.remove("difftrainer.py")
-			os.remove("quickinference.py")
-			shutil.move(f"{folder}/difftrainer.py", main_path)
-			shutil.move(f"{folder}/quickinference.py", main_path)
-			if os.path.isfile("torchdropA.py"):
-				os.remove("torchdropA.py")
-				if os.path.isfile(f"{folder}/torchdropA.py"):
-					shutil.move(f"{folder}/torchdropA.py", main_path)
-			if os.path.isfile("torchdropB.py"):
-				os.remove("torchdropB.py")
-				if os.path.isfile(f"{folder}/torchdropB.py"):
-					shutil.move(f"{folder}/torchdropB.py", main_path)
+			for filename in os.listdir(main_path):
+				if filename.endswith(".py"):
+					os.remove(filename)
+			for filename in os.listdir(main_path):
+				if filename.endswith(".py"):
+					shutil.move(os.path.join(folder, filename), main_path)
 
 			shutil.rmtree(folder)
 

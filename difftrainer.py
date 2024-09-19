@@ -1,4 +1,4 @@
-import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser
+import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, sys
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
@@ -6,54 +6,48 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from ezlocalizr import ezlocalizr
-import pyglet
+
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 version = "0.3.2"
 releasedate = "09/15/24"
 
-if os.path.exists(f"{main_path}/python"):
-    pip_exe = f"{main_path}/python/Scripts/pip"
-    python_exe = f"{main_path}/python/python.exe"
-elif os.path.exists(f"{main_path}/.env"):
-    pip_exe = f"{main_path}/.env/Scripts/pip"
-    python_exe = f"{main_path}/.env/Scripts/python"
-elif os.path.exists(f"{main_path}/.venv"):
-    pip_exe = f"{main_path}/.venv/Scripts/pip"
-    python_exe = f"{main_path}/.venv/Scripts/python"
-elif os.path.exists(f"{main_path}/env"):
-    pip_exe = f"{main_path}/env/Scripts/pip"
-    python_exe = f"{main_path}/env/Scripts/python"
-elif os.path.exists(f"{main_path}/venv"):
-    pip_exe = f"{main_path}/venv/Scripts/pip"
-    python_exe = f"{main_path}/venv/Scripts/python"
+username = os.environ.get('USERNAME')
+def is_linux():
+    return sys.platform.startswith("linux")
+def is_windows():
+    return sys.platform.startswith("win")
+def is_macos():
+    return sys.platform.startswith("darwin")
+
+if os.path.exists(os.path.join(main_path, "miniconda")):
+    conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
+    conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
+    conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
+    conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
+    conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("opt", "miniconda3")):
+    conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
+elif os.path.exists(os.path.join("opt", "anaconda3")):
+    conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
+elif os.path.exists(os.path.join("Users", username, "anaconda3")):
+    conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
+elif os.path.exists(os.path.join("Users", username, "miniconda3")):
+    conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
 else:
-    pip_exe = "pip"
-    python_exe = "python"
+    conda_path = "conda"
+
 
 guisettings = {
     'lang': 'en_US',
 }
 
-pyglet.options['win32_gdi_font'] = True
 
-if os.path.exists(('assets/guisettings.yaml')):
-    with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
-        try:
-            guisettings.update(yaml.safe_load(c))
-            c.close()
-        except yaml.YAMLError as exc:
-            print("No settings detected, defaulting to EN_US")
-
-pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
-font_en = 'Red Hat Display'
-pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
-font_jp = 'M PLUS 2'
-pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
-font_cn = 'Noto Sans SC'
-pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
-font_tw = 'Noto Sans TC'
 
 class tabview(ctk.CTkTabview):
 
@@ -63,6 +57,7 @@ class tabview(ctk.CTkTabview):
         os.chdir(main_path)
 
         self.all_shits = r"" #forcing users to select the folder <3
+        self.data_folder = r"" #more forces
         self.ckpt_save_dir = r"" #even more forces
         self.trainselect_option = r"" #rawr
         self.vocoder_onnx = r"" #actually this one isn't forcing anything none is fine
@@ -125,7 +120,7 @@ class tabview(ctk.CTkTabview):
         self.langselect.grid(row=4, column=2, sticky=tk.SE)
 
         ##SEGMENT
-        
+
         self.frame1 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
         self.frame1.grid(padx=(35, 10), pady=(10,0))
         self.label = ctk.CTkLabel(master=self.frame1, text = (self.L('silperseg')), font = self.font)
@@ -198,7 +193,7 @@ class tabview(ctk.CTkTabview):
         self.varbutton.grid(row=1, column=1)
         global trainselect
         trainselect = self.trtype
-        
+
         global adv_on
         adv_on = tk.StringVar()
         self.advswitch = ctk.CTkSwitch(master=self.frame5, text=(self.L('adv')), variable=adv_on, onvalue="on", offvalue="off", command=self.changeState, font = self.font)
@@ -286,7 +281,7 @@ class tabview(ctk.CTkTabview):
         self.langedit = ctk.CTkButton(master=self.frame14, text=(self.L('lang_edit')), command=self.langeditor, font=self.font)
         self.langedit.grid(row=2, column=1)
         self.tooltip = CTkToolTip(self.langedit, message=(self.L('lang_edit2')), font=self.font)
-        
+
 
 
         self.frame7 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
@@ -481,7 +476,7 @@ class tabview(ctk.CTkTabview):
             self.confbox5.deselect()
             self.confbox6.select()
             self.confbox7.select()
-            self.confbox8.select()      
+            self.confbox8.select()
         elif choice == "2. Pitch":
             self.confbox1.select()
             self.confbox2.select()
@@ -529,6 +524,28 @@ class tabview(ctk.CTkTabview):
             self.confbox8.select()
         else:
             print("Please select a preset or enable custom configuration!")
+
+    global run_cmdA
+    def run_cmdA(cmd):
+        if is_windows():
+            cmd = f'"{conda_path}" activate difftrainerA >nul && {cmd}'
+        elif is_linux() or is_macos():
+            cmd = f'. "{conda_path}" && conda activate difftrainerA && {cmd}'
+        try:
+            subprocess.run(cmd, check=True, shell=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error running command: {e}")
+
+    global run_cmdB
+    def run_cmdB(cmd):
+        if is_windows():
+            cmd = f'"{conda_path}" activate difftrainerB >nul && {cmd}'
+        elif is_linux() or is_macos():
+            cmd = f'. "{conda_path}" && conda activate difftrainerB && {cmd}'
+        try:
+            subprocess.run(cmd, check=True, shell=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error running command: {e}")
 
 ###COMMANDS###
     global all_shits_not_wav_n_lab
@@ -638,7 +655,7 @@ class tabview(ctk.CTkTabview):
         os.remove(diffsinger_zip)
         if os.path.exists(diffsinger_script_folder_name):
             os.rename(diffsinger_script_folder_name, "DiffSinger") #this beech too
-        
+
         for filename in os.listdir("dictionaries"):
             if filename.endswith(".yaml") or filename.endswith(".txt"):
                 filepath = os.path.join("dictionaries", filename)
@@ -706,10 +723,9 @@ class tabview(ctk.CTkTabview):
         os.remove(SOME_zip2)
         if os.path.exists("SOME-lite-main"):
             os.rename("SOME-lite-main", "SOME") #this beech too
-        
-        subprocess.check_call([pip_exe, "install", "click", "--no-warn-script-location"])
 
-        subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
+        if is_windows():
+            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
 
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
@@ -732,9 +748,9 @@ class tabview(ctk.CTkTabview):
         }
         with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
-        
+
         print("Setup Complete!")
-    
+
 
 
     def grab_raw_data(self):
@@ -743,7 +759,7 @@ class tabview(ctk.CTkTabview):
             os.makedirs(all_shits_not_wav_n_lab)
         print("raw data path: " + self.all_shits)
 
-        
+
     def run_segment(self):
 
             if not self.all_shits:
@@ -775,7 +791,7 @@ class tabview(ctk.CTkTabview):
 
             def is_excluded(phoneme):
                 return phoneme in ["pau", "AP", "SP", "sil"]
-            
+
             try:
                 phoneme_folder_path = self.all_shits
                 for root, dirs, files in os.walk(phoneme_folder_path):
@@ -876,7 +892,7 @@ class tabview(ctk.CTkTabview):
 
             max_silence = max_sil.get()
             max_wav_length = max_seg_ln.get()
-            
+
             try:
                 for raw_folder_name in os.listdir(self.all_shits):
                     raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
@@ -884,41 +900,43 @@ class tabview(ctk.CTkTabview):
                     if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                         print("segmenting data...")
                         #dear god please work
-                        cmd = [python_exe, r'nnsvs-db-converter\db_converter.py', '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                        converter = os.path.join("nnsvs-db-converter", "db_converter.py")
+                        cmdstage = ["python", converter, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                         if self.estimatemidivar.get() == "default":
                             estimate_midi_print = "Default"
-                            cmd.append("-m")
-                            cmd.append("-D")
-                            cmd.append("-c")
+                            cmdstage.append("-m")
+                            cmdstage.append("-D")
+                            cmdstage.append("-c")
                         elif self.estimatemidivar.get() == "some":
                             estimate_midi_print = "SOME"
                         else:
                             estimate_midi_print = "Off"
                         if self.detectbreathvar.get() == True:
-                            cmd.append('-B')
-                            cmd.append("-v")
-                            cmd.append(str(converter["voicing_treshold_breath"]))
-                            cmd.append("-W")
-                            cmd.append(str(converter["breath_window_size"]))
-                            cmd.append("-b")
-                            cmd.append(str(converter["breath_min_length"]))
-                            cmd.append("-e")
-                            cmd.append(str(converter["breath_db_threshold"]))
-                            cmd.append("-C")
-                            cmd.append(str(converter["breath_centroid_treshold"]))
+                            cmdstage.append('-B')
+                            cmdstage.append("-v")
+                            cmdstage.append(str(converter["voicing_treshold_breath"]))
+                            cmdstage.append("-W")
+                            cmdstage.append(str(converter["breath_window_size"]))
+                            cmdstage.append("-b")
+                            cmdstage.append(str(converter["breath_min_length"]))
+                            cmdstage.append("-e")
+                            cmdstage.append(str(converter["breath_db_threshold"]))
+                            cmdstage.append("-C")
+                            cmdstage.append(str(converter["breath_centroid_treshold"]))
                             detect_breath_print = "True"
                         else:
                             detect_breath_print = "False"
                         if converter["write_label"] == False:
                             write_label_print = "Not writing labels"
                         elif converter["write_label"] == "htk":
-                            cmd.append("-w htk")
+                            cmdstage.append("-w htk")
                             write_label_print = "Write HTK labels"
                         elif converter["write_label"] == "aud":
-                            cmd.append("-w aud")
+                            cmdstage.append("-w aud")
                             write_label_print = "Write Audacity labels"
                         else:
                             write_label_print = "unknown value, not writing labels"
+                        command = " ".join(cmdstage)
                         print("\n",
                             "##### Converter Settings #####\n",
                             f"max audio segment length: {str(max_wav_length)}\n",
@@ -927,10 +945,7 @@ class tabview(ctk.CTkTabview):
                             f"detect breath: {detect_breath_print}\n",
                             f"export label: {write_label_print}\n"
                             )
-
-
-                        output = subprocess.check_output(cmd, universal_newlines=True)
-                        print(output)
+                        run_cmdA(command)
             except Exception as e:
                 print(f"Error during segmentation: {e}")
             try:
@@ -958,13 +973,13 @@ class tabview(ctk.CTkTabview):
                             speaker_path = os.path.join(self.all_shits, speaker)
                             if os.path.isdir(speaker_path):
                                 print("loading SOME...")
-                                cmd2 = [python_exe, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
-                                output = subprocess.check_output(cmd2, universal_newlines=True)
-                                print(output)
+                                cmdstage = ["python", "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
+                                command2 = " ".join(cmdstage)
+                                run_cmdA(command2)
                     else:
                         pass
             except Exception as e:
-                    print(f"Error during SOME pitch generation: {e}") 
+                    print(f"Error during SOME pitch generation: {e}")
             print("data segmentation complete!")
 
     def grab_data_folder(self):
@@ -1002,7 +1017,7 @@ class tabview(ctk.CTkTabview):
         ckpt_save_dir = filedialog.askdirectory(title="Select save folder", initialdir = "DiffSinger/checkpoints")
         self.binary_save_dir = os.path.join(ckpt_save_dir, "binary")
         print("save path: " + ckpt_save_dir)
-        
+
     def write_config(self):
         #adding checks lmao make sure they select them
         config_check = trainselect.get()
@@ -1054,7 +1069,7 @@ class tabview(ctk.CTkTabview):
                 }
             allspeakers.append(spk_block)
 
-        
+
         if selected_config_type == 1:
             with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
@@ -1113,7 +1128,7 @@ class tabview(ctk.CTkTabview):
                 custom_name = ''.join(customname0)
                 with open(custom_name, "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
-                print("wrote custom acoustic config!")     
+                print("wrote custom acoustic config!")
             else:
                 with open("DiffSinger/configs/acoustic.yaml", "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
@@ -1173,7 +1188,7 @@ class tabview(ctk.CTkTabview):
                 with open(custom_name, "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
                 print("wrote custom variance config!")
-                
+
             else:
                 with open("DiffSinger/configs/variance.yaml", "w", encoding = "utf-8") as config:
                     yaml.dump(bitch_ass_config, config)
@@ -1199,7 +1214,7 @@ class tabview(ctk.CTkTabview):
             textbox.insert(tk.END, langloader.read())
         langsave = ctk.CTkButton(editor, text=(self.L('langsave')), command=self.updatelangloader, font=self.font)
         langsave.grid(row=1, column=0, pady=7)
-        
+
 
     def updatelangloader(self):
         with open("DiffSinger/dictionaries/langloader.yaml", "w", encoding="utf-8") as langloader:
@@ -1243,10 +1258,9 @@ class tabview(ctk.CTkTabview):
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
         os.environ["CUDA_VISIBLE_DEVICES"] = cuda
-        cmd = [python_exe, 'scripts/binarize.py', '--config', configpath]
-        print(' '.join(cmd))
-        output = subprocess.check_output(cmd, universal_newlines=True)
-        print(output)
+        cmdstage = ["python", 'scripts/binarize.py', '--config', configpath]
+        command = " ".join(cmdstage)
+        run_cmdA(command)
         os.chdir(main_path)
 
     def load_config_function(self):
@@ -1278,7 +1292,9 @@ class tabview(ctk.CTkTabview):
             if not configpath or not ckpt_save_dir:
                 self.label.config(text="Please select your config and the data you would like to train first!")
                 return
-            subprocess.check_call([python_exe, 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
+            cmdstage = ["python", 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset']
+            command = " ".join(cmdstage)
+            run_cmdA(command)
 
 
     def onnx_folder_save(self):
@@ -1299,28 +1315,28 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
-            cmd = [python_exe, 'scripts/export.py']
+            cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
             if export_check == 1:
                 print("exporting acoustic...")
-                cmd.append('acoustic')
-                cmd.append('--exp')
-                cmd.append(ckpt_save_abs)
-                cmd.append('--out')
-                cmd.append(onnx_folder_abs)
+                cmdstage.append('acoustic')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             elif export_check == 2:
                 print("exporting variance...")
-                cmd.append('variance')
-                cmd.append('--exp')
-                cmd.append(ckpt_save_abs)
-                cmd.append('--out')
-                cmd.append(onnx_folder_abs)
+                cmdstage.append('variance')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             else:
                 messagebox.showinfo("Required", "Please select a config type")
                 return
-            print(' '.join(cmd))
-            subprocess.check_call(cmd)
+            command = " ".join(cmdstage)
+            run_cmdB(command)
             print("Getting the files in order...")
 
             #move file cus it export stuff outside the save folder for some reason
@@ -1340,7 +1356,7 @@ class tabview(ctk.CTkTabview):
             wronnx = prefix + ".onnx"
             if os.path.exists(wronnx):
                 os.rename(wronnx, "acoustic.onnx")
-            nameList = os.listdir() 
+            nameList = os.listdir()
             for fileName in nameList:
                 rename=fileName.removeprefix(prefix + ".")
                 os.rename(fileName,rename)
@@ -1361,28 +1377,28 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
-            cmd = [python_exe, 'scripts/export.py']
+            cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
             if export_check == 1:
                 print("exporting acoustic...")
-                cmd.append('acoustic')
-                cmd.append('--exp')
-                cmd.append(ckpt_save_abs)
-                cmd.append('--out')
-                cmd.append(onnx_folder_abs)
+                cmdstage.append('acoustic')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             elif export_check == 2:
                 print("exporting variance...")
-                cmd.append('variance')
-                cmd.append('--exp')
-                cmd.append(ckpt_save_abs)
-                cmd.append('--out')
-                cmd.append(onnx_folder_abs)
+                cmdstage.append('variance')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             else:
                 messagebox.showinfo("Required", "Please select a config type")
                 return
-            print(' '.join(cmd))
-            subprocess.check_call(cmd)
+            command = " ".join(cmdstage)
+            run_cmdB(command)
             print("Getting the files in order...")
 
             #move file cus it export stuff outside the save folder for some reason
@@ -1402,7 +1418,7 @@ class tabview(ctk.CTkTabview):
             wronnx = prefix + ".onnx"
             if os.path.exists(wronnx):
                 os.rename(wronnx, "acoustic.onnx")
-            nameList = os.listdir() 
+            nameList = os.listdir()
             for fileName in nameList:
                 rename=fileName.removeprefix(prefix + ".")
                 os.rename(fileName,rename)
@@ -1410,7 +1426,7 @@ class tabview(ctk.CTkTabview):
             print("Done!")
             os.chdir(main_path)
 
-        
+
     def get_aco_folder(self):
         global aco_folder_dir
         aco_folder_dir = filedialog.askdirectory(title="Select folder with acoustic checkpoints", initialdir = "DiffSinger/checkpoints/")
@@ -1427,7 +1443,7 @@ class tabview(ctk.CTkTabview):
         var_folder_onnx = var_folder_dir + "/onnx"
         global var_config
         var_config = os.path.join(var_folder_dir, "config.yaml")
-    
+
     def get_dur_folder(self):
         dur_folder_dir = filedialog.askdirectory(title="Select folder with duration checkpoints", initialdir = "DiffSinger/checkpoints/")
         print("Duration folder: " + dur_folder_dir)
@@ -1457,7 +1473,7 @@ class tabview(ctk.CTkTabview):
         os.chdir(main_path)
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
-        
+
         print("\nmaking directories...")
         try:
             ou_name = ou_name_var.get()
@@ -1498,7 +1514,7 @@ class tabview(ctk.CTkTabview):
 
         except Exception as e:
             print(f"Error moving core files: {e}")
-        
+
         print("\nmoving acoustic embeds...")
         try:
             acoustic_emb_files = [file for file in os.listdir(aco_folder_onnx) if file.endswith(".emb")]
@@ -1514,7 +1530,7 @@ class tabview(ctk.CTkTabview):
                     acoustic_color_suffix.append(acoustic_emb)
         except Exception as e:
                     print(f"Error moving acoustic embeds: {e}")
-                
+
 
         print("\nmoving variance files...")
         try:
@@ -1689,7 +1705,7 @@ class tabview(ctk.CTkTabview):
         os.chdir(main_path)
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
-        
+
         print("\nmaking directories...")
         try:
             ou_name = ou_name_var2.get()
@@ -1732,7 +1748,7 @@ class tabview(ctk.CTkTabview):
 
         except Exception as e:
             print(f"Error moving core files: {e}")
-        
+
         print("\nmoving acoustic embeds...")
         try:
             acoustic_emb_files = [file for file in os.listdir(aco_folder_onnx) if file.endswith(".emb")]
@@ -1765,7 +1781,7 @@ class tabview(ctk.CTkTabview):
                     duration_color_suffix.append(duration_emb)
         except Exception as e:
             print(f"Error moving duration files: {e}")
-                
+
 
         print("\nmoving variance files...")
         try:
@@ -1950,10 +1966,10 @@ class tabview(ctk.CTkTabview):
             except Exception as e:
                     print(f"Error adding custom vocoder: {e}")
         print("OU setup complete! Please manually import dsdicts")
-        
 
 
-        
+
+
 class App(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -1964,7 +1980,29 @@ class App(ctk.CTk):
         self.iconphoto(False, self.iconpath)
         self.resizable(False, False)
         create_widgets(self)
+    import pyglet #idk a mac user said this helped and it still works
+    pyglet.options['win32_gdi_font'] = True
 
+    if os.path.exists(('assets/guisettings.yaml')):
+        with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
+            try:
+                guisettings.update(yaml.safe_load(c))
+                c.close()
+            except yaml.YAMLError as exc:
+                print("No settings detected, defaulting to EN_US")
+
+    pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
+    global font_en
+    font_en = 'Red Hat Display'
+    pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
+    global font_jp
+    font_jp = 'M PLUS 2'
+    pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
+    global font_cn
+    font_cn = 'Noto Sans SC'
+    pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
+    global font_tw
+    font_tw = 'Noto Sans TC'
 
     def on_tab_change(self, event):
         os.chdir(main_path)

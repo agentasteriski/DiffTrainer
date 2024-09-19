@@ -1,14 +1,27 @@
 @echo off
 
-echo Downloading Miniconda installer
-curl -o %cd%\assets\Miniconda3-py310_24.5.0-0-Windows-x86_64.exe https://repo.anaconda.com/miniconda/Miniconda3-py310_24.5.0-0-Windows-x86_64.exe
+set "download_url=https://repo.anaconda.com/miniconda/Miniconda3-py310_24.5.0-0-Windows-x86_64.exe" #exact version needed instead of the latest python
+set "installer_name=miniconda_installer.exe"
+set "install_path=%cd%\miniconda"
+set "conda_python=%cd%\miniconda\python.exe"
+set "conda_pip=%cd%\miniconda\Scripts\pip.exe"
 
-echo Granting write permissions to current user's directory... (for installing python)
-set dir=.
-for /f "tokens=*" %%a in ('whoami') do set current=%%a
-icacls "%dir%" /grant "%current%:(oi)(ci)f" /t
+echo downloading miniconda installer...
+powershell -ExecutionPolicy Bypass -command "invoke-webrequest -uri %download_url% -outfile %installer_name%"
 
-echo Installing Miniconda....
-assets\Miniconda3-py310_24.5.0-0-Windows-x86_64.exe /S
+
+echo installing miniconda...
+%installer_name% /InstallationType=JustMe /RegisterPython=0 /S /D=%install_path%
+
+echo cleaning up...
+del %installer_name%
+
+echo installing GUI's requirements...
+%conda_pip% install -r requirements.txt --no-warn-script-location
+
+:: continuing everything else in python <333
+%conda_python% setup_conda_envs.py
+
+echo miniconda setup complete.
 
 pause
