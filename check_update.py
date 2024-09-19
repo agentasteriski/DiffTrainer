@@ -23,11 +23,6 @@ else:
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
 		folder = "difftrainer-multidict"
 
-		if os.path.exists("DiffTrainer-multidict"):
-			try:
-				shutil.rmtree("DiffTrainer-multidict")
-			except Exception as e:
-				print(f"Error deleting the existing 'DiffTrainer-multidict' folder: {e}")
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
 		with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffTrainer...") as progress_bar:
@@ -45,27 +40,18 @@ else:
 			shutil.move(f"{folder}/strings", main_path)
 			shutil.rmtree("assets")
 			shutil.move(f"{folder}/assets", main_path)
-			shutil.rmtree("dictionaries")
-			shutil.move(f"{folder}/dictionaries", main_path)
-			for filename in os.listdir(main_path):
-				if filename.endswith(".bat"):
-					os.remove(filename)
-			for filename in os.listdir(folder):
-				if filename.endswith(".bat"):
-					shutil.move(os.path.join(folder, filename), main_path)
-			for filename in os.listdir(main_path):
-				if filename.endswith(".txt"):
-					os.remove(filename)
-			for filename in os.listdir(main_path):
-				if filename.endswith(".txt"):
-					shutil.move(os.path.join(folder, filename), main_path)
-			for filename in os.listdir(main_path):
-				if filename.endswith(".py"):
-					os.remove(filename)
-			for filename in os.listdir(main_path):
-				if filename.endswith(".py"):
-					shutil.move(os.path.join(folder, filename), main_path)
-
+			[os.remove(filename)
+			for filename in os.listdir(main_path) if filename.endswith(".bat")]
+			[shutil.move(os.path.join(folder, filename), main_path)
+        	for filename in os.listdir(folder) if filename.endswith(".bat")]
+			[os.remove(filename)
+			for filename in os.listdir(main_path) if filename.endswith(".txt")]
+			[os.remove(filename)
+			for filename in os.listdir(main_path) if filename.endswith(".txt")]
+			[shutil.move(os.path.join(folder, filename), main_path)
+        	for filename in os.listdir(folder) if filename.endswith(".py")]
+			[os.remove(filename)
+			for filename in os.listdir(main_path) if filename.endswith(".py")]
 			shutil.rmtree(folder)
 
 	else:
