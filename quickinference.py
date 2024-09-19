@@ -1,4 +1,4 @@
-import subprocess, os, yaml
+import subprocess, os, yaml, sys
 import tkinter as tk
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
@@ -14,12 +14,34 @@ main_path = os.getcwd()
 diffolder = f"{main_path}/DiffSinger"
 ckpts = f"{main_path}/DiffSinger/checkpoints"
 
-if os.path.exists(f"{main_path}/python"):
-    pip_exe = f"{main_path}/python/Scripts/pip"
-    python_exe = f"{main_path}/python/python.exe"
+username = os.environ.get('USERNAME')
+def is_linux():
+    return sys.platform.startswith("linux")
+def is_windows():
+    return sys.platform.startswith("win")
+def is_macos():
+    return sys.platform.startswith("darwin")
+
+if os.path.exists(os.path.join(main_path, "miniconda")):
+    conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
+    conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
+    conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
+    conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
+    conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
+elif os.path.exists(os.path.join("opt", "miniconda3")):
+    conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
+elif os.path.exists(os.path.join("opt", "anaconda3")):
+    conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
+elif os.path.exists(os.path.join("Users", username, "anaconda3")):
+    conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
+elif os.path.exists(os.path.join("Users", username, "miniconda3")):
+    conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
 else:
-    pip_exe = "pip"
-    python_exe = "python"
+    conda_path = "conda"
 
 guisettings = {
     'lang': 'en_US'
@@ -72,27 +94,36 @@ def ds():
         global postvards
         postvards = dsloc + "/" + postvar + ".ds"
         print(dsinput)
+        
+def run_cmdA(cmd):
+        if is_windows():
+            cmd = f'"{conda_path}" activate difftrainerA >nul && {cmd}'
+        elif is_linux() or is_macos():
+            cmd = f'. "{conda_path}" && conda activate difftrainerA && {cmd}'
+        try:
+            subprocess.run(cmd, check=True, shell=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error running command: {e}")
 def render():
       os.chdir(diffolder)
       spkname = spk.get()
       if varckpt != '':
-            cmd1 = [python_exe, 'scripts/infer.py', 'variance', dsinput, '--exp', varckpt, '--spk', spkname, '--out', dsloc, '--title', postvar]
+            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinput, '--exp', varckpt, '--spk', spkname, '--out', dsloc, '--title', postvar]
             print('inferencing variance data...')
-            print(' '.join(cmd1))
-            output = subprocess.check_output(cmd1, universal_newlines=True)
-            print(output)
-            cmd2 = [python_exe, 'scripts/infer.py', 'acoustic', postvards, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
-            print(cmd2)
+            command1 = ' '.join(cmd1)
+            run_cmdA(command1)
+            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvards, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
+            command2 = ' '.join(cmd2)
+            run_cmdA(command2)
             print('inferencing acoustic data...')
-            subprocess.check_output(cmd2, universal_newlines=True)
             global rendered
             rendered = os.path.join(dsloc, dsname2) + ".wav"
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
       else:
-            cmd3 = [python_exe, 'scripts/infer.py', 'acoustic', dsinput, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
-            print(cmd3)
+            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinput, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
+            command3 = ' '.join(cmd3)
             print('inferencing acoustic data...')
-            subprocess.check_output(cmd3, universal_newlines=True)
+            run_cmdA(command3)
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
 
 def replay():
