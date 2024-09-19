@@ -22,8 +22,8 @@ def is_windows():
 def is_macos():
     return sys.platform.startswith("darwin")
 
-if os.path.exists(os.path.join(os.getcwd(), "miniconda")):
-    conda_path = os.path.join(os.getcwd(), "miniconda", "condabin", "conda.bat")
+if os.path.exists(os.path.join(main_path, "miniconda")):
+    conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
 elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
     conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
 elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
@@ -40,6 +40,8 @@ elif os.path.exists(os.path.join("Users", username, "anaconda3")):
     conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
 elif os.path.exists(os.path.join("Users", username, "miniconda3")):
     conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
+else:
+    conda_path = "conda"
 
 
 guisettings = {
@@ -547,7 +549,7 @@ class tabview(ctk.CTkTabview):
     global all_shits_not_wav_n_lab
     all_shits_not_wav_n_lab = "raw_data/diffsinger_db"
 
-    def refresh(self, choice):
+    def refresh(self, choice, master):
         # Better option for updating the display language tbh.
         guisettings['lang'] = choice
         with open('assets/guisettings.yaml', 'w', encoding='utf-8') as f:
@@ -890,41 +892,42 @@ class tabview(ctk.CTkTabview):
                         print("segmenting data...")
                         #dear god please work
                         converter = os.path.join("nnsvs-db-converter", "db_converter.py")
-                        command = ["python", converter, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                        cmdstage = ["python", converter, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                         if self.estimatemidivar.get() == "default":
                             estimate_midi_print = "Default"
-                            command.append("-m")
-                            command.append("-D")
-                            command.append("-c")
+                            cmdstage.append("-m")
+                            cmdstage.append("-D")
+                            cmdstage.append("-c")
                         elif self.estimatemidivar.get() == "some":
                             estimate_midi_print = "SOME"
                         else:
                             estimate_midi_print = "Off"
                         if self.detectbreathvar.get() == True:
-                            command.append('-B')
-                            command.append("-v")
-                            command.append(str(converter["voicing_treshold_breath"]))
-                            command.append("-W")
-                            command.append(str(converter["breath_window_size"]))
-                            command.append("-b")
-                            command.append(str(converter["breath_min_length"]))
-                            command.append("-e")
-                            command.append(str(converter["breath_db_threshold"]))
-                            command.append("-C")
-                            command.append(str(converter["breath_centroid_treshold"]))
+                            cmdstage.append('-B')
+                            cmdstage.append("-v")
+                            cmdstage.append(str(converter["voicing_treshold_breath"]))
+                            cmdstage.append("-W")
+                            cmdstage.append(str(converter["breath_window_size"]))
+                            cmdstage.append("-b")
+                            cmdstage.append(str(converter["breath_min_length"]))
+                            cmdstage.append("-e")
+                            cmdstage.append(str(converter["breath_db_threshold"]))
+                            cmdstage.append("-C")
+                            cmdstage.append(str(converter["breath_centroid_treshold"]))
                             detect_breath_print = "True"
                         else:
                             detect_breath_print = "False"
                         if converter["write_label"] == False:
                             write_label_print = "Not writing labels"
                         elif converter["write_label"] == "htk":
-                            command.append("-w htk")
+                            cmdstage.append("-w htk")
                             write_label_print = "Write HTK labels"
                         elif converter["write_label"] == "aud":
-                            command.append("-w aud")
+                            cmdstage.append("-w aud")
                             write_label_print = "Write Audacity labels"
                         else:
                             write_label_print = "unknown value, not writing labels"
+                        command = " ".join(cmdstage)
                         print("\n",
                             "##### Converter Settings #####\n",
                             f"max audio segment length: {str(max_wav_length)}\n",
@@ -961,7 +964,8 @@ class tabview(ctk.CTkTabview):
                             speaker_path = os.path.join(self.all_shits, speaker)
                             if os.path.isdir(speaker_path):
                                 print("loading SOME...")
-                                command2 = ["python", "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
+                                cmdstage = ["python", "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
+                                command2 = " ".join(cmdstage)
                                 run_cmdA(command2)
                     else:
                         pass
@@ -1242,7 +1246,8 @@ class tabview(ctk.CTkTabview):
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
         os.environ["CUDA_VISIBLE_DEVICES"] = cuda
-        command = ["python", 'scripts/binarize.py', '--config', configpath]
+        cmdstage = ["python", 'scripts/binarize.py', '--config', configpath]
+        command = " ".join(cmdstage)
         run_cmdA(command)
         os.chdir(main_path)
 
@@ -1252,7 +1257,6 @@ class tabview(ctk.CTkTabview):
         print(configpath)
 
     def train_function(self):
-
             try:
                 output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
                 lines = output.split("\n")
@@ -1275,7 +1279,9 @@ class tabview(ctk.CTkTabview):
             if not configpath or not ckpt_save_dir:
                 self.label.config(text="Please select your config and the data you would like to train first!")
                 return
-            run_cmdA(["python", 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset'])
+            cmdstage = ["python", 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset']
+            command = " ".join(cmdstage)
+            run_cmdA(command)
 
 
     def onnx_folder_save(self):
@@ -1296,27 +1302,27 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
-            command = ["python", 'scripts/export.py']
+            cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
             if export_check == 1:
                 print("exporting acoustic...")
-                command.append('acoustic')
-                command.append('--exp')
-                command.append(ckpt_save_abs)
-                command.append('--out')
-                command.append(onnx_folder_abs)
+                cmdstage.append('acoustic')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             elif export_check == 2:
                 print("exporting variance...")
-                command.append('variance')
-                command.append('--exp')
-                command.append(ckpt_save_abs)
-                command.append('--out')
-                command.append(onnx_folder_abs)
+                cmdstage.append('variance')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             else:
                 messagebox.showinfo("Required", "Please select a config type")
                 return
-            print(' '.join(command))
+            command = " ".join(cmdstage)
             run_cmdB(command)
             print("Getting the files in order...")
 
@@ -1358,27 +1364,27 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
-            command = ["python", 'scripts/export.py']
+            cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
             if export_check == 1:
                 print("exporting acoustic...")
-                command.append('acoustic')
-                command.append('--exp')
-                command.append(ckpt_save_abs)
-                command.append('--out')
-                command.append(onnx_folder_abs)
+                cmdstage.append('acoustic')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             elif export_check == 2:
                 print("exporting variance...")
-                command.append('variance')
-                command.append('--exp')
-                command.append(ckpt_save_abs)
-                command.append('--out')
-                command.append(onnx_folder_abs)
+                cmdstage.append('variance')
+                cmdstage.append('--exp')
+                cmdstage.append(ckpt_save_abs)
+                cmdstage.append('--out')
+                cmdstage.append(onnx_folder_abs)
             else:
                 messagebox.showinfo("Required", "Please select a config type")
                 return
-            print(' '.join(command))
+            command = " ".join(cmdstage)
             run_cmdB(command)
             print("Getting the files in order...")
 
@@ -1492,13 +1498,13 @@ class tabview(ctk.CTkTabview):
             ##return
         ou_name = ou_name_var.get()
         dict_path = os.path.join(aco_folder_dir, "dictionary.txt")
-        command = ["python", 'scripts/build_ou_vb.py', '--acoustic_onnx_folder', aco_folder_onnx, '--acoustic_config', aco_config, '--variance_onnx_folder', var_folder_onnx, '--variance_config', var_config, '--dictionary_path', dict_path, '--save_path', ou_export_location, '--name', ou_name]
+        cmdstage = ["python", 'scripts/build_ou_vb.py', '--acoustic_onnx_folder', aco_folder_onnx, '--acoustic_config', aco_config, '--variance_onnx_folder', var_folder_onnx, '--variance_config', var_config, '--dictionary_path', dict_path, '--save_path', ou_export_location, '--name', ou_name]
         if self.vocoder_onnx:
-            command.append('--vocoder_onnx_model')
-            command.append(self.vocoder_onnx)
+            cmdstage.append('--vocoder_onnx_model')
+            cmdstage.append(self.vocoder_onnx)
         else:
             print("No custom vocoder")
-        print(' '.join(command))
+        command = " ".join(cmdstage)
         run_cmdB(command)
     
     def run_adv_config(self):
