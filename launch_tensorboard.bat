@@ -1,5 +1,5 @@
 @echo off
-if exist "%cd%\python" (
+if exist "%cd%\miniconda" (
 	set "conda_hook=%cd%\condabin\conda_hook.bat"
 ) else if exist "C:\Users\%username%\anaconda3" (
 	set "conda_hook=C:\Users\%username%\anaconda3\condabin\conda_hook.bat"
