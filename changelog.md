@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.2.1
+- automated environment activation(environment names are now hardcoded, all users must use conda)
 ## 0.2.0
 - started official changelog
 - switch all users to conda or self-management
