@@ -20,7 +20,7 @@ echo installing GUI's requirements...
 %conda_pip% install -r requirements.txt --no-warn-script-location
 
 :: continuing everything else in python <333
-%conda_python% setup_conda.py
+%conda_python% setup_conda_envs.py
 
 echo miniconda setup complete.
 
