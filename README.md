@@ -12,7 +12,6 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 ## setup options
 ### If you have never used Python:
 - run conda_installer.bat
-- run setup.bat
 - use run_gui.bat to launch after that
 
 ### If you have used Python:
