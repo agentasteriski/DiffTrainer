@@ -13,16 +13,14 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 ### If you have never used Python:
 - run conda_installer.bat
 - run setup.bat
-- use run_guiA.bat for preprocessing and training
-- use run_guiB.bat for exporting onnx
+- use run_gui.bat to launch after that
 
 ### If you have used Python:
 - DiffTrainer by default uses Miniconda to manage conflicting package requirements.
 - To use an existing conda installation:
-  - run setup.bat to automatically create the required environments
-  - OR create two environments using the requirements files in /assets/
-    - run torchdropA.py in one and torchdropB.py in the other
-  - run_guiA.bat and run_guiB.bat launch Difftrainer in environments DifftrainerA and DifftrainerB respectively
+  - install requirements.txt to base environment
+  - run setup_conda_envs.py to configure the required environments
+- As of v0.2.1, the names of the environments are hardcoded requirements.
 
 
 ## language support
