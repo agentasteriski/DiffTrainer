@@ -900,8 +900,8 @@ class tabview(ctk.CTkTabview):
                     if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                         print("segmenting data...")
                         #dear god please work
-                        converter = os.path.join("nnsvs-db-converter", "db_converter.py")
-                        cmdstage = ["python", converter, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                        converterpy = os.path.join("nnsvs-db-converter", "db_converter.py")
+                        cmdstage = ["python", converterpy, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                         if self.estimatemidivar.get() == "default":
                             estimate_midi_print = "Default"
                             cmdstage.append("-m")
