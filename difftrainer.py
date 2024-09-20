@@ -10,7 +10,7 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.3"
+version = "0.3.4"
 releasedate = "09/19/24"
 
 username = os.environ.get('USERNAME')
