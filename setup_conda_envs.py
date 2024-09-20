@@ -59,17 +59,33 @@ def run_cmdB(cmd):
         print(f"Error running command: {e}")
 
 print("Creating environment for DiffSinger...")
+output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
+lines = output.split("\n")
+for line in lines:
+    if "difftrainerA" in line:
+        command = [conda_path, "remove", "-n", "difftrainerA", "--all", "--yes"]
+        yeet = " ".join(command)
+        run_cmd(yeet)
 run_cmd(f'"{conda_path}" env create -f assets/environmentA.yml')
 
 
 print("Creating environment for ONNX...")
+try:
+    output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
+    lines = output.split("\n")
+    for line in lines:
+        if "difftrainerb" in line.lower():
+            command = [conda_path, "remove", "-n", "difftrainerB", "--all", "--yes"]
+            yeet = " ".join(command)
+            run_cmd(yeet)
+except:
+    print("Error removing old environment")
 run_cmd(f'"{conda_path}" env create -f assets/environmentB.yml')
 
 
 ###setup envs###
 
 print("Setting up training environment...")
-run_cmd(f'"{conda_path}" activate DiffTrainerA')
 try:
     output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
     lines = output.split("\n")
@@ -81,8 +97,8 @@ try:
             nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
             command1 = " ".join(torch)
             command2 = " ".join(nottorch)
-            run_cmd(command1)
-            run_cmd(command2)
+            run_cmdA(command1)
+            run_cmdA(command2)
             break
     else:
         print("CUDA version not found")
@@ -90,20 +106,21 @@ try:
         nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
         command1 = " ".join(torch)
         command2 = " ".join(nottorch)
-        run_cmd(command1)
-        run_cmd(command2)
+        run_cmdA(command1)
+        run_cmdA(command2)
 except (FileNotFoundError, subprocess.CalledProcessError):
     print("CUDA is not available")
     torch = ["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "torchaudio==2.3.1", "--no-warn-script-location"]
     nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
     command1 = " ".join(torch)
     command2 = " ".join(nottorch)
-    run_cmd(command1)
-    run_cmd(command2)
-subprocess.run([conda_path, "deactivate"], check=True, shell=True)
+    run_cmdA(command1)
+    run_cmdA(command2)
+deac = [conda_path, "deactivate"]
+deactivate = " ".join(deac)
+run_cmd(deactivate)
 
 print("Setting up ONNX environment...")
-run_cmd(f'"{conda_path}" activate DiffTrainerB')
 try:
     output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
     lines = output.split("\n")
@@ -115,8 +132,8 @@ try:
             nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
             command1 = " ".join(torch)
             command2 = " ".join(nottorch)
-            run_cmd(command1)
-            run_cmd(command2)
+            run_cmdB(command1)
+            run_cmdB(command2)
             break
     else:
         print("CUDA version not found")
@@ -124,14 +141,15 @@ try:
         nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
         command1 = " ".join(torch)
         command2 = " ".join(nottorch)
-        run_cmd(command1)
-        run_cmd(command2)
+        run_cmdB(command1)
+        run_cmdB(command2)
 except (FileNotFoundError, subprocess.CalledProcessError):
     print("CUDA is not available")
     torch = ["pip", "install", "torch==1.13.1", "torchvision==0.14.1", "torchaudio==0.13.1", "--no-warn-script-location"]
     nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
     command1 = " ".join(torch)
     command2 = " ".join(nottorch)
-    run_cmd(command1)
-    run_cmd(command2)
-subprocess.run([conda_path, "deactivate"], check=True, shell=True)
+    run_cmdB(command1)
+    run_cmdB(command2)
+run_cmd(deactivate)
+run_cmd("pause")
