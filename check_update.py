@@ -46,8 +46,10 @@ else:
         	for filename in os.listdir(folder) if filename.endswith(".bat")]
 			[os.remove(filename)
 			for filename in os.listdir(main_path) if filename.endswith(".txt")]
+			[shutil.move(os.path.join(folder, filename), main_path)
+        	for filename in os.listdir(folder) if filename.endswith(".txt")]
 			[os.remove(filename)
-			for filename in os.listdir(main_path) if filename.endswith(".bat")]
+			for filename in os.listdir(main_path) if filename.endswith(".py")]
 			[shutil.move(os.path.join(folder, filename), main_path)
         	for filename in os.listdir(folder) if filename.endswith(".py")]
 			shutil.rmtree(folder)
