@@ -1975,7 +1975,7 @@ class App(ctk.CTk):
         super().__init__()
 
         self.title("DiffTrainer")
-        self.iconpath = ImageTk.PhotoImage(file=os.path.join("assets","sussy.png"))
+        self.iconpath = ImageTk.PhotoImage(file=os.path.join("assets","hard-drive.png"))
         self.wm_iconbitmap()
         self.iconphoto(False, self.iconpath)
         self.resizable(False, False)
