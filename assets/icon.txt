@@ -1,0 +1,3 @@
+placeholder icon 'hard-drive.png' is derived from Zondicons 'hard-drive.svg' under CC-BY-4.0
+https://www.zondicons.com/
+https://creativecommons.org/licenses/by/4.0/
