@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.4"
-releasedate = "09/19/24"
+version = "0.3.5"
+releasedate = "10/12/24"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -40,7 +40,7 @@ elif os.path.exists(os.path.join("Users", username, "anaconda3")):
 elif os.path.exists(os.path.join("Users", username, "miniconda3")):
     conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
 else:
-    conda_path = "conda"
+    conda_path = 'conda'
 
 
 guisettings = {
@@ -205,7 +205,7 @@ class tabview(ctk.CTkTabview):
         self.confnamebox.grid(row=1, column=2, padx=10)
         self.databutton = ctk.CTkButton(master=self.frame5, text=(self.L('datafolder')), command=self.grab_data_folder, font = self.font)
         self.databutton.grid(row=0, column=3, rowspan=2, padx=10)
-        self.tooltip = CTkToolTip(self.databutton, message=(self.L('datafolder2')))
+        self.tooltip = CTkToolTip(self.databutton, message=(self.L('datafolder2')), font = self.font)
         self.ckptbutton = ctk.CTkButton(master=self.frame5, text=(self.L('savefolder')), command=self.ckpt_folder_save, font = self.font)
         self.ckptbutton.grid(row=0, column=4, rowspan=2, padx=(0,15))
         self.tooltip = CTkToolTip(self.ckptbutton, message=(self.L('savefolder2')), font = self.font)
@@ -528,9 +528,9 @@ class tabview(ctk.CTkTabview):
     global run_cmdA
     def run_cmdA(cmd):
         if is_windows():
-            cmd = f'"{conda_path}" activate difftrainerA >nul && {cmd}'
+            cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. "{conda_path}" && conda activate difftrainerA && {cmd}'
+            cmd = f'. {conda_path} && conda activate difftrainerA && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
@@ -539,9 +539,9 @@ class tabview(ctk.CTkTabview):
     global run_cmdB
     def run_cmdB(cmd):
         if is_windows():
-            cmd = f'"{conda_path}" activate difftrainerB >nul && {cmd}'
+            cmd = f'{conda_path} activate difftrainerB >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. "{conda_path}" && conda activate difftrainerB && {cmd}'
+            cmd = f'. {conda_path} && conda activate difftrainerB && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
