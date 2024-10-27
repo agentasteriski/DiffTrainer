@@ -19,10 +19,9 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 ### 如果你用過Python：
 - DiffTrainer 預設使用 Miniconda 來管理衝突的套件要求。
 - 要使用現有的 conda 安裝：
- - 執行setup.bat自動建立所需的環境
- - 或使用 /assets/ 中的需求文件建立兩個環境
- - 在一個中執行 torchdropA.py，在另一個中執行 torchdropB.py
- - run_guiA.bat 和 run_guiB.bat 分別在環境 DifftrainerA 和 DifftrainerB 中啟動 Difftrainer
+- 將requirements.txt安裝到基礎環境
+ - 執行setup_conda_envs.py來配置所需的環境
+- 從 v0.2.1 開始，環境名稱是硬編碼要求。
 
 ## 語言支持
 DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) 來允許 GUI 語言選擇。 歡迎所有使用者將 [en_US](/strings/en_US.yaml) 中找到的文字翻譯為其他語言並提交拉取請求。
