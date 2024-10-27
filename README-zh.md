@@ -31,7 +31,6 @@ DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/t
 - 更好的自述文件
 
 最終
-- 完全支持 .ds 訓練
 - 高級匯出
 - 更多翻譯
 - 一個不 amogus 的圖標
