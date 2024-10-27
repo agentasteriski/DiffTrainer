@@ -8,14 +8,13 @@
 # 用於處理和訓練 DiffSinger 模型的 CustomTkInter GUI
 DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包中。
 - [nnsvs-db-converter](https://github.com/UtaUtaUtau/nnsvs-db-converter) 用於將 wav+lab 資料轉換為 wav/ds+csv
+- [SOME](https://github.com/openvpi/SOME) 用於估計音調
 - [DiffSinger](https://github.com/openvpi/DiffSinger)的基礎訓練功能
 - OpenUtau匯出腳本
 ## 安裝選項
 ### 如果你從未用過Python：
 - 執行 conda_installer.bat
-- 執行 setup.bat
-- 使用 run_guiA.bat 進行預處理和訓練
-- 使用 run_guiB.bat 匯出 onnx
+- 之後使用 run_gui.bat 啟動
 
 ### 如果你用過Python：
 - DiffTrainer 預設使用 Miniconda 來管理衝突的套件要求。
