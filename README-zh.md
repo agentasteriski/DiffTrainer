@@ -1,5 +1,10 @@
-# [重要更新資訊](https://github.com/agentasteriski/DiffTrainer/blob/main/ANNOUNCEMENT-zh.md)
 ![DiffTrainer](https://github.com/agentasteriski/DiffTrainer/blob/main/assets/difftrainerlogo.png?raw=true)
+
+# 多辭典測試版
+非常粗糙。已知問題：
+
+甚至不確定我們做得對嗎
+langloader 編輯器通常隱藏在主視窗後面
 
 *[English](./README.md)* **中文（正體）**
 
