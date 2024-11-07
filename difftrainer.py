@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.5"
-releasedate = "10/12/24"
+version = "0.3.6"
+releasedate = "11/7/24"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -1094,7 +1094,7 @@ class tabview(ctk.CTkTabview):
             if len(lang["dictionaries"]) == 1:
                 bitch_ass_config["use_lang_id"] = False
             else:
-                bitch_ass_config["Use_lang_id"] = True
+                bitch_ass_config["use_lang_id"] = True
             bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
             bitch_ass_config["merged_phoneme_groups"] = merges["merged_phoneme_groups"]
             bitch_ass_config["augmentation_args"]["random_pitch_shifting"]["enabled"] = enable_random_aug
