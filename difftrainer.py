@@ -1158,7 +1158,7 @@ class tabview(ctk.CTkTabview):
             if len(lang["dictionaries"]) == 1:
                 bitch_ass_config["use_lang_id"] = False
             else:
-                bitch_ass_config["Use_lang_id"] = True
+                bitch_ass_config["use_lang_id"] = True
             bitch_ass_config["f0_max"] = 1600
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["max_batch_size"] = int(batch) #ive never tried reaching the limit so ill trust kei's setting for this
