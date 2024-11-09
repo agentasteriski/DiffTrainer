@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.6"
-releasedate = "11/7/24"
+version = "0.3.7"
+releasedate = "11/8/24"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -1085,6 +1085,10 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config = yaml.safe_load(config)
             bitch_ass_config["datasets"] = allspeakers
             bitch_ass_config["num_spk"] = num_spk
+            if num_spk > 1:
+                bitch_ass_config["use_spk_id"] = True
+            else:
+                bitch_ass_config["use_spk_id"] = False
             bitch_ass_config["diff_loss_type"] = "l1"
             bitch_ass_config["main_loss_type"] = "l1"
             bitch_ass_config["f0_max"] = 1600
@@ -1150,6 +1154,10 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["diff_loss_type"] = "l1"
             bitch_ass_config["main_loss_type"] = "l1"
             bitch_ass_config["num_spk"] = num_spk
+            if num_spk > 1:
+                bitch_ass_config["use_spk_id"] = True
+            else:
+                bitch_ass_config["use_spk_id"] = False
             bitch_ass_config["datasets"] = allspeakers
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
             bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
