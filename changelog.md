@@ -1,5 +1,7 @@
 # Changelog
 
+## 0.2.4
+- added backbone toggle(requires Diffsinger update 11/16/24)
 ## 0.2.1
 - automated environment activation(environment names are now hardcoded, all users must use conda)
 ## 0.2.0
