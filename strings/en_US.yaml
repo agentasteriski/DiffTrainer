@@ -56,9 +56,10 @@ confsel: "Select configuration:"
 confsel2: "Select from this list of preset configurations.\n All options have been tested."
 advconfig: "Advanced configuration:"
 advconfig2: "Select individual options for the configuration.\n Non-functional combinations are possible."
-
-vr: "Enable VR preprocessing"
+vr: "VR preprocessing"
 vr2: "Can produce more accurate variance results, but requires high processing power. \n Only recommended for GPU users."
+wavenet: "Alternate backbone"
+wavenet2: "Advanced configuration. \n Reverts acoustic to the previous wavenet default, or enables lynxnet for variance." 
 
 speaker: "Speaker"
 spk_lang: "Language"
