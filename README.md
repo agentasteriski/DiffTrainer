@@ -3,6 +3,9 @@ Very rough.
 Known issues:
 - not even sure we're doing this right
 - langloader editor usually hides behind main window
+- honestly langloader is just ugly and bad
+- if you load one dataset, change your mind and load another, it fails to write the config
+
 
 **English** *[中文（正體）](./README-zh.md)*
 
