@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.7"
-releasedate = "11/8/24"
+version = "0.3.8"
+releasedate = "11/16/24"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -102,7 +102,7 @@ class tabview(ctk.CTkTabview):
         self.label.grid(row=1, column=1)
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('changelog'), font = self.font)
         self.button.grid(row=2, column=0, padx=50)
-        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/SOME/changelog.md"))
+        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/multidict/changelog.md"))
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
@@ -217,7 +217,7 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.label, message=(self.L('confsel2')), font = self.font)
         global preset
         preset = ctk.StringVar()
-        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback, font = self.font)
+        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback, state="readonly", font = self.font)
         self.configbox.grid(row=0, column=1)
         self.label = ctk.CTkLabel(master=self.frame6, text=(self.L('advconfig')), font = self.font)
         self.label.grid(row=1, column=0, padx=15)
@@ -263,8 +263,13 @@ class tabview(ctk.CTkTabview):
         global vr
         vr = tk.BooleanVar()
         self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = True, offvalue = False, font = self.font)
-        self.confbox10.grid(row=3, column=0, columnspan=2, pady=15)
+        self.confbox10.grid(row=3, column=0, pady=15)
         self.tooltip = CTkToolTip(self.confbox10, message=(self.L('vr2')), font = self.font)
+        global wavenet
+        wavenet = tk.BooleanVar()
+        self.confbox11 = ctk.CTkCheckBox(master=self.frame6, text=(self.L('wavenet')), variable=wavenet, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
+        self.confbox11.grid(row=3, column=1, pady=15)
+        self.tooltip = CTkToolTip(self.confbox11, message=(self.L('wavenet2')), font = self.font)
 
         self.frame14 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -442,6 +447,7 @@ class tabview(ctk.CTkTabview):
             self.confbox7.configure(state=tk.NORMAL)
             self.confbox8.configure(state=tk.NORMAL)
             self.confbox9.configure(state=tk.NORMAL)
+            self.confbox11.configure(state=tk.NORMAL)
             self.confnamebox.configure(state=tk.NORMAL)
         elif adv_on.get() == "off":
             self.confbox1.configure(state=tk.DISABLED)
@@ -453,6 +459,7 @@ class tabview(ctk.CTkTabview):
             self.confbox7.configure(state=tk.DISABLED)
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
+            self.confbox11.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
         else:
             self.confbox1.configure(state=tk.DISABLED)
@@ -464,6 +471,7 @@ class tabview(ctk.CTkTabview):
             self.confbox7.configure(state=tk.DISABLED)
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
+            self.confbox11.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
 
     def combobox_callback(self, choice):
@@ -604,6 +612,10 @@ class tabview(ctk.CTkTabview):
         SOME_url2 = "https://github.com/agentasteriski/SOME-lite/archive/refs/heads/main.zip"
         SOME_zip2 = os.path.join(os.getcwd(), SOME_url2.split("/")[-1])
 
+        dicts_url = "https://github.com/agentasteriski/difftrainer-dictfiles/archive/refs/heads/main.zip"
+        dicts_zip = os.path.join(os.getcwd(), dicts_url.split("/")[-1])
+        dicts_subfolder_name = "difftrainer-dictfiles-main"
+
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
             if not user_response:
@@ -625,6 +637,11 @@ class tabview(ctk.CTkTabview):
                     shutil.rmtree("SOME")
                 except Exception as e:
                     print(f"Error deleting the existing 'SOME' folder: {e}")
+            if os.path.exists("dictionaries2"):
+                try:
+                    shutil.rmtree("dictionaries2")
+                except Exception as e:
+                    print(f"Error deleting the existing 'dictionaries2' folder: {e}")
 
         response = requests.get(uta_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
@@ -634,7 +651,6 @@ class tabview(ctk.CTkTabview):
                     if chunk:
                         f.write(chunk)
                         progress_bar.update(len(chunk))
-
         with zipfile.ZipFile(uta_zip, "r") as zip_ref:
             zip_ref.extractall()
         os.remove(uta_zip)
@@ -656,11 +672,6 @@ class tabview(ctk.CTkTabview):
         if os.path.exists(diffsinger_script_folder_name):
             os.rename(diffsinger_script_folder_name, "DiffSinger") #this beech too
 
-        for filename in os.listdir("dictionaries"):
-            if filename.endswith(".yaml") or filename.endswith(".txt"):
-                filepath = os.path.join("dictionaries", filename)
-        if os.path.isfile(filepath):
-            shutil.move(filepath, "Diffsinger/dictionaries")
 
         response = requests.get(vocoder_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
@@ -723,6 +734,27 @@ class tabview(ctk.CTkTabview):
         os.remove(SOME_zip2)
         if os.path.exists("SOME-lite-main"):
             os.rename("SOME-lite-main", "SOME") #this beech too
+        
+        response = requests.get(dicts_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading dictionary files") as progress_bar:
+            with open("main.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(dicts_zip, "r") as zip_ref:
+            zip_ref.extractall()
+        os.remove(dicts_zip)
+        if os.path.exists(dicts_subfolder_name):
+            os.rename(dicts_subfolder_name, "dictionaries2")
+        for filename in os.listdir("dictionaries2"):
+            if filename.endswith(".yaml") or filename.endswith(".txt"):
+                filepath = os.path.join("dictionaries2", filename)
+            if os.path.isfile(filepath):
+                shutil.move(filepath, "Diffsinger/dictionaries")
+            #shutil.rmtree("dictionaries")
+            shutil.rmtree("dictionaries2")
 
         if is_windows():
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
@@ -1042,6 +1074,7 @@ class tabview(ctk.CTkTabview):
         shallow = shallow_diff.get()
         pre_type = vr.get()
         ds = preferds.get()
+        backbone = wavenet.get()
         save_interval = save_int.get()
         batch = batch_size.get()
         selected_config_type = trainselect.get()
@@ -1115,6 +1148,10 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_voicing_embed"] = voicing
             bitch_ass_config["tension_logit_max"] = 8
             bitch_ass_config["tension_logit_min"] = -8
+            bitch_ass_config["tension_smooth_width"] = 0.06
+            bitch_ass_config["voicing_smooth_width"] = 0.06
+            bitch_ass_config["breathiness_smooth_width"] = 0.06
+            bitch_ass_config["energy_smooth_width"] = 0.06
             #diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
@@ -1125,7 +1162,17 @@ class tabview(ctk.CTkTabview):
             else:
                 bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
-
+            if backbone==True:
+                bitch_ass_config["backbone_type"] = "wavenet"
+                bitch_ass_config["backbone_args"]["num_channels"] = 512
+                bitch_ass_config["backbone_args"]["num_layers"] = 20
+                bitch_ass_config["backbone_args"]["dilation_cycle_length"] = 4
+            else:
+                bitch_ass_config["backbone_type"] = "lynxnet"
+                bitch_ass_config["backbone_args"]["num_channels"] = 1024
+                bitch_ass_config["backbone_args"]["num_layers"] = 6
+                bitch_ass_config["backbone_args"]["kernel_size"] = 31
+                bitch_ass_config["backbone_args"]["dropout_rate"] = 0.0
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
@@ -1180,6 +1227,10 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_melody_encoder"] = pitch
             bitch_ass_config["tension_logit_max"] = 8
             bitch_ass_config["tension_logit_min"] = -8
+            bitch_ass_config["tension_smooth_width"] = 0.06
+            bitch_ass_config["voicing_smooth_width"] = 0.06
+            bitch_ass_config["breathiness_smooth_width"] = 0.06
+            bitch_ass_config["energy_smooth_width"] = 0.06
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             bitch_ass_config["diff_accelerator"] = "unipc"
             #vr stuff please update it when you add a button that toggle it v2
@@ -1188,18 +1239,35 @@ class tabview(ctk.CTkTabview):
             else:
                 bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
+            if backbone==True:
+                bitch_ass_config["variances_prediction_args"]["backbone_type"] = "lynxnet"
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 384
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "lynxnet"
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 512
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 6
+   
+            else:
+                bitch_ass_config["variances_prediction_args"]["backbone_type"] = "wavenet"
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 192
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 10
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 4
+                bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "wavenet"
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 256
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 20
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 5
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
                 with open(custom_name, "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False)
                 print("wrote custom variance config!")
 
             else:
                 with open("DiffSinger/configs/variance.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False)
                 print("wrote variance config!")
 
         new_f0_max=1600
