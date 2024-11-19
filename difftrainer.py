@@ -11,8 +11,8 @@ import pyglet
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.3"
-releasedate = "10/12/24"
+version = "0.2.4"
+releasedate = "11/16/24"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -217,7 +217,7 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.label, message=(self.L('confsel2')), font = self.font)
         global preset
         preset = ctk.StringVar()
-        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback, font = self.font)
+        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback, state="readonly", font = self.font)
         self.configbox.grid(row=0, column=1)
         self.label = ctk.CTkLabel(master=self.frame6, text=(self.L('advconfig')), font = self.font)
         self.label.grid(row=1, column=0, padx=15)
@@ -263,8 +263,13 @@ class tabview(ctk.CTkTabview):
         global vr
         vr = tk.BooleanVar()
         self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = True, offvalue = False, font = self.font)
-        self.confbox10.grid(row=3, column=0, columnspan=2, pady=15)
+        self.confbox10.grid(row=3, column=0, pady=15)
         self.tooltip = CTkToolTip(self.confbox10, message=(self.L('vr2')), font = self.font)
+        global wavenet
+        wavenet = tk.BooleanVar()
+        self.confbox11 = ctk.CTkCheckBox(master=self.frame6, text=(self.L('wavenet')), variable=wavenet, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
+        self.confbox11.grid(row=3, column=1, pady=15)
+        self.tooltip = CTkToolTip(self.confbox11, message=(self.L('wavenet2')), font = self.font)
 
         self.frame14 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -440,6 +445,7 @@ class tabview(ctk.CTkTabview):
             self.confbox7.configure(state=tk.NORMAL)
             self.confbox8.configure(state=tk.NORMAL)
             self.confbox9.configure(state=tk.NORMAL)
+            self.confbox11.configure(state=tk.NORMAL)
             self.confnamebox.configure(state=tk.NORMAL)
         elif adv_on.get() == "off":
             self.confbox1.configure(state=tk.DISABLED)
@@ -451,6 +457,7 @@ class tabview(ctk.CTkTabview):
             self.confbox7.configure(state=tk.DISABLED)
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
+            self.confbox11.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
         else:
             self.confbox1.configure(state=tk.DISABLED)
@@ -462,6 +469,7 @@ class tabview(ctk.CTkTabview):
             self.confbox7.configure(state=tk.DISABLED)
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
+            self.confbox11.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
 
     def combobox_callback(self, choice):
@@ -1032,6 +1040,7 @@ class tabview(ctk.CTkTabview):
         voicing = trainvoc.get()
         shallow = shallow_diff.get()
         pre_type = vr.get()
+        backbone = wavenet.get()
         ds = preferds.get()
         save_interval = save_int.get()
         batch = batch_size.get()
@@ -1137,6 +1146,17 @@ class tabview(ctk.CTkTabview):
             else:
                 bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
+            if backbone==True:
+                bitch_ass_config["backbone_type"] = "wavenet"
+                bitch_ass_config["backbone_args"]["num_channels"] = 512
+                bitch_ass_config["backbone_args"]["num_layers"] = 20
+                bitch_ass_config["backbone_args"]["dilation_cycle_length"] = 4
+            else:
+                bitch_ass_config["backbone_type"] = "lynxnet"
+                bitch_ass_config["backbone_args"]["num_channels"] = 1024
+                bitch_ass_config["backbone_args"]["num_layers"] = 6
+                bitch_ass_config["backbone_args"]["kernel_size"] = 31
+                bitch_ass_config["backbone_args"]["dropout_rate"] = 0.0
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
@@ -1188,6 +1208,23 @@ class tabview(ctk.CTkTabview):
             else:
                 bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
+            if backbone==True:
+                bitch_ass_config["variances_prediction_args"]["backbone_type"] = "lynxnet"
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 384
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "lynxnet"
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 512
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 6
+   
+            else:
+                bitch_ass_config["variances_prediction_args"]["backbone_type"] = "wavenet"
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 192
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 10
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 4
+                bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "wavenet"
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 256
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 20
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 5
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
