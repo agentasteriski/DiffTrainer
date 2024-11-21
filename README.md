@@ -16,17 +16,20 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - [DiffSinger](https://github.com/openvpi/DiffSinger)'s primary training
 - OpenUtau export scripts
 ## setup options
+### If you have an NVIDIA GPU:
+- make sure [CUDA Toolkit](https://developer.nvidia.com/cuda-11-8-0-download-archive) is installed
+- proceed to next 'if'
 ### If you have never used Python:
 - run conda_installer.bat
+- "Update Tools" once DiffTrainer is running
 - use run_gui.bat to launch after that
-
 ### If you have used Python:
 - DiffTrainer by default uses Miniconda to manage conflicting package requirements.
 - To use an existing conda installation:
   - install requirements.txt to base environment
   - run setup_conda_envs.py to configure the required environments
+  - "Update Tools" on the first tab to complete the install
 - As of v0.2.1, the names of the environments are hardcoded requirements.
-
 
 
 ## language support
