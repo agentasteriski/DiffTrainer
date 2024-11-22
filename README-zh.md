@@ -4,6 +4,8 @@
 非常粗糙。已知問題：
 - 甚至不確定我們做得對嗎
 - langloader 編輯器通常隱藏在主視窗後面
+- 老實說 langloader 又醜又糟糕
+- 如果您載入一個資料集，然後改變主意並載入另一個資料集，則無法寫入配置
 
 
 *[English](./README.md)* **中文（正體）**
@@ -17,8 +19,13 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 - [DiffSinger](https://github.com/openvpi/DiffSinger)的基礎訓練功能
 - OpenUtau匯出腳本
 ## 安裝選項
+### 如果您有 NVIDIA GPU：
+- 確保已安裝了 [CUDA Toolkit](https://developer.nvidia.com/cuda-11-8-0-download-archive)
+- 繼續下一個“如果”
+
 ### 如果你從未用過Python：
 - 執行 conda_installer.bat
+- 在 DiffTrainer 上運行一次“更新工具”
 - 之後使用 run_gui.bat 啟動
 
 ### 如果你用過Python：
@@ -26,6 +33,7 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 - 要使用現有的 conda 安裝：
   - 將requirements.txt安裝到基礎環境
   - 執行setup_conda_envs.py來配置所需的環境
+  - 點擊第一個選項卡上的「更新工具」以完成安裝
 - 從 v0.2.1 開始，環境名稱是硬編碼要求。
 
 ## 語言支持
