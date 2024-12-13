@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.8"
-releasedate = "11/16/24"
+version = "0.3.9"
+releasedate = "12/12/24"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -754,7 +754,7 @@ class tabview(ctk.CTkTabview):
             if os.path.isfile(filepath):
                 shutil.move(filepath, "Diffsinger/dictionaries")
             #shutil.rmtree("dictionaries")
-            shutil.rmtree("dictionaries2")
+        shutil.rmtree("dictionaries2")
 
         if is_windows():
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
