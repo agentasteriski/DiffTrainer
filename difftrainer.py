@@ -6,12 +6,13 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from ezlocalizr import ezlocalizr
+#import pyglet
 
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.9"
-releasedate = "12/12/24"
+version = "0.3.11"
+releasedate = "1/1/2025"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -47,7 +48,30 @@ guisettings = {
     'lang': 'en_US',
 }
 
+#if is_windows():
+    #pyglet.options['win32_gdi_font'] = True
+    #pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
+    #pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
+    #pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
+    #pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
 
+if os.path.exists(('assets/guisettings.yaml')):
+    with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
+        try:
+                guisettings.update(yaml.safe_load(c))
+                c.close()
+        except yaml.YAMLError as exc:
+            print("No settings detected, defaulting to EN_US")
+
+ctk.FontManager.load_font(os.path.join("assets","RedHatDisplay-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join("assets","MPLUS2-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join("assets","NotoSansSC-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join("assets","NotoSansTC-Regular.ttf"))
+
+font_en = 'Red Hat Display'
+font_jp = 'M PLUS 2'
+font_cn = 'Noto Sans SC'
+font_tw = 'Noto Sans TC'
 
 class tabview(ctk.CTkTabview):
 
@@ -2056,36 +2080,13 @@ class App(ctk.CTk):
         self.iconphoto(False, self.iconpath)
         self.resizable(False, False)
         create_widgets(self)
-    import pyglet #idk a mac user said this helped and it still works
-    pyglet.options['win32_gdi_font'] = True
-
-    if os.path.exists(('assets/guisettings.yaml')):
-        with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
-            try:
-                guisettings.update(yaml.safe_load(c))
-                c.close()
-            except yaml.YAMLError as exc:
-                print("No settings detected, defaulting to EN_US")
-
-    pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
-    global font_en
-    font_en = 'Red Hat Display'
-    pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
-    global font_jp
-    font_jp = 'M PLUS 2'
-    pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
-    global font_cn
-    font_cn = 'Noto Sans SC'
-    pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
-    global font_tw
-    font_tw = 'Noto Sans TC'
+    
 
     def on_tab_change(self, event):
         os.chdir(main_path)
 
     global create_widgets
     def create_widgets(self):
-        self.lang = ctk.StringVar(value=guisettings['lang'])
         self.tab_view = tabview(master=self)
         self.tab_view.grid(row=0, column=0, padx=10, pady=(0, 15))
 
