@@ -6,13 +6,13 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from ezlocalizr import ezlocalizr
-#import pyglet
+
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.6"
-releasedate = "1/1/25"
+version = "0.2.7"
+releasedate = "1/2/25"
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -26,12 +26,6 @@ guisettings = {
     'lang': 'en_US',
 }
 
-#if is_windows():
-    #pyglet.options['win32_gdi_font'] = True
-    #pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
-    #pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
-    #pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
-    #pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
 
 if os.path.exists(('assets/guisettings.yaml')):
     with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
@@ -51,29 +45,30 @@ font_jp = 'M PLUS 2'
 font_cn = 'Noto Sans SC'
 font_tw = 'Noto Sans TC'
 
-if os.path.exists(os.path.join(main_path, "miniconda")):
-    conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-    conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-    conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("opt", "miniconda3")):
-    conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("opt", "anaconda3")):
-    conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "anaconda3")):
-    conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "miniconda3")):
-    conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
-else:
-    conda_path = "conda"
-
-
-
+if is_windows():
+    if os.path.exists(os.path.join(main_path, "miniconda")):
+        conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: conda_path = "conda"
+elif is_macos():
+    if os.path.exists(os.path.join("opt", "miniconda3")):
+        conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("opt", "anaconda3")):
+        conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
+elif is_linux():
+    if os.path.exists(os.path.join("Users", username, "anaconda3")):
+        conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("Users", username, "miniconda3")):
+        conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
 
 
 
@@ -563,7 +558,7 @@ class tabview(ctk.CTkTabview):
         if is_windows():
             cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. {conda_path} && conda activate difftrainerA && {cmd}'
+            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerA && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
@@ -574,7 +569,7 @@ class tabview(ctk.CTkTabview):
         if is_windows():
             cmd = f'{conda_path} activate difftrainerB >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. {conda_path} && conda activate difftrainerB && {cmd}'
+            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerB && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
@@ -798,6 +793,7 @@ class tabview(ctk.CTkTabview):
             # incase if user labeled SP as pau but i think utas script already account SP so meh
             try:
                 for root, dirs, files in os.walk(self.all_shits):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for filename in files:
                         if filename.endswith(".lab"):
                             file_path = os.path.join(root, filename)
@@ -821,6 +817,7 @@ class tabview(ctk.CTkTabview):
             try:
                 phoneme_folder_path = self.all_shits
                 for root, dirs, files in os.walk(phoneme_folder_path):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".lab"):
                             fpath = os.path.join(root, file)
@@ -833,6 +830,7 @@ class tabview(ctk.CTkTabview):
                                             phonemes.add(phoneme)
                 phoneme_folder_path = all_shits_not_wav_n_lab
                 for root, dirs, files in os.walk(phoneme_folder_path):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".csv"):
                             fpath = os.path.join(root, file)
@@ -846,6 +844,7 @@ class tabview(ctk.CTkTabview):
                                                 phonemes.add(phoneme)
                 phoneme_folder_path = self.all_shits
                 for root, dirs, files in os.walk(phoneme_folder_path):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".json"):
                             fpath = os.path.join(root, file)
@@ -923,6 +922,9 @@ class tabview(ctk.CTkTabview):
                 for raw_folder_name in os.listdir(self.all_shits):
                     raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
                     raw_folder_path = os.path.normpath(raw_folder_path)
+                    # Exclude .DS_Store and any other hidden files or directories
+                    if raw_folder_name.startswith('.'):
+                        continue
                     if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                         print("segmenting data...")
                         #dear god please work
@@ -979,6 +981,9 @@ class tabview(ctk.CTkTabview):
                     for raw_folder_name in os.listdir(self.all_shits):
                         raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
                         raw_folder_path = os.path.normpath(raw_folder_path)
+                        # Exclude .DS_Store and any other hidden files or directories
+                        if raw_folder_name.startswith('.'):
+                            continue
                         for filename in os.listdir(raw_folder_path):
                             if filename.endswith(".wav") or filename.endswith(".lab"):
                                 os.remove(os.path.join(raw_folder_path, filename))
@@ -996,6 +1001,8 @@ class tabview(ctk.CTkTabview):
             try:
                     if self.estimatemidivar.get() == "some":
                         for speaker in os.listdir(self.all_shits):
+                            if speaker.startswith('.'):
+                                continue
                             speaker_path = os.path.join(self.all_shits, speaker)
                             if os.path.isdir(speaker_path):
                                 print("loading SOME...")
@@ -1014,7 +1021,7 @@ class tabview(ctk.CTkTabview):
         raw_dir = []
         self.spk_lang = []
         print("data path: " + self.data_folder)
-        spk_name_list = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
+        spk_name_list = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name)) and not folder_name.startswith('.')]
         for folder_name in spk_name_list:
             folder_path = os.path.join(self.data_folder, folder_name)
             raw_dir.append(folder_path)
@@ -1053,9 +1060,9 @@ class tabview(ctk.CTkTabview):
             messagebox.showinfo("Required", "Please select a save directory")
             return
         print("writing config...")
-        spk_name = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
+        spk_name = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name)) and not folder_name.startswith('.')]
         # i used spk_name for something else cus i forgor now imma just copy and paste it
-        spk_names = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name))]
+        spk_names = [folder_name for folder_name in os.listdir(self.data_folder) if os.path.isdir(os.path.join(self.data_folder, folder_name)) and not folder_name.startswith('.')]
         num_spk = len(spk_name)
         raw_dir = []
         enable_random_aug = randaug.get()
@@ -1084,6 +1091,7 @@ class tabview(ctk.CTkTabview):
             all_ds_files = []
             if ds == False:
                 for root, dirs, files in os.walk(self.data_folder):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".wav"):
                             full_path = os.path.join(root, file)
@@ -1093,6 +1101,7 @@ class tabview(ctk.CTkTabview):
                 random_ass_test_files = [os.path.splitext(os.path.basename(file))[0] for file in random_ass_wavs]
             else:
                 for root, dirs, files in os.walk(self.data_folder):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".ds"):
                             full_path = os.path.join(root, file)
