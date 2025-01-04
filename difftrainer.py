@@ -11,10 +11,10 @@ from ezlocalizr import ezlocalizr
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.7"
-releasedate = "1/2/25"
+version = "0.2.8"
+releasedate = "1/4/25"
 
-username = os.environ.get('USERNAME')
+
 def is_linux():
     return sys.platform.startswith("linux")
 def is_windows():
@@ -46,6 +46,7 @@ font_cn = 'Noto Sans SC'
 font_tw = 'Noto Sans TC'
 
 if is_windows():
+    username = os.environ.get('USERNAME')
     if os.path.exists(os.path.join(main_path, "miniconda")):
         conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
     elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
@@ -64,6 +65,7 @@ elif is_macos():
         conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
     else: conda_path = "conda"
 elif is_linux():
+    username = os.environ.get('USER')
     if os.path.exists(os.path.join("Users", username, "anaconda3")):
         conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
     elif os.path.exists(os.path.join("Users", username, "miniconda3")):
