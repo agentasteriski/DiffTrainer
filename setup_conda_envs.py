@@ -1,7 +1,7 @@
 #doing this with python instead of cmd cus it stops running after 1 env setup????
 import os, subprocess, sys
 
-username = os.environ.get('USERNAME')
+
 def is_linux():
     return sys.platform.startswith("linux")
 def is_windows():
@@ -10,26 +10,32 @@ def is_macos():
     return sys.platform.startswith("darwin")
 
 mainpath = os.getcwd()
-if os.path.exists(os.path.join(mainpath, "miniconda")):
-    conda_path = os.path.join(mainpath, "miniconda", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-    conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-    conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("opt", "miniconda3")):
-    conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("opt", "anaconda3")):
-    conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "anaconda3")):
-    conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "miniconda3")):
-    conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
-else:
-    conda_path = "conda"
+if is_windows():
+    username = os.environ.get('USERNAME')
+    if os.path.exists(os.path.join(mainpath, "miniconda")):
+        conda_path = os.path.join(mainpath, "miniconda", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: conda_path = "conda"
+elif is_macos():
+    if os.path.exists(os.path.join("opt", "miniconda3")):
+        conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("opt", "anaconda3")):
+        conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
+elif is_linux():
+    username = os.environ.get('USER')
+    if os.path.exists(os.path.join("Users", username, "anaconda3")):
+        conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("Users", username, "miniconda3")):
+        conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
 ###create envs###
 
 def run_cmd(cmd):
@@ -42,7 +48,7 @@ def run_cmdA(cmd):
     if is_windows():
         cmd = f'"{conda_path}" activate difftrainerA >nul && {cmd}'
     elif is_linux() or is_macos():
-        cmd = f'. "{conda_path}" && conda activate difftrainerA && {cmd}'
+        cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerA && {cmd}'
     try:
         subprocess.run(cmd, check=True, shell=True)
     except subprocess.CalledProcessError as e:
@@ -52,21 +58,28 @@ def run_cmdB(cmd):
     if is_windows():
         cmd = f'"{conda_path}" activate difftrainerB >nul && {cmd}'
     elif is_linux() or is_macos():
-        cmd = f'. "{conda_path}" && conda activate difftrainerB && {cmd}'
+        cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerB && {cmd}'
     try:
         subprocess.run(cmd, check=True, shell=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running command: {e}")
+
+def run_cmdBase(cmd):
+    if is_windows():
+        cmd = cmd
+    elif is_linux() or is_macos():
+        cmd = f'eval "$(conda shell.bash hook)" && {cmd}'
 
 print("Creating environment for DiffSinger...")
 output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
 lines = output.split("\n")
 for line in lines:
     if "difftrainerA" in line:
-        command = [conda_path, "remove", "-n", "difftrainerA", "--all", "--yes"]
-        yeet = " ".join(command)
-        run_cmd(yeet)
-run_cmd(f'"{conda_path}" env create -f assets/environmentA.yml')
+            command = [conda_path, "remove", "-n", "difftrainerA", "--all", "--yes"]
+            yeet = " ".join(command)
+            run_cmdBase(yeet)
+envtxt = os.path.join(mainpath, "assets", "environmentA.yml")
+run_cmdBase(f'"{conda_path}" env create -f {envtxt}')
 
 
 print("Creating environment for ONNX...")
@@ -77,10 +90,11 @@ try:
         if "difftrainerb" in line.lower():
             command = [conda_path, "remove", "-n", "difftrainerB", "--all", "--yes"]
             yeet = " ".join(command)
-            run_cmd(yeet)
+            run_cmdBase(yeet)
 except:
     print("Error removing old environment")
-run_cmd(f'"{conda_path}" env create -f assets/environmentB.yml')
+envtxt = os.path.join(mainpath, "assets", "environmentB.yml")
+run_cmdBase(f'"{conda_path}" env create -f {envtxt}')
 
 
 ###setup envs###
@@ -118,7 +132,7 @@ except (FileNotFoundError, subprocess.CalledProcessError):
     run_cmdA(command2)
 deac = [conda_path, "deactivate"]
 deactivate = " ".join(deac)
-run_cmd(deactivate)
+run_cmdBase(deactivate)
 
 print("Setting up ONNX environment...")
 try:
@@ -151,5 +165,5 @@ except (FileNotFoundError, subprocess.CalledProcessError):
     command2 = " ".join(nottorch)
     run_cmdB(command1)
     run_cmdB(command2)
-run_cmd(deactivate)
+run_cmdBase(deactivate)
 run_cmd("pause")

@@ -10,10 +10,10 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.12"
-releasedate = "1/2/2025"
+version = "0.3.13"
+releasedate = "1/4/2025"
 
-username = os.environ.get('USERNAME')
+
 def is_linux():
     return sys.platform.startswith("linux")
 def is_windows():
@@ -22,6 +22,7 @@ def is_macos():
     return sys.platform.startswith("darwin")
 
 if is_windows():
+    username = os.environ.get('USERNAME')
     if os.path.exists(os.path.join(main_path, "miniconda")):
         conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
     elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
@@ -40,6 +41,7 @@ elif is_macos():
         conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
     else: conda_path = "conda"
 elif is_linux():
+    username = os.environ.get('USER')
     if os.path.exists(os.path.join("Users", username, "anaconda3")):
         conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
     elif os.path.exists(os.path.join("Users", username, "miniconda3")):
@@ -60,10 +62,10 @@ if os.path.exists(('assets/guisettings.yaml')):
         except yaml.YAMLError as exc:
             print("No settings detected, defaulting to EN_US")
 
-ctk.FontManager.load_font(os.path.join("assets","RedHatDisplay-Regular.ttf"))
-ctk.FontManager.load_font(os.path.join("assets","MPLUS2-Regular.ttf"))
-ctk.FontManager.load_font(os.path.join("assets","NotoSansSC-Regular.ttf"))
-ctk.FontManager.load_font(os.path.join("assets","NotoSansTC-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","RedHatDisplay-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","MPLUS2-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansSC-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansTC-Regular.ttf"))
 
 font_en = 'Red Hat Display'
 font_jp = 'M PLUS 2'
@@ -1428,6 +1430,24 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
+            spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
+            with open(spkmap, "r") as file:
+                data = json.load(file)
+            result = {}
+            seen_values = {}
+            for key, value in data.items():
+                if value in seen_values:
+                    # For duplicates, truncate both keys to a common prefix
+                    original_key = seen_values[value]
+                    common_prefix = original_key.split('-')[0]
+                    result.pop(original_key)  # Remove the original key
+                    result[common_prefix] = value  # Add the common prefix
+                else:
+                    # Add the original key to the result
+                    result[key] = value
+                    seen_values[value] = key
+            with open(spkmap, "w") as file:
+                json.dump(result, file)
             cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
