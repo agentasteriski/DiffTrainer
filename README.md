@@ -5,6 +5,7 @@ Known issues:
 - langloader editor usually hides behind main window
 - honestly langloader is just ugly and bad
 - if you load one dataset, change your mind and load another, it fails to write the config
+- when merging speakers, spk_map.json has to be manually edited so only 1 speakers has that number
 
 
 **English** *[中文（正體）](./README-zh.md)*
