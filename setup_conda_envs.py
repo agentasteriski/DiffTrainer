@@ -69,16 +69,23 @@ def run_cmdBase(cmd):
         cmd = cmd
     elif is_linux() or is_macos():
         cmd = f'eval "$(conda shell.bash hook)" && {cmd}'
+    try:
+        subprocess.run(cmd, check=True, shell=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running command: {e}")
 
 print("Creating environment for DiffSinger...")
-output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
-lines = output.split("\n")
-for line in lines:
-    if "difftrainerA" in line:
-            command = [conda_path, "remove", "-n", "difftrainerA", "--all", "--yes"]
-            yeet = " ".join(command)
-            run_cmdBase(yeet)
-envtxt = os.path.join(mainpath, "assets", "environmentA.yml")
+try:
+    output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
+    lines = output.split("\n")
+    for line in lines:
+        if "difftrainerA" in line:
+                command = [conda_path, "remove", "-n", "difftrainerA", "--all", "--yes"]
+                yeet = " ".join(command)
+                run_cmdBase(yeet)
+    envtxt = os.path.join(mainpath, "assets", "environmentA.yml")
+except:
+    print("Error removing old environment")
 run_cmdBase(f'"{conda_path}" env create -f {envtxt}')
 
 
