@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.13
+- sorry I always forget to update this section
+- there's probably a few changes that should be mentioned but I forgot
+- should actually work on Linux/Mac now
+- automates merging speakers in spk_map.json
 ## 0.3.0(multidict beta)
 - new config format for multidict setup
 - new settings files: langloader.yaml and merged.yaml

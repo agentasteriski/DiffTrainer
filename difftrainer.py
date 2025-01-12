@@ -10,10 +10,10 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.8"
-releasedate = "11/16/24"
+version = "0.3.13"
+releasedate = "1/4/2025"
 
-username = os.environ.get('USERNAME')
+
 def is_linux():
     return sys.platform.startswith("linux")
 def is_windows():
@@ -21,26 +21,32 @@ def is_windows():
 def is_macos():
     return sys.platform.startswith("darwin")
 
-if os.path.exists(os.path.join(main_path, "miniconda")):
-    conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-    conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-    conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("opt", "miniconda3")):
-    conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("opt", "anaconda3")):
-    conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "anaconda3")):
-    conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "miniconda3")):
-    conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
-else:
-    conda_path = 'conda'
+if is_windows():
+    username = os.environ.get('USERNAME')
+    if os.path.exists(os.path.join(main_path, "miniconda")):
+        conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: conda_path = "conda"
+elif is_macos():
+    if os.path.exists(os.path.join("opt", "miniconda3")):
+        conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("opt", "anaconda3")):
+        conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
+elif is_linux():
+    username = os.environ.get('USER')
+    if os.path.exists(os.path.join("Users", username, "anaconda3")):
+        conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("Users", username, "miniconda3")):
+        conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
 
 
 guisettings = {
@@ -48,6 +54,23 @@ guisettings = {
 }
 
 
+if os.path.exists(('assets/guisettings.yaml')):
+    with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
+        try:
+                guisettings.update(yaml.safe_load(c))
+                c.close()
+        except yaml.YAMLError as exc:
+            print("No settings detected, defaulting to EN_US")
+
+ctk.FontManager.load_font(os.path.join(main_path, "assets","RedHatDisplay-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","MPLUS2-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansSC-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansTC-Regular.ttf"))
+
+font_en = 'Red Hat Display'
+font_jp = 'M PLUS 2'
+font_cn = 'Noto Sans SC'
+font_tw = 'Noto Sans TC'
 
 class tabview(ctk.CTkTabview):
 
@@ -538,7 +561,7 @@ class tabview(ctk.CTkTabview):
         if is_windows():
             cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. {conda_path} && conda activate difftrainerA && {cmd}'
+            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerA && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
@@ -549,7 +572,7 @@ class tabview(ctk.CTkTabview):
         if is_windows():
             cmd = f'{conda_path} activate difftrainerB >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. {conda_path} && conda activate difftrainerB && {cmd}'
+            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerB && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
@@ -574,6 +597,9 @@ class tabview(ctk.CTkTabview):
 
     def credit(self, url):
         webbrowser.open_new(url)
+
+    def is_hidden_folder(folder):
+        return folder.startswith('.')
 
     def dl_update(self):
         if not os.path.exists(all_shits_not_wav_n_lab):
@@ -754,7 +780,7 @@ class tabview(ctk.CTkTabview):
             if os.path.isfile(filepath):
                 shutil.move(filepath, "Diffsinger/dictionaries")
             #shutil.rmtree("dictionaries")
-            shutil.rmtree("dictionaries2")
+        shutil.rmtree("dictionaries2")
 
         if is_windows():
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
@@ -804,6 +830,7 @@ class tabview(ctk.CTkTabview):
             # incase if user labeled SP as pau but i think utas script already account SP so meh
             try:
                 for root, dirs, files in os.walk(self.all_shits):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for filename in files:
                         if filename.endswith(".lab"):
                             file_path = os.path.join(root, filename)
@@ -827,6 +854,7 @@ class tabview(ctk.CTkTabview):
             try:
                 phoneme_folder_path = self.all_shits
                 for root, dirs, files in os.walk(phoneme_folder_path):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".lab"):
                             fpath = os.path.join(root, file)
@@ -839,6 +867,7 @@ class tabview(ctk.CTkTabview):
                                             phonemes.add(phoneme)
                 phoneme_folder_path = all_shits_not_wav_n_lab
                 for root, dirs, files in os.walk(phoneme_folder_path):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".csv"):
                             fpath = os.path.join(root, file)
@@ -852,6 +881,7 @@ class tabview(ctk.CTkTabview):
                                                 phonemes.add(phoneme)
                 phoneme_folder_path = self.all_shits
                 for root, dirs, files in os.walk(phoneme_folder_path):
+                    dirs[:] = [d for d in dirs if not d.startswith('.')]
                     for file in files:
                         if file.endswith(".json"):
                             fpath = os.path.join(root, file)
@@ -929,6 +959,9 @@ class tabview(ctk.CTkTabview):
                 for raw_folder_name in os.listdir(self.all_shits):
                     raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
                     raw_folder_path = os.path.normpath(raw_folder_path)
+                    # Exclude .DS_Store and any other hidden files or directories
+                    if raw_folder_name.startswith('.'):
+                        continue
                     if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
                         print("segmenting data...")
                         #dear god please work
@@ -983,6 +1016,9 @@ class tabview(ctk.CTkTabview):
             try:
                     #this for folder organization / raw data cleanup
                     for raw_folder_name in os.listdir(self.all_shits):
+                        # Exclude .DS_Store and any other hidden files or directories
+                        if raw_folder_name.startswith('.'):
+                            continue
                         raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
                         raw_folder_path = os.path.normpath(raw_folder_path)
                         for filename in os.listdir(raw_folder_path):
@@ -1002,6 +1038,8 @@ class tabview(ctk.CTkTabview):
             try:
                     if self.estimatemidivar.get() == "some":
                         for speaker in os.listdir(self.all_shits):
+                            if speaker.startswith('.'):
+                                continue
                             speaker_path = os.path.join(self.all_shits, speaker)
                             if os.path.isdir(speaker_path):
                                 print("loading SOME...")
@@ -1024,7 +1062,7 @@ class tabview(ctk.CTkTabview):
     def load_spk(self, data_folder):
         for widget in self.subframe2.winfo_children():
             widget.destroy()
-        spk_folders = [f for f in os.listdir(data_folder) if os.path.isdir(os.path.join(data_folder, f))]
+        spk_folders = [f for f in os.listdir(data_folder) if os.path.isdir(os.path.join(data_folder, f)) and not f.startswith('.')]
         spk_rows = []
         for spk in spk_folders:
             folder_to_id = {spk: i for i, spk in enumerate(spk_folders)}
@@ -1112,7 +1150,8 @@ class tabview(ctk.CTkTabview):
                     yaml.dump(based, baseconfig)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
-            with open(lang["merge_list"], "r", encoding = "utf-8") as merge_list:
+            merged_loc = os.path.join("Diffsinger/dictionaries", lang["merge_list"])
+            with open(merged_loc, "r", encoding = "utf-8") as merge_list:
                 merges = yaml.safe_load(merge_list)
             with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config:
                 bitch_ass_config = yaml.safe_load(config)
@@ -1194,7 +1233,8 @@ class tabview(ctk.CTkTabview):
                     yaml.dump(based, baseconfig)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
-            with open(lang["merge_list"], "r", encoding = "utf-8") as merge_list:
+            merged_loc = os.path.join("Diffsinger/dictionaries", lang["merge_list"])
+            with open(merged_loc, "r", encoding = "utf-8") as merge_list:
                 merges = yaml.safe_load(merge_list)
             with open("DiffSinger/configs/variance.yaml", "r", encoding = "utf-8") as config:
                 bitch_ass_config = yaml.safe_load(config)
@@ -1281,7 +1321,7 @@ class tabview(ctk.CTkTabview):
         global editor
         editor = ctk.CTkToplevel(self)
         editor.geometry("400x320")
-        editor.title("DiffTrainer")
+        editor.title("DiffTrainer Langloader")
         editor.resizable(False, False)
         global textbox
         textbox = ctk.CTkTextbox(editor, width=375, height=275)
@@ -1345,7 +1385,6 @@ class tabview(ctk.CTkTabview):
         print(configpath)
 
     def train_function(self):
-
             try:
                 output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
                 lines = output.split("\n")
@@ -1391,6 +1430,24 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
+            spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
+            with open(spkmap, "r") as file:
+                data = json.load(file)
+            result = {}
+            seen_values = {}
+            for key, value in data.items():
+                if value in seen_values:
+                    # For duplicates, truncate both keys to a common prefix
+                    original_key = seen_values[value]
+                    common_prefix = original_key.split('-')[0]
+                    result.pop(original_key)  # Remove the original key
+                    result[common_prefix] = value  # Add the common prefix
+                else:
+                    # Add the original key to the result
+                    result[key] = value
+                    seen_values[value] = key
+            with open(spkmap, "w") as file:
+                json.dump(result, file)
             cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
@@ -2056,36 +2113,13 @@ class App(ctk.CTk):
         self.iconphoto(False, self.iconpath)
         self.resizable(False, False)
         create_widgets(self)
-    import pyglet #idk a mac user said this helped and it still works
-    pyglet.options['win32_gdi_font'] = True
-
-    if os.path.exists(('assets/guisettings.yaml')):
-        with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
-            try:
-                guisettings.update(yaml.safe_load(c))
-                c.close()
-            except yaml.YAMLError as exc:
-                print("No settings detected, defaulting to EN_US")
-
-    pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
-    global font_en
-    font_en = 'Red Hat Display'
-    pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
-    global font_jp
-    font_jp = 'M PLUS 2'
-    pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
-    global font_cn
-    font_cn = 'Noto Sans SC'
-    pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
-    global font_tw
-    font_tw = 'Noto Sans TC'
+    
 
     def on_tab_change(self, event):
         os.chdir(main_path)
 
     global create_widgets
     def create_widgets(self):
-        self.lang = ctk.StringVar(value=guisettings['lang'])
         self.tab_view = tabview(master=self)
         self.tab_view.grid(row=0, column=0, padx=10, pady=(0, 15))
 
