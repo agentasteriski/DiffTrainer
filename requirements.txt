@@ -6,4 +6,4 @@ tdqm
 pyyaml
 requests
 pillow
-pyglet
+
