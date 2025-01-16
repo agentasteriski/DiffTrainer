@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.8"
-releasedate = "1/4/25"
+version = "0.2.9"
+releasedate = "1/16/25"
 
 
 def is_linux():
@@ -1195,6 +1195,7 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["backbone_args"]["num_layers"] = 6
                 bitch_ass_config["backbone_args"]["kernel_size"] = 31
                 bitch_ass_config["backbone_args"]["dropout_rate"] = 0.0
+                bitch_ass_config["backbone_args"]["strong_cond"] = True
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
@@ -1250,9 +1251,13 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["variances_prediction_args"]["backbone_type"] = "lynxnet"
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 384
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['dropout_rate'] = 0.0
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['strong_cond'] = True
                 bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "lynxnet"
                 bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 512
                 bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dropout_rate'] = 0.0
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['strong_cond'] = True
    
             else:
                 bitch_ass_config["variances_prediction_args"]["backbone_type"] = "wavenet"
