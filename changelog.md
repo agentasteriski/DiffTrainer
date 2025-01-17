@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.14
+- added config strings to match Diffsinger update(requires running update tools)
+- updated langloader window
+  - still uses langloader/merged.yaml, just has a nicer editor
+  - it still usually pops up hidden behind the main window, sorry
 ## 0.3.13
 - sorry I always forget to update this section
 - there's probably a few changes that should be mentioned but I forgot
