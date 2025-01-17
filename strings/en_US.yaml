@@ -74,6 +74,15 @@ saveint2: "The checkpoint will save every f'{saveint}' steps."
 maxbatch: "Max batch size"
 maxbatch2: "How many files the training will process at once.\nRecommended values vary heavily by system, but try starting with 9 for acoustic and 24 for variance.\nThis value can be changed without reprocessing the binaries."
 saveconf: "Save configuration"
+
+dicts: "Dictionaries:"
+dicts2: "Make sure to list only the dictionaries for languages being used. \nSelect a dictionary to remove by clicking the line to highlight it."
+add_dict: "Add dictionary"
+del_dict: "Remove dictionary"
+ext_ph: "Extra phonemes:"
+ext_ph2: "List all global phonemes with no prefix, or additional language-specific phonemes with their prefix. \nSeparate phonemes with commas, spaces are optional."
+merge: "Merge list location:"
+merge2: "Writing your own merged phoneme list is extremely recommended. \nThe default list provided should mostly be taken as a reference for formatting. \nThis file must be located in the dictionaries folder."
 langsave: "Save and return to configuration"
 
 #Train tab
