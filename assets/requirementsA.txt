@@ -14,7 +14,6 @@ torchmetrics
 customtkinter
 ctktooltip
 ez-localizr
-pyglet
 mido
 einops==0.6.1
 librosa<0.10.0
