@@ -19,6 +19,7 @@ dependencies:
   - pip:
     - customtkinter
     - ctktooltip
+    - einops
     - ez-localizr
     - pyglet
     - "librosa<0.10.0"
