@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.14"
-releasedate = "1/16/2025"
+version = "0.3.15"
+releasedate = "2/6/2025"
 
 
 def is_linux():
@@ -1831,7 +1831,7 @@ class tabview(ctk.CTkTabview):
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
                         file.write("phonemes: ../dsmain/phonemes.json\n")
                         file.write("languages: ../dsmain/languages.json\n")
-                        file.write("linguistic: ..dsmain/linguistic.onnx\n")
+                        file.write("linguistic: ../dsmain/linguistic.onnx\n")
                         file.write("variance: variance.onnx\n")
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         dsvariance_config = yaml.safe_load(config)
