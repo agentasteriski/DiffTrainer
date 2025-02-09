@@ -3,7 +3,7 @@ Very rough.
 Known issues:
 - not even sure we're doing this right
 - langloader editor usually hides behind main window
-- honestly langloader is just ugly and bad
+- ~~honestly langloader is just ugly and bad~~ improved as of 0.3.14(01/16/25)
 - if you load one dataset, change your mind and load another, it fails to write the config
 
 

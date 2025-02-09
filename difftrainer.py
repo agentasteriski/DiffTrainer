@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.13"
-releasedate = "1/4/2025"
+version = "0.3.15"
+releasedate = "2/6/2025"
 
 
 def is_linux():
@@ -240,7 +240,7 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.label, message=(self.L('confsel2')), font = self.font)
         global preset
         preset = ctk.StringVar()
-        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback, state="readonly", font = self.font)
+        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback, state="readonly", font = self.font, dropdown_font = self.font)
         self.configbox.grid(row=0, column=1)
         self.label = ctk.CTkLabel(master=self.frame6, text=(self.L('advconfig')), font = self.font)
         self.label.grid(row=1, column=0, padx=15)
@@ -1212,6 +1212,7 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["backbone_args"]["num_layers"] = 6
                 bitch_ass_config["backbone_args"]["kernel_size"] = 31
                 bitch_ass_config["backbone_args"]["dropout_rate"] = 0.0
+                bitch_ass_config["backbone_args"]["strong_cond"] = True
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
@@ -1283,9 +1284,13 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["variances_prediction_args"]["backbone_type"] = "lynxnet"
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 384
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['dropout_rate'] = 0.0
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['strong_cond'] = True
                 bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "lynxnet"
                 bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 512
                 bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dropout_rate'] = 0.0
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['strong_cond'] = True
    
             else:
                 bitch_ass_config["variances_prediction_args"]["backbone_type"] = "wavenet"
@@ -1316,25 +1321,86 @@ class tabview(ctk.CTkTabview):
         up_f0_val = re.sub(r"f0_max\s*=\s*.*", f"f0_max={new_f0_max},", f0_read)
         with open("DiffSinger/utils/binarizer_utils.py", "w", encoding = "utf-8") as f:
             f.write(up_f0_val)
-
+        
     def langeditor(self):
         global editor
         editor = ctk.CTkToplevel(self)
-        editor.geometry("400x320")
+        editor.geometry("360x360")
         editor.title("DiffTrainer Langloader")
         editor.resizable(False, False)
-        global textbox
-        textbox = ctk.CTkTextbox(editor, width=375, height=275)
-        textbox.grid(row=0, column=0, padx=13)
-        with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding="utf-8") as langloader:
-            textbox.insert(tk.END, langloader.read())
+        with open("Diffsinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
+                global langloader
+                langloader = yaml.safe_load(load_lang)
+        dictframe = ctk.CTkFrame(master=editor)
+        dictframe.grid(row=0, column=0, columnspan=3, pady=(7,0))
+        tooltip_dict = CTkToolTip(dictframe, message=(self.L('dicts2')), font = self.font)
+        dictlabel= ctk.CTkLabel(dictframe, text=(self.L('dicts')), font=self.font)
+        dictlabel.grid(row=0, column=0, padx=7, sticky=tk.N)
+        tooltip_dict2 = CTkToolTip(dictlabel, message=(self.L('dicts2')), font = self.font)
+        global dictbox
+        dictbox = tk.Listbox(dictframe, width=30)
+        dictbox.grid(row=0, column=1, padx=13, pady=7)
+        for key in langloader['dictionaries']:
+            dictbox.insert(tk.END, f"{key}: {langloader['dictionaries'][key]}")
+        buttonframe1 = ctk.CTkFrame(master=editor)
+        buttonframe1.grid(row=1, columnspan=3, padx=13)
+        langadd = ctk.CTkButton(buttonframe1, text=(self.L('add_dict')), command=self.add_entry, font=self.font)
+        langadd.grid(row=0, column=0, pady=7, padx=13)
+        langdel = ctk.CTkButton(buttonframe1, text=(self.L('del_dict')), command=self.remove_entry, font=self.font)
+        langdel.grid(row=0, column=2, pady=7, padx=13)
+        formatted_phonemes = ', '.join(langloader["extra_phonemes"])
+        exphframe = ctk.CTkFrame(master=editor)
+        exphframe.grid(row=2, column=0, columnspan=3, padx=13, pady=7)
+        tooltip_ext = CTkToolTip(exphframe, message=(self.L('ext_ph2')), font = self.font)
+        exphlabel = ctk.CTkLabel(exphframe, text=(self.L('ext_ph')), font=self.font)
+        exphlabel.grid(row=0, column=0, padx=7)
+        tooltip_ext2 = CTkToolTip(exphlabel, message=(self.L('ext_ph2')), font = self.font)
+        global exphbox
+        exphbox = ctk.CTkEntry(exphframe, font=self.font)
+        exphbox.grid(row=0, column=1, padx=13, pady=7)
+        exphbox.insert(tk.END, formatted_phonemes)
+        mergeframe = ctk.CTkFrame(master=editor)
+        mergeframe.grid(row=3, column=0, columnspan=3, padx=13, pady=7)
+        tooltip_merge = CTkToolTip(mergeframe, message=(self.L('merge2')), font = self.font)
+        mergelabel = ctk.CTkLabel(mergeframe, text=(self.L('merge')), font=self.font)
+        mergelabel.grid(row=0, column=0, padx=7)
+        tooltip_merge2 = CTkToolTip(mergelabel, message=(self.L('merge2')), font = self.font)
+        global mergebox
+        mergebox = ctk.CTkEntry(mergeframe, font=self.font)
+        mergebox.grid(row=0, column=1, padx=13, pady=7)
+        mergebox.insert(tk.END, (langloader["merge_list"]))
         langsave = ctk.CTkButton(editor, text=(self.L('langsave')), command=self.updatelangloader, font=self.font)
-        langsave.grid(row=1, column=0, pady=7)
+        langsave.grid(row=5, column=1, pady=7)
 
+    def update_dictbox(self):
+        dictbox.delete(0, tk.END)
+        for key in langloader['dictionaries']:
+            dictbox.insert(tk.END, f"{key}: {langloader['dictionaries'][key]}")
+    
+    def add_entry(self):
+        language = tk.simpledialog.askstring("Input", "Enter the language code:")
+        if language:
+            phoneme_file = tk.simpledialog.askstring("Input", f"Enter the file path for {language}:")
+            if phoneme_file:
+                langloader['dictionaries'][language] = phoneme_file
+                self.update_dictbox()
+    
+    def remove_entry(self):
+        try:
+            index = dictbox.curselection()[0]
+            language = list(langloader['dictionaries'].keys())[index]
+            del langloader['dictionaries'][language]
+            self.update_dictbox()
+        except IndexError:
+            pass
 
     def updatelangloader(self):
-        with open("DiffSinger/dictionaries/langloader.yaml", "w", encoding="utf-8") as langloader:
-            langloader.write(textbox.get("1.0", tk.END))
+        new_phonemes_str = exphbox.get()
+        new_phonemes_list = [item.strip() for item in new_phonemes_str.split(',')]
+        langloader["extra_phonemes"] = new_phonemes_list
+        langloader["merge_list"] = mergebox.get()
+        with open("DiffSinger/dictionaries/langloader.yaml", "w", encoding="utf-8") as langdump:
+            yaml.dump(langloader, langdump)
         editor.destroy()
 
     def tensor_patch(self):
@@ -1765,7 +1831,7 @@ class tabview(ctk.CTkTabview):
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
                         file.write("phonemes: ../dsmain/phonemes.json\n")
                         file.write("languages: ../dsmain/languages.json\n")
-                        file.write("linguistic: ..dsmain/linguistic.onnx\n")
+                        file.write("linguistic: ../dsmain/linguistic.onnx\n")
                         file.write("variance: variance.onnx\n")
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         dsvariance_config = yaml.safe_load(config)
