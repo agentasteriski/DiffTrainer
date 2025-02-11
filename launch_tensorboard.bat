@@ -13,7 +13,6 @@ if exist "%cd%\miniconda" (
 	echo Conda not located, proceeding anyways...
 )
 
-call %conda_hook%
-call conda activate difftrainerA
 echo Activating environment A...
-tensorboard --logdir=DiffSinger\checkpoints
+call %conda_hook% && conda activate difftrainerA && tensorboard --logdir=DiffSinger\checkpoints
+pause
