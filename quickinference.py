@@ -4,7 +4,6 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
 from ezlocalizr import ezlocalizr
-import pyglet
 
 if os.path.exists('assets/ds_gui.json'):
       ctk.set_default_color_theme("assets/ds_gui.json")
@@ -22,48 +21,54 @@ def is_windows():
 def is_macos():
     return sys.platform.startswith("darwin")
 
-if os.path.exists(os.path.join(main_path, "miniconda")):
-    conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-    conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-    conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("opt", "miniconda3")):
-    conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("opt", "anaconda3")):
-    conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "anaconda3")):
-    conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "miniconda3")):
-    conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
-else:
-    conda_path = "conda"
+if is_windows():
+    username = os.environ.get('USERNAME')
+    if os.path.exists(os.path.join(main_path, "miniconda")):
+        conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: conda_path = "conda"
+elif is_macos():
+    if os.path.exists(os.path.join("opt", "miniconda3")):
+        conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("opt", "anaconda3")):
+        conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
+elif is_linux():
+    username = os.environ.get('USER')
+    if os.path.exists(os.path.join("Users", username, "anaconda3")):
+        conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("Users", username, "miniconda3")):
+        conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
 
 guisettings = {
-    'lang': 'en_US'
+    'lang': 'en_US',
 }
 
-pyglet.options['win32_gdi_font'] = True
 
 if os.path.exists(('assets/guisettings.yaml')):
     with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
         try:
-            guisettings.update(yaml.safe_load(c))
-            c.close()
+                guisettings.update(yaml.safe_load(c))
+                c.close()
         except yaml.YAMLError as exc:
-            print("No language choice detected, defaulting to EN_US")
+            print("No settings detected, defaulting to EN_US")
 
-pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","RedHatDisplay-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","MPLUS2-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansSC-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansTC-Regular.ttf"))
+
 font_en = 'Red Hat Display'
-pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
 font_jp = 'M PLUS 2'
-pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
 font_cn = 'Noto Sans SC'
-pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
 font_tw = 'Noto Sans TC'
 
 
@@ -97,9 +102,9 @@ def ds():
         
 def run_cmdA(cmd):
         if is_windows():
-            cmd = f'"{conda_path}" activate difftrainerA >nul && {cmd}'
+            cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. "{conda_path}" && conda activate difftrainerA && {cmd}'
+            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerA && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
@@ -107,12 +112,13 @@ def run_cmdA(cmd):
 def render():
       os.chdir(diffolder)
       spkname = spk.get()
+      langname = lcode.get()
       if varckpt != '':
-            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinput, '--exp', varckpt, '--spk', spkname, '--out', dsloc, '--title', postvar]
+            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinput, '--exp', varckpt, '--spk', spkname, '--lang', langname, '--out', dsloc, '--title', postvar]
             print('inferencing variance data...')
             command1 = ' '.join(cmd1)
             run_cmdA(command1)
-            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvards, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
+            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvards, '--exp', acockpt, '--spk', spkname, '--lang', langname, '--out', dsloc, '--title', dsname2]
             command2 = ' '.join(cmd2)
             run_cmdA(command2)
             print('inferencing acoustic data...')
@@ -154,7 +160,10 @@ button2 = ctk.CTkButton(app, text=L('acockpt'), command=aco, font=font)
 button2.grid(row=0, column=1, padx=10, pady=10)
 spk = tk.StringVar(value=L('spk'))
 box = ctk.CTkEntry(app, textvariable=spk, font=font)
-box.grid(row=1, column=0, padx=10, pady=10, columnspan=2)
+box.grid(row=1, column=0, padx=10, pady=10)
+lcode = tk.StringVar(value=L('langcode'))
+box2 = ctk.CTkEntry(app, textvariable=lcode, font=font)
+box2.grid(row=1, column=1, padx=10, pady=10)
 button3 = ctk.CTkButton(app, text=L('getds'), command=ds, font=font)
 button3.grid(row=2, column=0, padx=10, pady=10)
 button4 = ctk.CTkButton(app, text=L('render'), command=render, font=font)
