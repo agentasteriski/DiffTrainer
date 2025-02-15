@@ -59,7 +59,7 @@ advconfig2: "Select individual options for the configuration.\n Non-functional c
 vr: "VR preprocessing"
 vr2: "Can produce more accurate variance results, but requires high processing power. \n Only recommended for GPU users."
 wavenet: "Alternate backbone"
-wavenet2: "Advanced configuration. \n Reverts acoustic to the previous wavenet default, or enables lynxnet for variance. \n Wavenet is better for weaker hardware." 
+wavenet2: "Advanced configuration. \n Reverts acoustic to the previous wavenet default, or enables lynxnet for variance." 
 
 speaker: "Speaker"
 spk_lang: "Language"
@@ -125,6 +125,7 @@ getds: "Select .ds file"
 varckpt: "Variance ckpt folder"
 acockpt: "Acoustic ckpt folder"
 spk: "enter speaker name"
+langcode: "main language code"
 render: "Render audio"
 replay: "Replay rendered audio"
 
