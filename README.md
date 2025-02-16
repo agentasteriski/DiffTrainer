@@ -40,6 +40,6 @@ soon
 - better readme
 
 eventually
-- advanced export
+- ~~advanced export~~
 - more translations
-- an icon that isn't amogus
+- ~~an icon that isn't amogus~~
