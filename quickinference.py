@@ -71,6 +71,7 @@ font_jp = 'M PLUS 2'
 font_cn = 'Noto Sans SC'
 font_tw = 'Noto Sans TC'
 
+varckptQ = ''
 
 def var():
         varget = filedialog.askdirectory(title=L('getvar'), initialdir = "DiffSinger/checkpoints")
@@ -133,7 +134,7 @@ def render():
         
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
       else:
-            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--out', dslocQ, '--title', dsname2Q]
+            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', dsname2Q]
             command3 = ' '.join(cmd3)
             print('inferencing acoustic data...')
             run_cmdA(command3)
