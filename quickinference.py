@@ -71,33 +71,42 @@ font_jp = 'M PLUS 2'
 font_cn = 'Noto Sans SC'
 font_tw = 'Noto Sans TC'
 
+varckptQ = ''
 
 def var():
         varget = filedialog.askdirectory(title=L('getvar'), initialdir = "DiffSinger/checkpoints")
         os.chdir(main_path)
-        global varckpt
         varckpt = os.path.relpath(varget, ckpts)
         print(varckpt)
+        global varckptQ
+        varckptQ = '"{}"'.format(varckpt)
 def aco():
         acoget = filedialog.askdirectory(title=L('getaco'), initialdir = "DiffSinger/checkpoints")
         os.chdir(main_path)
-        global acockpt
         acockpt = os.path.relpath(acoget, ckpts)
         print(acockpt)
+        global acockptQ
+        acockptQ = '"{}"'.format(acockpt)
 def ds():
-        global dsinput
         dsinput = filedialog.askopenfilename(title=L('getds'), filetypes=[("DS files", "*.ds")])
-        global dsloc
+        global dsinputQ
+        dsinputQ = '"{}"'.format(dsinput)
         dsloc = os.path.dirname(dsinput)
+        global dslocQ
+        dslocQ = '"{}"'.format(dsloc)
         dsname = os.path.basename(dsinput)
-        global dsname2
         dsname2 = os.path.splitext(dsname)[0]
-        global dsname3
-        dsname3 = os.path.splitext(dsinput)[0]
-        global postvar
+        global dsname2Q
+        dsname2Q = '"{}"'.format(dsname2)
         postvar = dsname2 + "_var"
-        global postvards
+        global postvarQ
+        postvarQ = '"{}"'.format(postvar)
         postvards = dsloc + "/" + postvar + ".ds"
+        global postvardsQ 
+        postvardsQ = '"{}"'.format(postvards)
+        global renderedQ
+        rendered = os.path.join(dsloc, dsname2) + ".wav"
+        renderedQ = '"{}"'.format(rendered)
         print(dsinput)
         
 def run_cmdA(cmd):
@@ -112,27 +121,26 @@ def run_cmdA(cmd):
 def render():
       os.chdir(diffolder)
       spkname = spk.get()
-      if varckpt != '':
-            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinput, '--exp', varckpt, '--spk', spkname, '--out', dsloc, '--title', postvar]
+      if varckptQ != '':
+            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinputQ, '--exp', varckptQ, '--spk', spkname, '--out', dslocQ, '--title', postvarQ]
             print('inferencing variance data...')
             command1 = ' '.join(cmd1)
             run_cmdA(command1)
-            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvards, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
+            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvardsQ, '--exp', acockptQ, '--spk', spkname, '--out', dslocQ, '--title', dsname2Q]
             command2 = ' '.join(cmd2)
             run_cmdA(command2)
             print('inferencing acoustic data...')
-            global rendered
-            rendered = os.path.join(dsloc, dsname2) + ".wav"
-            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
+        
+            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
       else:
-            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinput, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
+            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--out', dslocQ, '--title', dsname2Q]
             command3 = ' '.join(cmd3)
             print('inferencing acoustic data...')
             run_cmdA(command3)
-            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
+            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
 
 def replay():
-      subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
+      subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
 
 
 
