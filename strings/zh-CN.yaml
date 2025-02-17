@@ -117,6 +117,7 @@ getds: "选择 .ds 档"
 varckpt: "方差 ckpt 文件夹"
 acockpt: "原声 ckpt 文件夹"
 spk: "请输入说话人的名字"
+langcode: "主要语言代码"
 render: "渲染音频"
 replay: "重播渲染的音频"
 
