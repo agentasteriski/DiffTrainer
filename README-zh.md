@@ -45,5 +45,5 @@ DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/t
 
 最終
 - ~~高級匯出~~
-- ~~更多翻譯~~
+- 更多翻譯
 - ~~一個不 amogus 的圖標~~
