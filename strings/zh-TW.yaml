@@ -59,7 +59,7 @@ advconfig2: "選擇配置的各個選項。 \n 非功能性組合是可能的。
 vr: "VR 預處理"
 vr2: "可以產生更準確的變異結果，但需要較高的處理能力。\n 僅推薦給 GPU 使用者。"
 wavenet: "備用骨幹"
-wavenet2: "高級配置。 \n 將聲學還原為先前的 wavenet 預設值，或啟用 lynxnet 以獲得差異。\n Wavenet 更適合較弱的硬體。" 
+wavenet2: "高級配置。 \n 將聲學還原為先前的 wavenet 預設值，或啟用 lynxnet 以獲得差異。" 
 speaker: "説話人"
 spk_lang: "語言"
 spk_lang2: "説話人的第一語言"
