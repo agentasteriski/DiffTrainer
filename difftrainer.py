@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.15"
-releasedate = "2/6/2025"
+version = "0.3.16"
+releasedate = "2/17/2025"
 
 
 def is_linux():
@@ -1676,7 +1676,8 @@ class tabview(ctk.CTkTabview):
         print("\nmaking directories...")
         try:
             ou_name = ou_name_var.get()
-            main_stuff = f"{ou_export_location}/{ou_name}"
+            ou_name_stripped = "".join(ou_name.split())
+            main_stuff = f"{ou_export_location}/{ou_name_stripped}"
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
             if not os.path.exists(f"{main_stuff}/dsmain"):
@@ -1908,7 +1909,8 @@ class tabview(ctk.CTkTabview):
         print("\nmaking directories...")
         try:
             ou_name = ou_name_var2.get()
-            main_stuff = f"{ou_export_location}/{ou_name}"
+            ou_name_stripped = "".join(ou_name.split())
+            main_stuff = f"{ou_export_location}/{ou_name_stripped}"
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
             if not os.path.exists(f"{main_stuff}/dsmain"):
