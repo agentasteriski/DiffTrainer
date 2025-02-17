@@ -4,7 +4,6 @@ import customtkinter as ctk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
 from ezlocalizr import ezlocalizr
-import pyglet
 
 if os.path.exists('assets/ds_gui.json'):
       ctk.set_default_color_theme("assets/ds_gui.json")
@@ -22,84 +21,99 @@ def is_windows():
 def is_macos():
     return sys.platform.startswith("darwin")
 
-if os.path.exists(os.path.join(main_path, "miniconda")):
-    conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-    conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-    conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-    conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-elif os.path.exists(os.path.join("opt", "miniconda3")):
-    conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("opt", "anaconda3")):
-    conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "anaconda3")):
-    conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
-elif os.path.exists(os.path.join("Users", username, "miniconda3")):
-    conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
-else:
-    conda_path = "conda"
+if is_windows():
+    username = os.environ.get('USERNAME')
+    if os.path.exists(os.path.join(main_path, "miniconda")):
+        conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: conda_path = "conda"
+elif is_macos():
+    if os.path.exists(os.path.join("opt", "miniconda3")):
+        conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("opt", "anaconda3")):
+        conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
+elif is_linux():
+    username = os.environ.get('USER')
+    if os.path.exists(os.path.join("Users", username, "anaconda3")):
+        conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("Users", username, "miniconda3")):
+        conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
+    else: conda_path = "conda"
 
 guisettings = {
-    'lang': 'en_US'
+    'lang': 'en_US',
 }
 
-pyglet.options['win32_gdi_font'] = True
 
 if os.path.exists(('assets/guisettings.yaml')):
     with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
         try:
-            guisettings.update(yaml.safe_load(c))
-            c.close()
+                guisettings.update(yaml.safe_load(c))
+                c.close()
         except yaml.YAMLError as exc:
-            print("No language choice detected, defaulting to EN_US")
+            print("No settings detected, defaulting to EN_US")
 
-pyglet.font.add_file(os.path.join("assets","RedHatDisplay-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","RedHatDisplay-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","MPLUS2-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansSC-Regular.ttf"))
+ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansTC-Regular.ttf"))
+
 font_en = 'Red Hat Display'
-pyglet.font.add_file(os.path.join("assets","MPLUS2-Regular.ttf"))
 font_jp = 'M PLUS 2'
-pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
 font_cn = 'Noto Sans SC'
-pyglet.font.add_file(os.path.join("assets","NotoSansSC-Regular.ttf"))
 font_tw = 'Noto Sans TC'
 
+varckptQ = ''
 
 def var():
         varget = filedialog.askdirectory(title=L('getvar'), initialdir = "DiffSinger/checkpoints")
         os.chdir(main_path)
-        global varckpt
         varckpt = os.path.relpath(varget, ckpts)
         print(varckpt)
+        global varckptQ
+        varckptQ = '"{}"'.format(varckpt)
 def aco():
         acoget = filedialog.askdirectory(title=L('getaco'), initialdir = "DiffSinger/checkpoints")
         os.chdir(main_path)
-        global acockpt
         acockpt = os.path.relpath(acoget, ckpts)
         print(acockpt)
+        global acockptQ
+        acockptQ = '"{}"'.format(acockpt)
 def ds():
-        global dsinput
         dsinput = filedialog.askopenfilename(title=L('getds'), filetypes=[("DS files", "*.ds")])
-        global dsloc
+        global dsinputQ
+        dsinputQ = '"{}"'.format(dsinput)
         dsloc = os.path.dirname(dsinput)
+        global dslocQ
+        dslocQ = '"{}"'.format(dsloc)
         dsname = os.path.basename(dsinput)
-        global dsname2
         dsname2 = os.path.splitext(dsname)[0]
-        global dsname3
-        dsname3 = os.path.splitext(dsinput)[0]
-        global postvar
+        global dsname2Q
+        dsname2Q = '"{}"'.format(dsname2)
         postvar = dsname2 + "_var"
-        global postvards
+        global postvarQ
+        postvarQ = '"{}"'.format(postvar)
         postvards = dsloc + "/" + postvar + ".ds"
+        global postvardsQ 
+        postvardsQ = '"{}"'.format(postvards)
+        global renderedQ
+        rendered = os.path.join(dsloc, dsname2) + ".wav"
+        renderedQ = '"{}"'.format(rendered)
         print(dsinput)
         
 def run_cmdA(cmd):
         if is_windows():
-            cmd = f'"{conda_path}" activate difftrainerA >nul && {cmd}'
+            cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
         elif is_linux() or is_macos():
-            cmd = f'. "{conda_path}" && conda activate difftrainerA && {cmd}'
+            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerA && {cmd}'
         try:
             subprocess.run(cmd, check=True, shell=True)
         except subprocess.CalledProcessError as e:
@@ -107,27 +121,26 @@ def run_cmdA(cmd):
 def render():
       os.chdir(diffolder)
       spkname = spk.get()
-      if varckpt != '':
-            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinput, '--exp', varckpt, '--spk', spkname, '--out', dsloc, '--title', postvar]
+      if varckptQ != '':
+            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinputQ, '--exp', varckptQ, '--spk', spkname, '--out', dslocQ, '--title', postvarQ]
             print('inferencing variance data...')
             command1 = ' '.join(cmd1)
             run_cmdA(command1)
-            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvards, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
+            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvardsQ, '--exp', acockptQ, '--spk', spkname, '--out', dslocQ, '--title', dsname2Q]
             command2 = ' '.join(cmd2)
             run_cmdA(command2)
             print('inferencing acoustic data...')
-            global rendered
-            rendered = os.path.join(dsloc, dsname2) + ".wav"
-            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
+        
+            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
       else:
-            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinput, '--exp', acockpt, '--spk', spkname, '--out', dsloc, '--title', dsname2]
+            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--out', dslocQ, '--title', dsname2Q]
             command3 = ' '.join(cmd3)
             print('inferencing acoustic data...')
             run_cmdA(command3)
-            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
+            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
 
 def replay():
-      subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {rendered}).PlaySync();'])
+      subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
 
 
 
