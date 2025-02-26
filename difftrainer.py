@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.10"
-releasedate = "2/17/25"
+version = "0.2.11"
+releasedate = "2/26/25"
 
 
 def is_linux():
@@ -1147,7 +1147,7 @@ class tabview(ctk.CTkTabview):
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
             with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
-                    yaml.dump(based, baseconfig)
+                    yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config:
                 bitch_ass_config = yaml.safe_load(config)
             bitch_ass_config["speakers"] = spk_names
@@ -1203,11 +1203,11 @@ class tabview(ctk.CTkTabview):
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
                 with open(custom_name, "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote custom acoustic config!")     
             else:
                 with open("DiffSinger/configs/acoustic.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote acoustic config!")
 
         else:
@@ -1216,7 +1216,7 @@ class tabview(ctk.CTkTabview):
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
             with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
-                    yaml.dump(based, baseconfig)
+                    yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/configs/variance.yaml", "r", encoding = "utf-8") as config:
                 bitch_ass_config = yaml.safe_load(config)
             bitch_ass_config["speakers"] = spk_names
@@ -1275,12 +1275,12 @@ class tabview(ctk.CTkTabview):
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
                 with open(custom_name, "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote custom variance config!")
                 
             else:
                 with open("DiffSinger/configs/variance.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote variance config!")
 
         new_f0_max=1600
@@ -1684,7 +1684,7 @@ class tabview(ctk.CTkTabview):
             if subbanks:
                 dsconfig_data["speakers"] = acoustic_embeds
             with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsconfig_data, config)
+                yaml.dump(dsconfig_data, config, sort_keys=False)
         except Exception as e:
                     print(f"Error writing OU main configs: {e}")
 
@@ -1716,7 +1716,7 @@ class tabview(ctk.CTkTabview):
             if subbanks:
                 dsdur_config["speakers"] = variance_embeds
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsdur_config, config)
+                yaml.dump(dsdur_config, config, sort_keys=False)
 
             try:
                 if os.path.exists(f"{var_folder_onnx}/variance.onnx"):
@@ -1744,7 +1744,7 @@ class tabview(ctk.CTkTabview):
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dsvariance_config, config)
+                        yaml.dump(dsvariance_config, config, sort_keys=False)
                 else:
                     print("No variance selected")
             except Exception as e:
@@ -1768,7 +1768,7 @@ class tabview(ctk.CTkTabview):
                         dspitch_config["speakers"] = variance_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dspitch_config, config)
+                        yaml.dump(dspitch_config, config, sort_keys=False)
                 else:
                     print("No pitch selected")
             except Exception as e:
@@ -1789,7 +1789,7 @@ class tabview(ctk.CTkTabview):
                     dsconfig_data2 = yaml.safe_load(config)
                 dsconfig_data2["vocoder"] = vocoder_name
                 with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(dsconfig_data2, config)
+                    yaml.dump(dsconfig_data2, config, sort_keys=False)
             except Exception as e:
                     print(f"Error adding custom vocoder: {e}")
         print("OU setup complete! Please manually import dsdicts")
@@ -1940,7 +1940,7 @@ class tabview(ctk.CTkTabview):
             if subbanks:
                 dsconfig_data["speakers"] = acoustic_embeds
             with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsconfig_data, config)
+                yaml.dump(dsconfig_data, config, sort_keys=False)
         except Exception as e:
                     print(f"Error writing OU main configs: {e}")
 
@@ -1970,7 +1970,7 @@ class tabview(ctk.CTkTabview):
             if subbanks:
                 dsdur_config["speakers"] = duration_embeds
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsdur_config, config)
+                yaml.dump(dsdur_config, config, sort_keys=False)
 
             try:
                 if var_folder_onnx:
@@ -1998,7 +1998,7 @@ class tabview(ctk.CTkTabview):
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dsvariance_config, config)
+                        yaml.dump(dsvariance_config, config, sort_keys=False)
                 else:
                     print("No variance selected")
             except Exception as e:
@@ -2021,7 +2021,7 @@ class tabview(ctk.CTkTabview):
                         dspitch_config["speakers"] = variance_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dspitch_config, config)
+                        yaml.dump(dspitch_config, config, sort_keys=False)
                 else:
                     print("No pitch selected")
             except Exception as e:
@@ -2042,7 +2042,7 @@ class tabview(ctk.CTkTabview):
                     dsconfig_data2 = yaml.safe_load(config)
                 dsconfig_data2["vocoder"] = vocoder_name
                 with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(dsconfig_data2, config)
+                    yaml.dump(dsconfig_data2, config, sort_keys=False)
             except Exception as e:
                     print(f"Error adding custom vocoder: {e}")
         print("OU setup complete! Please manually import dsdicts")
