@@ -1,4 +1,4 @@
-import requests, os, zipfile, shutil
+import requests, os, zipfile, shutil, subprocess
 from tqdm import tqdm
 import re
 from tkinter import messagebox
@@ -13,6 +13,23 @@ with open("difftrainer.py", "r", encoding = "utf-8") as gui_local:
 	gui_local = gui_local.read()
 local_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_local)
 local_version = local_version.group(1)
+
+reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/main/requirements.txt"
+reqresponse = requests.get(reqs_url)
+with open('requirements_compare.txt', 'wb') as f:
+            f.write(reqresponse.content)
+reqs_new = "requirements_compare.txt"
+reqs = "requirements.txt"
+with open(reqs, 'r') as f1:
+	with open(reqs_new, 'r') as f2:
+		if f1.read() != f2.read():
+				update_reqs = True
+		else:
+				update_reqs = False
+try:
+	os.remove(reqs_new)
+except:
+	print("Error removing temporary comparison file")
 
 if local_version >= github_version:
 	pass
@@ -53,6 +70,12 @@ else:
 			[shutil.move(os.path.join(folder, filename), main_path)
         	for filename in os.listdir(folder) if filename.endswith(".py")]
 			shutil.rmtree(folder)
+
+		if update_reqs == True:
+			try:
+				subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
+			except subprocess.CalledProcessError as e:
+				print(f"Error updating dependencies: {e}")
 
 	else:
 		pass
