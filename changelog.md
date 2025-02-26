@@ -1,4 +1,10 @@
 # Changelog
+## 0.3.18
+- automatic update will update core dependencies if needed
+- configs come out in the same order they went in
+
+## 0.3.17-ish
+- QuickInference overhaul
 
 ## 0.3.14
 - added config strings to match Diffsinger update(requires running update tools)
