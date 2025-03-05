@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.11"
-releasedate = "2/26/25"
+version = "0.2.12"
+releasedate = "3/5/25"
 
 
 def is_linux():
@@ -299,16 +299,11 @@ class tabview(ctk.CTkTabview):
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
         self.label = ctk.CTkLabel(master=self.frame14, text=self.L('speaker'), font=self.font)
         self.label.grid(row=0, column=0, padx=20)
-        self.label = ctk.CTkLabel(master=self.frame14, text=self.L('spk_lang'), font=self.font)
-        self.label.grid(row=0, column=1, padx=20)
-        self.tooltip = CTkToolTip(self.label, message=(self.L('spk_lang2')), font=self.font)
         self.label = ctk.CTkLabel(master=self.frame14, text=self.L('spk_id'), font=self.font)
         self.label.grid(row=0, column=2, padx=20)
         self.tooltip = CTkToolTip(self.label, message=(self.L('spk_id2')), font=self.font)
         self.subframe2 = ctk.CTkScrollableFrame(master=self.frame14, width=360)
         self.subframe2.grid(row=1, columnspan=3)
-        
-
 
         self.frame7 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame7.grid(row=2, column=0)
@@ -614,24 +609,24 @@ class tabview(ctk.CTkTabview):
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
         vocoder_folder = "DiffSinger/checkpoints"
-        vocoder_subfolder_name = "Diffsinger/checkpoints/nsf_hifigan_44.1k_hop512_128bin_2024.02"
+        vocoder_subfolder_name = "DiffSinger/checkpoints/nsf_hifigan_44.1k_hop512_128bin_2024.02"
 
         rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
         rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])
         rmvpe_folder = "DiffSinger/checkpoints"
-        rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
+        rmvpe_subfolder_name = "DiffSinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
         vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
         vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])
         vr_folder = "DiffSinger/checkpoints"
-        vr_subfolder_name = "Diffsinger/checkpoints"
+        vr_subfolder_name = "DiffSinger/checkpoints"
         os.makedirs(vr_subfolder_name, exist_ok = True)
 
         SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
         SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])
         SOME_folder = "DiffSinger/checkpoints"
-        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
+        SOME_subfolder_name = "DiffSinger/checkpoints/SOME"
         os.makedirs(SOME_subfolder_name, exist_ok = True)
 
         SOME_url2 = "https://github.com/agentasteriski/SOME-lite/archive/refs/heads/main.zip"
@@ -1036,8 +1031,7 @@ class tabview(ctk.CTkTabview):
             spk_name_box = ctk.CTkEntry(master=spk_rows[folder_id], width=100)
             spk_name_box.insert(0, folder_name)
             spk_name_box.grid(column=0, row=0, padx=15, pady=3)
-            spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "EN", "JA", "ZH/CMN", "ZH/YUE", "KO", "ES", "PT", "SV", "TL"])
-            spk_lang_select.grid(column=1, row=0, padx=10)
+
             spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20)
             spk_id_select.insert(0, folder_id)
             spk_id_select.grid(column=2, row=0, padx=15)
@@ -1142,7 +1136,7 @@ class tabview(ctk.CTkTabview):
             spk_id.append(spk_id_format)
         
         if selected_config_type == 1:
-            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
@@ -1211,7 +1205,7 @@ class tabview(ctk.CTkTabview):
                 print("wrote acoustic config!")
 
         else:
-            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
