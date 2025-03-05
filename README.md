@@ -20,11 +20,14 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 ### If you have used Python:
 - DiffTrainer by default uses Miniconda to manage conflicting package requirements.
 - To use an existing conda installation:
-  - install requirements.txt to base environment
+  - install requirements.txt to base environment(3.10 strongly recommended, other versions may still work for the base environment)
   - run setup_conda_envs.py to configure the required environments
   - "Update Tools" on the first tab to complete the install
 - As of v0.2.1, the names of the environments are hardcoded requirements.
 
+## known bug on Linux
+- if the text and buttons appear jagged:
+  - in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`
 
 ## language support
 DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) to allow GUI language selection. All users are welcome to translate the text found in [en_US](/strings/en_US.yaml) to other languages and submit a pull request.
@@ -34,6 +37,5 @@ soon
 - better readme
 
 eventually
-- advanced export
 - more translations
 - an icon that isn't amogus
