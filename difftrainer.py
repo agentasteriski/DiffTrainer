@@ -623,17 +623,17 @@ class tabview(ctk.CTkTabview):
 
         rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
         rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])
-        rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
+        rmvpe_subfolder_name = "DiffSinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
         vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
         vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])
-        vr_subfolder_name = "Diffsinger/checkpoints"
+        vr_subfolder_name = "DiffSinger/checkpoints"
         os.makedirs(vr_subfolder_name, exist_ok = True)
 
         SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
         SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])
-        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
+        SOME_subfolder_name = "DiffSinger/checkpoints/SOME"
         os.makedirs(SOME_subfolder_name, exist_ok = True)
 
         SOME_url2 = "https://github.com/agentasteriski/SOME-lite/archive/refs/heads/main.zip"
@@ -641,10 +641,11 @@ class tabview(ctk.CTkTabview):
 
         dicts_url = "https://github.com/agentasteriski/difftrainer-dictfiles/archive/refs/heads/main.zip"
         dicts_zip = os.path.join(os.getcwd(), dicts_url.split("/")[-1])
-        dicts_subfolder_name = "difftrainer-dictfiles-main"
+        dicts_subfolder_name = "DiffSinger/dictionaries"
+        dicts_subsubfolder = os.path.join(dicts_subfolder_name, "difftrainer-dictfiles-main")
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
-            user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
+            user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the DiffSinger folder.")
             if not user_response:
                 return
 
@@ -771,17 +772,23 @@ class tabview(ctk.CTkTabview):
                         f.write(chunk)
                         progress_bar.update(len(chunk))
         with zipfile.ZipFile(dicts_zip, "r") as zip_ref:
-            zip_ref.extractall()
+            zip_ref.extractall(dicts_subfolder_name)
         os.remove(dicts_zip)
-        if os.path.exists(dicts_subfolder_name):
-            os.rename(dicts_subfolder_name, "dictionaries2")
-        for filename in os.listdir("dictionaries2"):
-            if filename.endswith(".yaml") or filename.endswith(".txt"):
-                filepath = os.path.join("dictionaries2", filename)
-            if os.path.isfile(filepath):
-                shutil.move(filepath, "Diffsinger/dictionaries")
+        for filename in os.listdir(dicts_subsubfolder):
+            source = os.path.join(dicts_subsubfolder, filename)
+            dest = os.path.join(dicts_subfolder_name, filename)
+            if os.path.isfile(source):
+                shutil.copy(source, dest)
+        shutil.rmtree(dicts_subsubfolder, ignore_errors=False)
+        #if os.path.exists(dicts_subfolder_name):
+            #os.rename(dicts_subfolder_name, "dictionaries2")
+        #for filename in os.listdir("dictionaries2"):
+            #if filename.endswith(".yaml") or filename.endswith(".txt"):
+                #filepath = os.path.join("dictionaries2", filename)
+            #if os.path.isfile(filepath):
+                #shutil.move(filepath, "DiffSinger/dictionaries")
             #shutil.rmtree("dictionaries")
-        shutil.rmtree("dictionaries2")
+        #shutil.rmtree("dictionaries2")
 
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
@@ -1077,7 +1084,7 @@ class tabview(ctk.CTkTabview):
             spk_name_box.grid(column=0, row=0, padx=15, pady=3)
             #default selectable languages currently match localizations
             #might change it to the default phoneme lists instead
-            #does a Swedish Diffsinger even exist yet?
+            #does a Swedish DiffSinger even exist yet?
             spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "ja", "zh", "ko", "es", "pt", "sv", "tl"])
             spk_lang_select.grid(column=1, row=0, padx=10)
             spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20)
@@ -1147,7 +1154,7 @@ class tabview(ctk.CTkTabview):
 
 
         if selected_config_type == 1:
-            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
@@ -1155,7 +1162,7 @@ class tabview(ctk.CTkTabview):
                     yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
-            merged_loc = os.path.join("Diffsinger/dictionaries", lang["merge_list"])
+            merged_loc = os.path.join("DiffSinger/dictionaries", lang["merge_list"])
             with open(merged_loc, "r", encoding = "utf-8") as merge_list:
                 merges = yaml.safe_load(merge_list)
             with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config:
@@ -1233,7 +1240,7 @@ class tabview(ctk.CTkTabview):
                 print("wrote acoustic config!")
 
         else:
-            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
@@ -1241,7 +1248,7 @@ class tabview(ctk.CTkTabview):
                     yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
-            merged_loc = os.path.join("Diffsinger/dictionaries", lang["merge_list"])
+            merged_loc = os.path.join("DiffSinger/dictionaries", lang["merge_list"])
             with open(merged_loc, "r", encoding = "utf-8") as merge_list:
                 merges = yaml.safe_load(merge_list)
             with open("DiffSinger/configs/variance.yaml", "r", encoding = "utf-8") as config:
@@ -1337,7 +1344,7 @@ class tabview(ctk.CTkTabview):
         editor.geometry("360x360")
         editor.title("DiffTrainer Langloader")
         editor.resizable(False, False)
-        with open("Diffsinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
+        with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
                 global langloader
                 langloader = yaml.safe_load(load_lang)
         dictframe = ctk.CTkFrame(master=editor)
