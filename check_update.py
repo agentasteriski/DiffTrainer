@@ -35,11 +35,11 @@ except:
 if local_version >= github_version:
 	pass
 else:
-	update_prompt = messagebox.askyesno("Notice", f"Latest difftrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update difftrainer?")
+	update_prompt = messagebox.askyesno("Notice", f"Latest DiffTrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update DiffTrainer?")
 	if update_prompt:
 		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/multidict.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
-		folder = "difftrainer-multidict"
+		folder = "DiffTrainer-multidict"
 
 
 
