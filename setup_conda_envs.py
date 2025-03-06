@@ -141,36 +141,11 @@ deac = [conda_path, "deactivate"]
 deactivate = " ".join(deac)
 run_cmdBase(deactivate)
 
-print("Setting up ONNX environment...")
-try:
-    output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
-    lines = output.split("\n")
-    for line in lines:
-        if "release" in line.lower():
-            version = line.split()[-1]
-            print("CUDA version:", version)
-            torch = ["pip", "install", "torch==1.13.1+cu117", "torchvision==0.14.1+cu117", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cu117", "--no-warn-script-location"]
-            nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
-            command1 = " ".join(torch)
-            command2 = " ".join(nottorch)
-            run_cmdB(command1)
-            run_cmdB(command2)
-            break
-    else:
-        print("CUDA version not found")
-        torch = ["pip", "install", "torch==1.13.1", "torchvision==0.14.1", "torchaudio==0.13.1", "--no-warn-script-location"]
-        nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
-        command1 = " ".join(torch)
-        command2 = " ".join(nottorch)
-        run_cmdB(command1)
-        run_cmdB(command2)
-except (FileNotFoundError, subprocess.CalledProcessError):
-    print("CUDA is not available")
-    torch = ["pip", "install", "torch==1.13.1", "torchvision==0.14.1", "torchaudio==0.13.1", "--no-warn-script-location"]
-    nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
-    command1 = " ".join(torch)
-    command2 = " ".join(nottorch)
-    run_cmdB(command1)
-    run_cmdB(command2)
-run_cmdBase(deactivate)
-run_cmd("pause")
+#print("Setting up ONNX environment...")
+#torch = ["pip", "install", "torch==1.13.1", "torchvision==0.14.1", "torchaudio==0.13.1", "--no-warn-script-location"]
+#nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+#command1 = " ".join(torch)
+#command2 = " ".join(nottorch)
+#run_cmdB(command1)
+#run_cmdB(command2)
+#run_cmdBase(deactivate)
