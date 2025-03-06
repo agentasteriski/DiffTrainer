@@ -15,15 +15,20 @@ dependencies:
   - tensorboard
   - tensorboardX
   - torchmetrics
+  - protobuf
   - pip
   - pip:
     - customtkinter
     - ctktooltip
-    - einops
+    - "einops>=0.7.0"
     - ez-localizr
     - "librosa<0.10.0"
     - "lightning~=2.1.0"
     - MonkeyType==23.3.0
     - "onnxsim~=0.4.36"
+    - onnxruntime
     - praat-parselmouth==0.4.3
     - pyworld==0.3.4
+    - "torch==1.13.1"
+    - "torchvision==0.14.1"
+    - "torchaudio==0.13.1"
