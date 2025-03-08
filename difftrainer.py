@@ -10,8 +10,8 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.19"
-releasedate = "3/5/2025"
+version = "0.3.20"
+releasedate = "3/8/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1592,6 +1592,24 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
+            spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
+            with open(spkmap, "r") as file:
+                data = json.load(file)
+            result = {}
+            seen_values = {}
+            for key, value in data.items():
+                if value in seen_values:
+                    # For duplicates, truncate both keys to a common prefix
+                    original_key = seen_values[value]
+                    common_prefix = original_key.split('-')[0]
+                    result.pop(original_key)  # Remove the original key
+                    result[common_prefix] = value  # Add the common prefix
+                else:
+                    # Add the original key to the result
+                    result[key] = value
+                    seen_values[value] = key
+            with open(spkmap, "w") as file:
+                json.dump(result, file)
             cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
