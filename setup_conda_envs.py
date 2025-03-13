@@ -14,28 +14,31 @@ if is_windows():
     username = os.environ.get('USERNAME')
     if os.path.exists(os.path.join(mainpath, "miniconda")):
         conda_path = os.path.join(mainpath, "miniconda", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-    else: conda_path = "conda"
+    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", os.sep, "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", os.sep, "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", os.sep, "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", os.sep, "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: 
+        conda_path = "conda"
 elif is_macos():
     if os.path.exists(os.path.join("opt", "miniconda3")):
         conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
     elif os.path.exists(os.path.join("opt", "anaconda3")):
         conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
-    else: conda_path = "conda"
+    else: 
+        conda_path = "conda"
 elif is_linux():
     username = os.environ.get('USER')
     if os.path.exists(os.path.join("Users", username, "anaconda3")):
         conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
     elif os.path.exists(os.path.join("Users", username, "miniconda3")):
         conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
-    else: conda_path = "conda"
+    else: 
+        conda_path = "conda"
 ###create envs###
 
 def run_cmd(cmd):
@@ -112,15 +115,44 @@ try:
     lines = output.split("\n")
     for line in lines:
         if "release" in line.lower():
-            version = line.split()[-1]
+            release = line.split(',')[-2]
+            version = release.split()[1]
             print("CUDA version:", version)
-            torch = ["pip", "install", "torch==2.3.1+cu118", "torchvision==0.18.1+cu118", "torchaudio==2.3.1", "--extra-index-url", "https://download.pytorch.org/whl/cu118", "--no-warn-script-location"]
-            nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
-            command1 = " ".join(torch)
-            command2 = " ".join(nottorch)
-            run_cmdA(command1)
-            run_cmdA(command2)
-            break
+            if version == "11.8":
+                torch = ["pip", "install", "torch==2.3.1+cu118", "torchvision==0.18.1+cu118", "torchaudio==2.3.1", "--extra-index-url", "https://download.pytorch.org/whl/cu118", "--no-warn-script-location"]
+                nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                command1 = " ".join(torch)
+                command2 = " ".join(nottorch)
+                run_cmdA(command1)
+                run_cmdA(command2)
+                break
+            elif version == "12.1":
+                torch = ["pip", "install", "torch==2.3.1+cu121", "torchvision==0.18.1+cu121", "torchaudio==2.3.1", "--extra-index-url", "https://download.pytorch.org/whl/cu121", "--no-warn-script-location"]
+                nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                command1 = " ".join(torch)
+                command2 = " ".join(nottorch)
+                run_cmdA(command1)
+                run_cmdA(command2)
+                break
+            elif version == "12.6":
+                print("Preferred Torch version not available for this CUDA version, installing latest")
+                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu126", "--no-warn-script-location"]
+                nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                command1 = " ".join(torch)
+                command2 = " ".join(nottorch)
+                run_cmdA(command1)
+                run_cmdA(command2)
+                break
+            else:
+                print("Unsupported CUDA version detected! Installing CPU Torch")
+                print("CUDA version not found")
+                torch = ["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "torchaudio==2.3.1", "--no-warn-script-location"]
+                nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                command1 = " ".join(torch)
+                command2 = " ".join(nottorch)
+                run_cmdA(command1)
+                run_cmdA(command2)
+                break
     else:
         print("CUDA version not found")
         torch = ["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "torchaudio==2.3.1", "--no-warn-script-location"]
