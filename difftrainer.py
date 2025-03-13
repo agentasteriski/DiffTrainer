@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.12"
-releasedate = "3/5/25"
+version = "0.2.13"
+releasedate = "3/13/25"
 
 
 def is_linux():
@@ -49,15 +49,16 @@ if is_windows():
     username = os.environ.get('USERNAME')
     if os.path.exists(os.path.join(main_path, "miniconda")):
         conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-    else: conda_path = "conda"
+    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", os.sep, "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", os.sep, "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", os.sep, "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", os.sep, "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: 
+        conda_path = "conda"
 elif is_macos():
     if os.path.exists(os.path.join("opt", "miniconda3")):
         conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
