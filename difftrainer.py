@@ -10,10 +10,11 @@ from ezlocalizr import ezlocalizr
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.15"
-releasedate = "2/6/2025"
+version = "0.3.21"
+releasedate = "3/13/2025"
 
-
+#checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
+#if it's not there then it better be in path
 def is_linux():
     return sys.platform.startswith("linux")
 def is_windows():
@@ -25,15 +26,16 @@ if is_windows():
     username = os.environ.get('USERNAME')
     if os.path.exists(os.path.join(main_path, "miniconda")):
         conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "ProgramData", "anaconda3")):
-        conda_path = os.path.join("C:", "ProgramData", "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "ProgramData", "miniconda3")):
-        conda_path = os.path.join("C:", "ProgramData", "miniconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "Users", username, "anaconda3")):
-        conda_path = os.path.join("C:", "Users", username, "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", "Users", username, "miniconda3")):
-        conda_path = os.path.join("C:", "Users", username, "miniconda3", "condabin", "conda.bat")
-    else: conda_path = "conda"
+    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "anaconda3")):
+        conda_path = os.path.join("C:", os.sep, "ProgramData", "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "miniconda3")):
+        conda_path = os.path.join("C:", os.sep, "ProgramData", "miniconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "anaconda3")):
+        conda_path = os.path.join("C:", os.sep, "Users", username, "anaconda3", "condabin", "conda.bat")
+    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "miniconda3")):
+        conda_path = os.path.join("C:", os.sep, "Users", username, "miniconda3", "condabin", "conda.bat")
+    else: 
+        conda_path = "conda"
 elif is_macos():
     if os.path.exists(os.path.join("opt", "miniconda3")):
         conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
@@ -48,12 +50,10 @@ elif is_linux():
         conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
     else: conda_path = "conda"
 
-
+#starts with English before overriding the language with whatever's in the settings
 guisettings = {
     'lang': 'en_US',
 }
-
-
 if os.path.exists(('assets/guisettings.yaml')):
     with open('assets/guisettings.yaml', 'r', encoding='utf-8') as c:
         try:
@@ -62,6 +62,8 @@ if os.path.exists(('assets/guisettings.yaml')):
         except yaml.YAMLError as exc:
             print("No settings detected, defaulting to EN_US")
 
+#this function is basically undocumented in CTk docs but I found it in a random issues thread on the GitHub
+#it doesn't work on Mac but it doesn't break things like the Pyglet method did
 ctk.FontManager.load_font(os.path.join(main_path, "assets","RedHatDisplay-Regular.ttf"))
 ctk.FontManager.load_font(os.path.join(main_path, "assets","MPLUS2-Regular.ttf"))
 ctk.FontManager.load_font(os.path.join(main_path, "assets","NotoSansSC-Regular.ttf"))
@@ -119,6 +121,8 @@ class tabview(ctk.CTkTabview):
                                   size=(400, 150))
 
         ##ABOUT
+        #to do: rewrite for accuracy(at this point all that's left of Ghin's code is the segmenter tab and the questionable variable names)
+        #add info on tools used, add line to credit active localization
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = "", image = self.logo)
         self.label.grid(row=0, column=0, ipady=10, columnspan = 3)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = f"{self.L('vers')} {version}({releasedate})", font = self.font)
@@ -388,8 +392,6 @@ class tabview(ctk.CTkTabview):
         onnx_folder = self.onnx_folder_save
         self.button = ctk.CTkButton(master=self.frame12, text=(self.L('onnx')), command=self.run_onnx_export, font = self.font)
         self.button.grid(row=0, column=2, rowspan=2, padx=10)
-        #self.PATCHbutton = ctk.CTkButton(master=self.tab(self.L('tab_ttl_5')), text=(self.L('oupatch')), command=self.dl_ou_patch, font = self.font)
-        #self.PATCHbutton.grid(row=1, column=0, pady=10)
         self.frame13 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_5')))
         self.frame13.grid(row=3, column=0, pady=10)
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('getaco')), command=self.get_aco_folder, font = self.font)
@@ -457,7 +459,7 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ouexport')), command=self.run_adv_config, font = self.font)
         self.button.grid(row=3, column=1, padx=10, pady=10)
 
-
+    #keeps the checkboxes in config tab locked until advanced config is enabled
     def changeState(self):
         print("Toggling advanced configuration", adv_on.get())
         if adv_on.get() == "on":
@@ -497,6 +499,7 @@ class tabview(ctk.CTkTabview):
             self.confbox11.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
 
+    #checks and unchecks boxes based on selected config
     def combobox_callback(self, choice):
         print("Configuration selected:", choice)
         if choice == "1. Basic functions":
@@ -556,6 +559,7 @@ class tabview(ctk.CTkTabview):
         else:
             print("Please select a preset or enable custom configuration!")
 
+    #runs a command through env A
     global run_cmdA
     def run_cmdA(cmd):
         if is_windows():
@@ -567,6 +571,7 @@ class tabview(ctk.CTkTabview):
         except subprocess.CalledProcessError as e:
             print(f"Error running command: {e}")
 
+    #runs a command through env B
     global run_cmdB
     def run_cmdB(cmd):
         if is_windows():
@@ -598,6 +603,7 @@ class tabview(ctk.CTkTabview):
     def credit(self, url):
         webbrowser.open_new(url)
 
+    #stops everything from dying when anything touched a Mac
     def is_hidden_folder(folder):
         return folder.startswith('.')
 
@@ -615,24 +621,20 @@ class tabview(ctk.CTkTabview):
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
         vocoder_folder = "DiffSinger/checkpoints"
-        vocoder_subfolder_name = "Diffsinger/checkpoints/nsf_hifigan_44.1k_hop512_128bin_2024.02"
 
         rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
         rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])
-        rmvpe_folder = "DiffSinger/checkpoints"
-        rmvpe_subfolder_name = "Diffsinger/checkpoints/rmvpe"
+        rmvpe_subfolder_name = "DiffSinger/checkpoints/rmvpe"
         os.makedirs(rmvpe_subfolder_name, exist_ok = True)
 
         vr_url = "https://github.com/yxlllc/vocal-remover/releases/download/hnsep_240512/hnsep_240512.zip"
         vr_zip = os.path.join(os.getcwd(), vr_url.split("/")[-1])
-        vr_folder = "DiffSinger/checkpoints"
-        vr_subfolder_name = "Diffsinger/checkpoints"
+        vr_subfolder_name = "DiffSinger/checkpoints"
         os.makedirs(vr_subfolder_name, exist_ok = True)
 
         SOME_url = "https://github.com/openvpi/SOME/releases/download/v1.0.0-baseline/0119_continuous128_5spk.zip"
         SOME_zip = os.path.join(os.getcwd(), SOME_url.split("/")[-1])
-        SOME_folder = "DiffSinger/checkpoints"
-        SOME_subfolder_name = "Diffsinger/checkpoints/SOME"
+        SOME_subfolder_name = "DiffSinger/checkpoints/SOME"
         os.makedirs(SOME_subfolder_name, exist_ok = True)
 
         SOME_url2 = "https://github.com/agentasteriski/SOME-lite/archive/refs/heads/main.zip"
@@ -640,10 +642,11 @@ class tabview(ctk.CTkTabview):
 
         dicts_url = "https://github.com/agentasteriski/difftrainer-dictfiles/archive/refs/heads/main.zip"
         dicts_zip = os.path.join(os.getcwd(), dicts_url.split("/")[-1])
-        dicts_subfolder_name = "difftrainer-dictfiles-main"
+        dicts_subfolder_name = "DiffSinger/dictionaries"
+        dicts_subsubfolder = os.path.join(dicts_subfolder_name, "difftrainer-dictfiles-main")
 
         if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
-            user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the Diffsinger folder.")
+            user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the DiffSinger folder.")
             if not user_response:
                 return
 
@@ -770,20 +773,23 @@ class tabview(ctk.CTkTabview):
                         f.write(chunk)
                         progress_bar.update(len(chunk))
         with zipfile.ZipFile(dicts_zip, "r") as zip_ref:
-            zip_ref.extractall()
+            zip_ref.extractall(dicts_subfolder_name)
         os.remove(dicts_zip)
-        if os.path.exists(dicts_subfolder_name):
-            os.rename(dicts_subfolder_name, "dictionaries2")
-        for filename in os.listdir("dictionaries2"):
-            if filename.endswith(".yaml") or filename.endswith(".txt"):
-                filepath = os.path.join("dictionaries2", filename)
-            if os.path.isfile(filepath):
-                shutil.move(filepath, "Diffsinger/dictionaries")
+        for filename in os.listdir(dicts_subsubfolder):
+            source = os.path.join(dicts_subsubfolder, filename)
+            dest = os.path.join(dicts_subfolder_name, filename)
+            if os.path.isfile(source):
+                shutil.copy(source, dest)
+        shutil.rmtree(dicts_subsubfolder, ignore_errors=False)
+        #if os.path.exists(dicts_subfolder_name):
+            #os.rename(dicts_subfolder_name, "dictionaries2")
+        #for filename in os.listdir("dictionaries2"):
+            #if filename.endswith(".yaml") or filename.endswith(".txt"):
+                #filepath = os.path.join("dictionaries2", filename)
+            #if os.path.isfile(filepath):
+                #shutil.move(filepath, "DiffSinger/dictionaries")
             #shutil.rmtree("dictionaries")
-        shutil.rmtree("dictionaries2")
-
-        if is_windows():
-            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
+        #shutil.rmtree("dictionaries2")
 
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
@@ -807,6 +813,10 @@ class tabview(ctk.CTkTabview):
         with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
 
+        #no idea how to do this on other OS and honestly idc, it's here for the bit
+        if is_windows():
+            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
+
         print("Setup Complete!")
 
 
@@ -817,9 +827,8 @@ class tabview(ctk.CTkTabview):
             os.makedirs(all_shits_not_wav_n_lab)
         print("raw data path: " + self.all_shits)
 
-
+    #oldest code in the whole thing, questionable phoneme behavior, idk what the purpose of liquids/vowels.txt even is
     def run_segment(self):
-
             if not self.all_shits:
                 messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
                 return
@@ -1061,7 +1070,7 @@ class tabview(ctk.CTkTabview):
 
     def load_spk(self, data_folder):
         for widget in self.subframe2.winfo_children():
-            widget.destroy()
+            widget.destroy() #something about this doesn't work right, it visually clears the old one but still tries to read them after deletion
         spk_folders = [f for f in os.listdir(data_folder) if os.path.isdir(os.path.join(data_folder, f)) and not f.startswith('.')]
         spk_rows = []
         for spk in spk_folders:
@@ -1074,6 +1083,9 @@ class tabview(ctk.CTkTabview):
             spk_name_box = ctk.CTkEntry(master=spk_rows[folder_id], width=100)
             spk_name_box.insert(0, folder_name)
             spk_name_box.grid(column=0, row=0, padx=15, pady=3)
+            #default selectable languages currently match localizations
+            #might change it to the default phoneme lists instead
+            #does a Swedish DiffSinger even exist yet?
             spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "ja", "zh", "ko", "es", "pt", "sv", "tl"])
             spk_lang_select.grid(column=1, row=0, padx=10)
             spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20)
@@ -1131,6 +1143,7 @@ class tabview(ctk.CTkTabview):
                     if len(row) > 0:
                         prefixes.append(row[0])
                 test_prefixes = random.sample(prefixes, 3)
+                #tried using less than 3 way back and it just errored, not sure what I'm missing there
             spk_block = {
                 "raw_data_dir": raw_dir,
                 "speaker": folder_name,
@@ -1142,15 +1155,15 @@ class tabview(ctk.CTkTabview):
 
 
         if selected_config_type == 1:
-            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
             with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
-                    yaml.dump(based, baseconfig)
+                    yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
-            merged_loc = os.path.join("Diffsinger/dictionaries", lang["merge_list"])
+            merged_loc = os.path.join("DiffSinger/dictionaries", lang["merge_list"])
             with open(merged_loc, "r", encoding = "utf-8") as merge_list:
                 merges = yaml.safe_load(merge_list)
             with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config:
@@ -1185,28 +1198,30 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_breathiness_embed"] = energy
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
-            bitch_ass_config["tension_logit_max"] = 8
-            bitch_ass_config["tension_logit_min"] = -8
-            bitch_ass_config["tension_smooth_width"] = 0.06
+            bitch_ass_config["tension_logit_max"] = 8 #nobody is hitting the original default, lowering this reduces the nastiness at high tension
+            bitch_ass_config["tension_logit_min"] = -8 #haven't heard as many issues with low tension but just for good measure
+            bitch_ass_config["tension_smooth_width"] = 0.06 #original default 0.12, lowering it reduces vocal modes coming out the same
             bitch_ass_config["voicing_smooth_width"] = 0.06
             bitch_ass_config["breathiness_smooth_width"] = 0.06
             bitch_ass_config["energy_smooth_width"] = 0.06
-            #diff stuff
             bitch_ass_config["use_shallow_diffusion"] = shallow
             bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
             bitch_ass_config["diff_accelerator"] = "unipc"
-            #vr stuff please update it when you add a button that toggle it
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
             else:
                 bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
             if backbone==True:
+                #switches to wavenet backbone at default recommended settings
+                #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
                 bitch_ass_config["backbone_type"] = "wavenet"
                 bitch_ass_config["backbone_args"]["num_channels"] = 512
                 bitch_ass_config["backbone_args"]["num_layers"] = 20
                 bitch_ass_config["backbone_args"]["dilation_cycle_length"] = 4
             else:
+                #keeps lynxnet backbone at default recommended settings
+                #some people complain they're too heavy but I think they were trying to train on weak cards
                 bitch_ass_config["backbone_type"] = "lynxnet"
                 bitch_ass_config["backbone_args"]["num_channels"] = 1024
                 bitch_ass_config["backbone_args"]["num_layers"] = 6
@@ -1218,23 +1233,23 @@ class tabview(ctk.CTkTabview):
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
                 with open(custom_name, "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote custom acoustic config!")
             else:
                 with open("DiffSinger/configs/acoustic.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote acoustic config!")
 
         else:
-            with open("Diffsinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
+            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
                 based = yaml.safe_load(baseconfig)
             based["pe"] = "rmvpe"
             based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
             with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
-                    yaml.dump(based, baseconfig)
+                    yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
-            merged_loc = os.path.join("Diffsinger/dictionaries", lang["merge_list"])
+            merged_loc = os.path.join("DiffSinger/dictionaries", lang["merge_list"])
             with open(merged_loc, "r", encoding = "utf-8") as merge_list:
                 merges = yaml.safe_load(merge_list)
             with open("DiffSinger/configs/variance.yaml", "r", encoding = "utf-8") as config:
@@ -1257,7 +1272,7 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["use_lang_id"] = True
             bitch_ass_config["f0_max"] = 1600
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
-            bitch_ass_config["max_batch_size"] = int(batch) #ive never tried reaching the limit so ill trust kei's setting for this
+            bitch_ass_config["max_batch_size"] = int(batch)
             bitch_ass_config["val_check_interval"] = int(save_interval)
             bitch_ass_config["predict_dur"] = duration
             bitch_ass_config["predict_energy"] = energy
@@ -1274,13 +1289,14 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["energy_smooth_width"] = 0.06
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             bitch_ass_config["diff_accelerator"] = "unipc"
-            #vr stuff please update it when you add a button that toggle it v2
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
             else:
                 bitch_ass_config["hnsep"] = "world"
             bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
             if backbone==True:
+                #switches to lynxnet at default recommended settings
+                #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
                 bitch_ass_config["variances_prediction_args"]["backbone_type"] = "lynxnet"
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 384
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 6
@@ -1307,12 +1323,12 @@ class tabview(ctk.CTkTabview):
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
                 custom_name = ''.join(customname0)
                 with open(custom_name, "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config, default_flow_style=False)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote custom variance config!")
 
             else:
                 with open("DiffSinger/configs/variance.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(bitch_ass_config, config, default_flow_style=False)
+                    yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote variance config!")
 
         new_f0_max=1600
@@ -1323,12 +1339,13 @@ class tabview(ctk.CTkTabview):
             f.write(up_f0_val)
         
     def langeditor(self):
+        #you thought you were done reading GUI code. wrong.
         global editor
         editor = ctk.CTkToplevel(self)
         editor.geometry("360x360")
         editor.title("DiffTrainer Langloader")
         editor.resizable(False, False)
-        with open("Diffsinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
+        with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
                 global langloader
                 langloader = yaml.safe_load(load_lang)
         dictframe = ctk.CTkFrame(master=editor)
@@ -1400,7 +1417,7 @@ class tabview(ctk.CTkTabview):
         langloader["extra_phonemes"] = new_phonemes_list
         langloader["merge_list"] = mergebox.get()
         with open("DiffSinger/dictionaries/langloader.yaml", "w", encoding="utf-8") as langdump:
-            yaml.dump(langloader, langdump)
+            yaml.dump(langloader, langdump, sort_keys=False)
         editor.destroy()
 
     def tensor_patch(self):
@@ -1576,6 +1593,24 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
+            spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
+            with open(spkmap, "r") as file:
+                data = json.load(file)
+            result = {}
+            seen_values = {}
+            for key, value in data.items():
+                if value in seen_values:
+                    # For duplicates, truncate both keys to a common prefix
+                    original_key = seen_values[value]
+                    common_prefix = original_key.split('-')[0]
+                    result.pop(original_key)  # Remove the original key
+                    result[common_prefix] = value  # Add the common prefix
+                else:
+                    # Add the original key to the result
+                    result[key] = value
+                    seen_values[value] = key
+            with open(spkmap, "w") as file:
+                json.dump(result, file)
             cmdstage = ["python", 'scripts/export.py']
             ckpt_save_abs = os.path.abspath(ckpt_save_dir)
             onnx_folder_abs = os.path.abspath(onnx_folder_dir)
@@ -1676,12 +1711,13 @@ class tabview(ctk.CTkTabview):
         print("\nmaking directories...")
         try:
             ou_name = ou_name_var.get()
-            main_stuff = f"{ou_export_location}/{ou_name}"
+            ou_name_stripped = "".join(ou_name.split()) #takes the spaces out so cmd doesn't get confused
+            main_stuff = f"{ou_export_location}/{ou_name_stripped}"
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
             if not os.path.exists(f"{main_stuff}/dsmain"):
-                os.makedirs(f"{main_stuff}/dsmain/embeds/acoustic")
-                os.makedirs(f"{main_stuff}/dsmain/embeds/variance")
+                os.makedirs(f"{main_stuff}/dsmain/embeds/acoustic") #these embed folders wind up empty if it's single speaker
+                os.makedirs(f"{main_stuff}/dsmain/embeds/variance") #but it doesn't hurt anything and I don't feel like making it conditional
                 os.makedirs(f"{main_stuff}/dsdur")
                 try:
                     if os.path.exists(f"{var_folder_onnx}/variance.onnx"):
@@ -1696,9 +1732,9 @@ class tabview(ctk.CTkTabview):
                 except Exception as e:
                     print(f"Error creating directories: {e}")
             with open(f"{main_stuff}/character.txt", "w", encoding = "utf-8") as file:
-                file.write(f"name={ou_name}\n")
+                file.write(f"name={ou_name}\n") #this file could be fancier but feels like overkill for this program
             with open(f"{main_stuff}/character.yaml", "w", encoding = "utf-8") as file: #create initial yaml
-                file.write("default_phonemizer: OpenUtau.Core.DiffSinger.DiffSingerPhonemizer\n")
+                file.write("default_phonemizer: OpenUtau.Core.DiffSinger.DiffSingerPhonemizer\n") #defaults to DIFFS on first use
                 file.write("singer_type: diffsinger\n")
         except Exception as e:
             print(f"Error creating directories: {e}")
@@ -1708,7 +1744,7 @@ class tabview(ctk.CTkTabview):
             shutil.copy(f"{aco_folder_onnx}/acoustic.onnx", f"{main_stuff}/dsmain")
             shutil.copy(f"{aco_folder_onnx}/phonemes.json", f"{main_stuff}/dsmain")
             shutil.copy(f"{aco_folder_onnx}/languages.json", f"{main_stuff}/dsmain")
-            shutil.copy(f"{aco_folder_onnx}/dsconfig.yaml", main_stuff)
+            shutil.copy(f"{aco_folder_onnx}/dsconfig.yaml", main_stuff) #just straight up uses the original acoustic dsconfig as the one for the main folder
             shutil.copy(f"{var_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsmain")
 
         except Exception as e:
@@ -1755,18 +1791,18 @@ class tabview(ctk.CTkTabview):
 
         print("writing main configs...")
         try:
-            subbanks = []
+            subbanks = [] #list of vocal modes
             for i, (acoustic_embed_color, acoustic_embed_suffix) in enumerate(zip(acoustic_color_suffix, acoustic_embeds), start=1):
-                color = f"{i:02}: {acoustic_embed_color}"
-                suffix = f"{acoustic_embed_suffix}"
+                color = f"{i:02}: {acoustic_embed_color}" #name of vocal mode
+                suffix = f"{acoustic_embed_suffix}" #where to find the acoustic embed
                 subbanks.append({"color": color, "suffix": suffix})
-            if subbanks:
+            if subbanks: #add all the modes and where to find them to character config
                 with open(f"{main_stuff}/character.yaml", "r", encoding = "utf-8") as config:
                     character_config = yaml.safe_load(config)
-                character_config["subbanks"] = subbanks
+                character_config["subbanks"] = subbanks 
                 with open(f"{main_stuff}/character.yaml", "w", encoding = "utf-8") as config:
                     yaml.dump(character_config, config)
-            #image, portrait, and portrait opacity can be manually edited
+            #placeholders to fill in later if you care, can be left this way for private/test models
             with open(f"{main_stuff}/character.yaml", "a", encoding = "utf-8") as file:
                 file.write("\n")
                 file.write("text_file_encoding: utf-8\n")
@@ -1775,23 +1811,23 @@ class tabview(ctk.CTkTabview):
                 file.write("portrait:\n")
                 file.write("portrait_opacity: 0.45\n")
             with open(f"{main_stuff}/dsconfig.yaml", "r", encoding = "utf-8") as config:
-                dsconfig_data = yaml.safe_load(config)
-            dsconfig_data["acoustic"] = "dsmain/acoustic.onnx"
+                dsconfig_data = yaml.safe_load(config) #just edit the original config seriously
+            dsconfig_data["acoustic"] = "dsmain/acoustic.onnx" #fix those file paths
             dsconfig_data["phonemes"] = "dsmain/phonemes.json"
             dsconfig_data["languages"] = "dsmain/languages.json"
-            dsconfig_data["vocoder"] = "nsf_hifigan"
+            dsconfig_data["vocoder"] = "nsf_hifigan" #gets overwritten later if there's a custom vocoder
             dsconfig_data["singer_type"] = "diffsinger"
             if subbanks:
-                dsconfig_data["speakers"] = acoustic_embeds
+                dsconfig_data["speakers"] = acoustic_embeds #cleans up the file names
             with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsconfig_data, config)
+                yaml.dump(dsconfig_data, config, sort_keys=False)
         except Exception as e:
                     print(f"Error writing OU main configs: {e}")
 
         print("writing sub-configs...")
         try:
             with open(aco_config, "r", encoding = "utf-8") as config:
-                acoustic_config_data = yaml.safe_load(config)
+                acoustic_config_data = yaml.safe_load(config) #copies most of the main dsconfig
             sample_rate = acoustic_config_data.get("audio_sample_rate")
             hop_size = acoustic_config_data.get("hop_size")
             with open(f"{var_folder_onnx}/dsconfig.yaml", "r", encoding = "utf-8") as config:
@@ -1806,22 +1842,22 @@ class tabview(ctk.CTkTabview):
                 file.write("phonemes: ../dsmain/phonemes.json\n")
                 file.write("languages: ../dsmain/languages.json\n")
                 file.write("linguistic: ../dsmain/linguistic.onnx\n")
-                file.write("dur: dur.onnx\n")
+                file.write("dur: dur.onnx\n") #file paths aren't totally the same so gotta rewrite
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "r", encoding = "utf-8") as config:
                 dsdur_config = yaml.safe_load(config)
             dsdur_config["use_continuous_acceleration"] = use_continuous_acceleration
             dsdur_config["sample_rate"] = sample_rate2
             dsdur_config["hop_size"] = hop_size2
-            dsdur_config["predict_dur"] = True
+            dsdur_config["predict_dur"] = True #this is the dur config, if it doesn't predict_dur wtf does it do
             dsdur_config["use_lang_id"] = use_lang_id
             if subbanks:
-                dsdur_config["speakers"] = variance_embeds
+                dsdur_config["speakers"] = variance_embeds #points it to the correct embeds for dur
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsdur_config, config)
+                yaml.dump(dsdur_config, config, sort_keys=False)
 
             try:
-                if os.path.exists(f"{var_folder_onnx}/variance.onnx"):
-                    with open(var_config, "r", encoding = "utf-8") as config:
+                if os.path.exists(f"{var_folder_onnx}/variance.onnx"): #if no bre/ene/ten/voc, skips this section
+                    with open(var_config, "r", encoding = "utf-8") as config: #it's basically the same as dsdur in basic export tho
                         var_config_data = yaml.safe_load(config)
                     predict_voicing = var_config_data.get("predict_voicing")
                     predict_tension = var_config_data.get("predict_tension")
@@ -1847,14 +1883,14 @@ class tabview(ctk.CTkTabview):
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dsvariance_config, config)
+                        yaml.dump(dsvariance_config, config, sort_keys=False)
                 else:
                     print("No variance selected")
             except Exception as e:
                 print(f"Error editing variance config: {e}")
 
             try:
-                if os.path.exists(f"{var_folder_onnx}/pitch.onnx"):
+                if os.path.exists(f"{var_folder_onnx}/pitch.onnx"): #if no pitch, skips this section
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as file:
                         file.write("phonemes: ../dsmain/phonemes.json\n")
                         file.write("languages: ../dsmain/languages.json\n")
@@ -1873,7 +1909,7 @@ class tabview(ctk.CTkTabview):
                         dspitch_config["speakers"] = variance_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dspitch_config, config)
+                        yaml.dump(dspitch_config, config, sort_keys=False)
                 else:
                     print("No pitch selected")
             except Exception as e:
@@ -1892,15 +1928,15 @@ class tabview(ctk.CTkTabview):
                 shutil.copy(f"{vocoder_folder}/vocoder.yaml", f"{main_stuff}/dsvocoder")
                 with open(f"{main_stuff}/dsconfig.yaml", "r", encoding = "utf-8") as config:
                     dsconfig_data2 = yaml.safe_load(config)
-                dsconfig_data2["vocoder"] = vocoder_name
+                dsconfig_data2["vocoder"] = vocoder_name #overwrites nsf_hifigan
                 with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(dsconfig_data2, config)
+                    yaml.dump(dsconfig_data2, config, sort_keys=False)
             except Exception as e:
                     print(f"Error adding custom vocoder: {e}")
         print("OU setup complete! Please manually import dsdicts")
 
 
-    def run_adv_config(self):
+    def run_adv_config(self): #see basic export for most of the comments
         os.chdir(main_path)
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
@@ -1908,7 +1944,8 @@ class tabview(ctk.CTkTabview):
         print("\nmaking directories...")
         try:
             ou_name = ou_name_var2.get()
-            main_stuff = f"{ou_export_location}/{ou_name}"
+            ou_name_stripped = "".join(ou_name.split())
+            main_stuff = f"{ou_export_location}/{ou_name_stripped}"
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
             if not os.path.exists(f"{main_stuff}/dsmain"):
@@ -1916,14 +1953,14 @@ class tabview(ctk.CTkTabview):
                 os.makedirs(f"{main_stuff}/dsmain/embeds/duration")
                 os.makedirs(f"{main_stuff}/dsdur")
                 try:
-                    if var_folder_onnx:
+                    if var_folder_onnx: #treats var as fully separate from dur in this version
                         os.makedirs(f"{main_stuff}/dsmain/embeds/variance")
                         os.makedirs(f"{main_stuff}/dsvariance")
                     else: pass
                 except Exception as e:
                     print(f"Error creating directories: {e}")
                 try:
-                    if pitch_folder_onnx:
+                    if pitch_folder_onnx: #same with pitch
                         os.makedirs(f"{main_stuff}/dsmain/embeds/pitch")
                         os.makedirs(f"{main_stuff}/dspitch")
                     else: pass
@@ -1942,7 +1979,7 @@ class tabview(ctk.CTkTabview):
             shutil.copy(f"{aco_folder_onnx}/acoustic.onnx", f"{main_stuff}/dsmain")
             shutil.copy(f"{aco_folder_onnx}/phonemes.json", f"{main_stuff}/dsmain")
             shutil.copy(f"{aco_folder_onnx}/languages.json", f"{main_stuff}/dsmain")
-            shutil.copy(f"{aco_folder_onnx}/dsconfig.yaml", main_stuff)
+            shutil.copy(f"{aco_folder_onnx}/dsconfig.yaml", main_stuff) #default acoustic dsconfig becomes the base
             shutil.copy(f"{dur_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsmain")
 
         except Exception as e:
@@ -1989,6 +2026,7 @@ class tabview(ctk.CTkTabview):
                 shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/variance")
             shutil.copy(f"{var_folder_onnx}/variance.onnx", f"{main_stuff}/dsvariance")
             shutil.copy(f"{var_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsvariance")
+            shutil.copy(f"{var_folder_onnx}/phonemes.json", f"{main_stuff}/dsvariance") #multidict merge shenanigans can require multiple different phonemes.json
             variance_emb_files = os.listdir(var_folder_onnx)
             variance_embeds = []
             variance_color_suffix = []
@@ -2007,6 +2045,7 @@ class tabview(ctk.CTkTabview):
                 shutil.copy(f"{pitch_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/pitch")
             shutil.copy(f"{pitch_folder_onnx}/pitch.onnx", f"{main_stuff}/dspitch")
             shutil.copy(f"{pitch_folder_onnx}/linguistic.onnx", f"{main_stuff}/dspitch")
+            shutil.copy(f"{pitch_folder_onnx}/phonemes.json", f"{main_stuff}/dspitch")
             pitch_emb_files = os.listdir(pitch_folder_onnx)
             pitch_embeds = []
             pitch_color_suffix = []
@@ -2049,13 +2088,13 @@ class tabview(ctk.CTkTabview):
             if subbanks:
                 dsconfig_data["speakers"] = acoustic_embeds
             with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsconfig_data, config)
+                yaml.dump(dsconfig_data, config, sort_keys=False)
         except Exception as e:
                     print(f"Error writing OU main configs: {e}")
 
         print("writing sub-configs...")
         try:
-            with open(aco_config, "r", encoding = "utf-8") as config:
+            with open(aco_config, "r", encoding = "utf-8") as config: #all this stuff should be consistent across configs
                 acoustic_config_data = yaml.safe_load(config)
             sample_rate = acoustic_config_data.get("audio_sample_rate")
             hop_size = acoustic_config_data.get("hop_size")
@@ -2068,7 +2107,7 @@ class tabview(ctk.CTkTabview):
             use_lang_id = acoustic_config_data.get("use_lang_id")
 
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                file.write("phonemes: ../dsmain/phonemes.json\n")
+                file.write("phonemes: ../dsmain/phonemes.json\n") #dur gets the main one
                 file.write("languages: ../dsmain/languages.json\n")
                 file.write("linguistic: ../dsmain/linguistic.onnx\n")
                 file.write("dur: dur.onnx\n")
@@ -2082,7 +2121,7 @@ class tabview(ctk.CTkTabview):
             if subbanks:
                 dsdur_config["speakers"] = duration_embeds
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                yaml.dump(dsdur_config, config)
+                yaml.dump(dsdur_config, config, sort_keys=False)
 
             try:
                 if var_folder_onnx:
@@ -2094,7 +2133,7 @@ class tabview(ctk.CTkTabview):
                     predict_breathiness = var_config_data.get("predict_breathiness")
                     predict_dur = var_config_data.get("predict_dur")
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                        file.write("phonemes: ../dsmain/phonemes.json\n")
+                        file.write("phonemes: phonemes.json\n") #multidict merging shenanigans can require separate phonemes.json
                         file.write("languages: ../dsmain/languages.json\n")
                         file.write("linguistic: linguistic.onnx\n")
                         file.write("variance: variance.onnx\n")
@@ -2112,7 +2151,7 @@ class tabview(ctk.CTkTabview):
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dsvariance_config, config)
+                        yaml.dump(dsvariance_config, config, sort_keys=False)
                 else:
                     print("No variance selected")
             except Exception as e:
@@ -2121,7 +2160,7 @@ class tabview(ctk.CTkTabview):
             try:
                 if pitch_folder_onnx:
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as file:
-                        file.write("phonemes: ../dsmain/phonemes.json\n")
+                        file.write("phonemes: phonemes.json\n") #multidict merging shenanigans can require separate phonemes.json
                         file.write("languages: ../dsmain/languages.json\n")
                         file.write("linguistic: linguistic.onnx\n")
                         file.write("pitch: pitch.onnx\n")
@@ -2140,7 +2179,7 @@ class tabview(ctk.CTkTabview):
                         dspitch_config["speakers"] = pitch_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                        yaml.dump(dspitch_config, config)
+                        yaml.dump(dspitch_config, config, sort_keys=False)
                 else:
                     print("No pitch selected")
             except Exception as e:
@@ -2161,7 +2200,7 @@ class tabview(ctk.CTkTabview):
                     dsconfig_data2 = yaml.safe_load(config)
                 dsconfig_data2["vocoder"] = vocoder_name
                 with open(f"{main_stuff}/dsconfig.yaml", "w", encoding = "utf-8") as config:
-                    yaml.dump(dsconfig_data2, config)
+                    yaml.dump(dsconfig_data2, config, sort_keys=False)
             except Exception as e:
                     print(f"Error adding custom vocoder: {e}")
         print("OU setup complete! Please manually import dsdicts")
