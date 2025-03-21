@@ -59,7 +59,7 @@ advconfig2: "Select individual options for the configuration.\n Non-functional c
 vr: "VR preprocessing"
 vr2: "Can produce more accurate variance results, but requires high processing power. \n Only recommended for GPU users."
 wavenet: "Alternate backbone"
-wavenet2: "Advanced configuration. \n Reverts acoustic to the previous wavenet default, or enables lynxnet for variance. \n Wavenet is better for weaker hardware." 
+wavenet2: "Advanced configuration. \n Reverts acoustic to the previous wavenet default, or enables lynxnet for variance." 
 
 speaker: "Speaker"
 spk_lang: "Language"
@@ -113,11 +113,24 @@ ouexport: "Prepare for OpenUtau"
 #Quick Inference
 ##strings 'getaco' and 'getvar' are reused
 getds: "Select .ds file"
+eval: "Evaluating .ds file..."
+hasdur: "Existing duration data detected"
+haspitch: "Existing pitch data detected"
+hasbre: "Existing breathiness data detected"
+hasene: "Existing energy data detected"
+hasten: "Existing tension data detected"
+hasvoc: "Existing voicing data detected"
+eval2: ".ds file evaluated!"
 varckpt: "Variance ckpt folder"
 acockpt: "Acoustic ckpt folder"
+overwrite: "Overwrite existing parameters:"
 spk: "enter speaker name"
+langcode: "main language code"
+inf1: "Inferencing variance data..."
+inf2: "Inferencing acoustic data..."
 render: "Render audio"
 replay: "Replay rendered audio"
+replayerror: "Error replaying rendered audio"
 
 
 #test
