@@ -6,12 +6,13 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from ezlocalizr import ezlocalizr
+from collections import defaultdict
 
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.21"
-releasedate = "3/13/2025"
+version = "0.3.22"
+releasedate = "3/26/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1517,18 +1518,30 @@ class tabview(ctk.CTkTabview):
             with open(spkmap, "r") as file:
                 data = json.load(file)
             result = {}
-            seen_values = {}
+            seen_values = defaultdict(list)
             for key, value in data.items():
-                if value in seen_values:
-                    # For duplicates, truncate both keys to a common prefix
-                    original_key = seen_values[value]
-                    common_prefix = original_key.split('-')[0]
-                    result.pop(original_key)  # Remove the original key
-                    result[common_prefix] = value  # Add the common prefix
+                seen_values[value].append(key)
+            for value, keys in seen_values.items():
+                if len(keys) > 1:
+                    # Merging duplicate spk_ids by trying to reduce the names to a common prefix
+                    min_length = min(len(key) for key in keys)
+                    common_prefix = ""
+                    for i in range(min_length):
+                        char_set = set(key[i] for key in keys)
+                        if len(char_set) != 1:
+                            break
+                        common_prefix += char_set.pop()
+                    # If you used '-lang' or something, get rid of the separator
+                    unwanted_chars = ('-', '_', '.')
+                    while common_prefix.endswith(unwanted_chars):
+                        common_prefix = common_prefix.rstrip("-_.")
+                    # If you did something insane like naming folders '-1' and '-2', and it just deleted the 1 and 2, no blank entries
+                    if common_prefix:
+                        result[common_prefix] = value
+                    else:
+                        result[min(keys, key=len)] = value
                 else:
-                    # Add the original key to the result
-                    result[key] = value
-                    seen_values[value] = key
+                    result[keys[0]] = value
             with open(spkmap, "w") as file:
                 json.dump(result, file)
             cmdstage = ["python", 'scripts/export.py']
@@ -1594,21 +1607,34 @@ class tabview(ctk.CTkTabview):
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
             spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
+            # Fixing spk_map so the onnx can export
             with open(spkmap, "r") as file:
                 data = json.load(file)
             result = {}
-            seen_values = {}
+            seen_values = defaultdict(list)
             for key, value in data.items():
-                if value in seen_values:
-                    # For duplicates, truncate both keys to a common prefix
-                    original_key = seen_values[value]
-                    common_prefix = original_key.split('-')[0]
-                    result.pop(original_key)  # Remove the original key
-                    result[common_prefix] = value  # Add the common prefix
+                seen_values[value].append(key)
+            for value, keys in seen_values.items():
+                if len(keys) > 1:
+                    # Merging duplicate spk_ids by trying to reduce the names to a common prefix
+                    min_length = min(len(key) for key in keys)
+                    common_prefix = ""
+                    for i in range(min_length):
+                        char_set = set(key[i] for key in keys)
+                        if len(char_set) != 1:
+                            break
+                        common_prefix += char_set.pop()
+                    # If you used '-lang' or something, get rid of the separator
+                    unwanted_chars = ('-', '_', '.')
+                    while common_prefix.endswith(unwanted_chars):
+                        common_prefix = common_prefix.rstrip("-_.")
+                    # If you did something insane like naming folders '-1' and '-2', and it just deleted the 1 and 2, no blank entries
+                    if common_prefix:
+                        result[common_prefix] = value
+                    else:
+                        result[min(keys, key=len)] = value
                 else:
-                    # Add the original key to the result
-                    result[key] = value
-                    seen_values[value] = key
+                    result[keys[0]] = value
             with open(spkmap, "w") as file:
                 json.dump(result, file)
             cmdstage = ["python", 'scripts/export.py']
