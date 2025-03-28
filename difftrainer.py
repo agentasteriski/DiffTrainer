@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.13"
-releasedate = "3/13/25"
+version = "0.2.14"
+releasedate = "3/28/25"
 
 
 def is_linux():
@@ -598,14 +598,13 @@ class tabview(ctk.CTkTabview):
         if not os.path.exists(all_shits_not_wav_n_lab):
           os.makedirs(all_shits_not_wav_n_lab)
 
-        uta_url = "https://github.com/UtaUtaUtau/nnsvs-db-converter/archive/refs/heads/main.zip"
+        uta_url = "https://github.com/AgentAsteriski/nnsvs-db-converter/archive/refs/heads/main.zip"
         uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
-
         uta_script_folder_name = "nnsvs-db-converter-main"
 
-        diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/main.zip"
+        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/singledict-archive.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-main"
+        diffsinger_script_folder_name = "DiffSinger-singledict-archive"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
