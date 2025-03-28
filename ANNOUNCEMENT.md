@@ -1,4 +1,5 @@
 # NEW Announcement 3/28/25: THE MERGE IS COMING
+![Image](https://github.com/user-attachments/assets/017e89e2-4b73-4766-8294-95c7b4ae644d)
 ### Here's how DiffTrainer is handling it:
 - Main(currently single-dict) will get an update that redirects the update functions to a new branch, singledict-archive, and an archived copy of DiffSinger
 - After a few weeks to allow these changes to spread, the current main branch will be replaced with the multi-dict branch
