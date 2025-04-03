@@ -43,7 +43,7 @@ else:
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
 		with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffTrainer...") as progress_bar:
-			with open("main.zip", "wb") as f:
+			with open("singledict-archived.zip", "wb") as f:
 				for chunk in response.iter_content(chunk_size = 1024):
 					if chunk:
 						f.write(chunk)
