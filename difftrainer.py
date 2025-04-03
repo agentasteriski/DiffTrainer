@@ -11,8 +11,8 @@ from ezlocalizr import ezlocalizr
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
 
-version = "0.2.14"
-releasedate = "3/28/25"
+version = "0.2.15"
+releasedate = "4/2/25"
 
 
 def is_linux():
@@ -672,7 +672,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("main.zip", "wb") as f:
+            with open("singledict-archive.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
