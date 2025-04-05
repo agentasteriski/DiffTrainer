@@ -1,4 +1,11 @@
 # Changelog
+
+## 0.3.23
+- redirect diffsinger download to main branch
+- download pc-nsf-hifigan in addition to previous nsf-hifigan
+- split breathiness/energy toggle
+- added kitchen sink config
+
 ## 0.3.18
 - automatic update will update core dependencies if needed
 - configs come out in the same order they went in
