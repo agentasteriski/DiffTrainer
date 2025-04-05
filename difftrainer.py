@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.22"
-releasedate = "3/26/2025"
+version = "0.3.23"
+releasedate = "4/4/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -245,7 +245,7 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.label, message=(self.L('confsel2')), font = self.font)
         global preset
         preset = ctk.StringVar()
-        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch"], variable=preset, command=self.combobox_callback, state="readonly", font = self.font, dropdown_font = self.font)
+        self.configbox = ctk.CTkComboBox(master=self.frame6, values=["1. Basic functions", "2. Pitch", "3. Breathiness/Energy", "4. BRE/ENE + Pitch", "5. Tension", "6. Tension + Pitch", "7. Kitchen Sink"], variable=preset, command=self.combobox_callback, state="readonly", font = self.font, dropdown_font = self.font)
         self.configbox.grid(row=0, column=1)
         self.label = ctk.CTkLabel(master=self.frame6, text=(self.L('advconfig')), font = self.font)
         self.label.grid(row=1, column=0, padx=15)
@@ -255,49 +255,60 @@ class tabview(ctk.CTkTabview):
         global randaug
         randaug = tk.BooleanVar()
         self.confbox1 =  ctk.CTkCheckBox(master=self.subframe, text="gen", variable=randaug, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox1.grid(row=2, column=1, pady=5)
+        self.confbox1.grid(row=2, column=2, pady=5)
+        self.tooltip = CTkToolTip(self.confbox1, message="random_pitch_shifting/use_key_shift_embed(gender)", font=self.font)
         global trainpitch
         trainpitch = tk.BooleanVar()
         self.confbox2 =  ctk.CTkCheckBox(master=self.subframe, text="pit", variable=trainpitch, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox2.grid(row=3, column=1, pady=5)
-        global trainbren
-        trainbren = tk.BooleanVar()
-        self.confbox3 =  ctk.CTkCheckBox(master=self.subframe, text="bre/ene", variable=trainbren, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox3.grid(row=4, column=1, pady=5)
+        self.confbox2.grid(row=3, column=3, pady=5, padx=(0,3))
+        self.tooltip = CTkToolTip(self.confbox2, message="predict_pitch", font=self.font)
+        global trainbre
+        trainbre = tk.BooleanVar()
+        self.confbox3 =  ctk.CTkCheckBox(master=self.subframe, text="bre", variable=trainbre, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
+        self.confbox3.grid(row=4, column=1, pady=5, padx=(3,0))
+        self.tooltip = CTkToolTip(self.confbox3, message="use_breathiness_embed/predict_breathiness", font=self.font)
         global trainten
         trainten = tk.BooleanVar()
         self.confbox4 =  ctk.CTkCheckBox(master=self.subframe, text="ten", variable=trainten, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox4.grid(row=2, column=2, pady=5)
+        self.confbox4.grid(row=3, column=1, pady=5, padx=(3,0))
+        self.tooltip = CTkToolTip(self.confbox4, message="use_tension_embed/predict_tension", font=self.font)
         global trainvoc
         trainvoc = tk.BooleanVar()
         self.confbox5 =  ctk.CTkCheckBox(master=self.subframe, text="voc", variable=trainvoc, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox5.grid(row=3, column=2, pady=5)
+        self.tooltip = CTkToolTip(self.confbox5, message="use_voicing_embed/predict_voicing", font=self.font)
         global traindur
         traindur = tk.BooleanVar()
         self.confbox6 =  ctk.CTkCheckBox(master=self.subframe, text="dur", variable=traindur, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox6.grid(row=2, column=3, pady=5)
+        self.confbox6.grid(row=2, column=1, pady=5, padx=(3,0))
+        self.tooltip = CTkToolTip(self.confbox6, message="predict_dur", font=self.font)
         global stretchaug
         stretchaug = tk.BooleanVar()
         self.confbox7 =  ctk.CTkCheckBox(master=self.subframe, text="vel", variable=stretchaug, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox7.grid(row=3, column=3, pady=5)
-        global shallow_diff
-        shallow_diff = tk.BooleanVar()
-        self.confbox8 =  ctk.CTkCheckBox(master=self.subframe, text="shallow", variable=shallow_diff, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
+        self.confbox7.grid(row=2, column=3, pady=5, padx=(0,3))
+        self.tooltip = CTkToolTip(self.confbox7, message="random_time_stretching/use_speed_embed(velocity)", font=self.font)
+        global trainene
+        trainene = tk.BooleanVar()
+        self.confbox8 =  ctk.CTkCheckBox(master=self.subframe, text="ene", variable=trainene, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox8.grid(row=4, column=2, pady=5)
+        self.tooltip = CTkToolTip(self.confbox8, message="use_energy_embed/predict_energy", font=self.font)
         global preferds
         preferds = tk.BooleanVar()
         self.confbox9 = ctk.CTkCheckBox(master=self.subframe, text="prefer_ds", variable=preferds, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox9.grid(row=4, column=3, pady=5)
+        self.confbox9.grid(row=5, column=1, columnspan=2, pady=5)
         global vr
         vr = tk.BooleanVar()
         self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = True, offvalue = False, font = self.font)
-        self.confbox10.grid(row=3, column=0, pady=15)
+        self.confbox10.grid(row=3, column=0, columnspan=2, pady=15)
         self.tooltip = CTkToolTip(self.confbox10, message=(self.L('vr2')), font = self.font)
         global wavenet
         wavenet = tk.BooleanVar()
-        self.confbox11 = ctk.CTkCheckBox(master=self.frame6, text=(self.L('wavenet')), variable=wavenet, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox11.grid(row=3, column=1, pady=15)
+        self.confbox11 = ctk.CTkCheckBox(master=self.subframe, text=(self.L('wavenet')), variable=wavenet, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
+        self.confbox11.grid(row=5, column=2, columnspan=2, pady=15)
         self.tooltip = CTkToolTip(self.confbox11, message=(self.L('wavenet2')), font = self.font)
+        self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="dummy", state=tk.DISABLED, font=self.font)
+        self.confbox12.grid(row=4, column=3, pady=5, padx=(0,3))
+        self.tooltip = CTkToolTip(self.confbox12, message=(self.L('dummy')), font = self.font)
 
         self.frame14 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -312,7 +323,7 @@ class tabview(ctk.CTkTabview):
         self.subframe2 = ctk.CTkScrollableFrame(master=self.frame14, width=360)
         self.subframe2.grid(row=1, columnspan=3)
         self.langedit = ctk.CTkButton(master=self.frame14, text=(self.L('lang_edit')), command=self.langeditor, font=self.font)
-        self.langedit.grid(row=2, column=1)
+        self.langedit.grid(row=2, column=1, pady=3)
         self.tooltip = CTkToolTip(self.langedit, message=(self.L('lang_edit2')), font=self.font)
 
 
@@ -511,7 +522,7 @@ class tabview(ctk.CTkTabview):
             self.confbox5.deselect()
             self.confbox6.select()
             self.confbox7.select()
-            self.confbox8.select()
+            self.confbox8.deselect()
         elif choice == "2. Pitch":
             self.confbox1.select()
             self.confbox2.select()
@@ -520,7 +531,7 @@ class tabview(ctk.CTkTabview):
             self.confbox5.deselect()
             self.confbox6.select()
             self.confbox7.select()
-            self.confbox8.select()
+            self.confbox8.deselect()
         elif choice == "3. Breathiness/Energy":
             self.confbox1.select()
             self.confbox2.deselect()
@@ -547,7 +558,7 @@ class tabview(ctk.CTkTabview):
             self.confbox5.deselect()
             self.confbox6.select()
             self.confbox7.select()
-            self.confbox8.select()
+            self.confbox8.deselect()
         elif choice == "6. Tension + Pitch":
             self.confbox1.select()
             self.confbox2.select()
@@ -556,7 +567,16 @@ class tabview(ctk.CTkTabview):
             self.confbox5.deselect()
             self.confbox6.select()
             self.confbox7.select()
-            self.confbox8.select()
+            self.confbox8.deselect()
+        elif choice == "7. Kitchen Sink":
+            self.confbox1.select()
+            self.confbox2.select()
+            self.confbox3.select()
+            self.confbox4.select()
+            self.confbox5.select()
+            self.confbox6.select()
+            self.confbox7.select()
+            self.confbox8.deselect()
         else:
             print("Please select a preset or enable custom configuration!")
 
@@ -615,13 +635,16 @@ class tabview(ctk.CTkTabview):
         uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
         uta_script_folder_name = "nnsvs-db-converter-main"
 
-        diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/multi-dict.zip"
+        diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/main.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-multi-dict"
+        diffsinger_script_folder_name = "DiffSinger-main"
 
-        vocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
+        vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
         vocoder_folder = "DiffSinger/checkpoints"
+
+        oldvocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
+        oldvocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
 
         rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
         rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])
@@ -690,7 +713,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("multi-dict.zip", "wb") as f:
+            with open("main.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -705,8 +728,8 @@ class tabview(ctk.CTkTabview):
 
         response = requests.get(vocoder_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading NSF-HifiGAN") as progress_bar:
-            with open("nsf_hifigan_44.1k_hop512_128bin_2024.02.zip", "wb") as f:
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading PC-NSF-HifiGAN") as progress_bar:
+            with open("pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -714,6 +737,18 @@ class tabview(ctk.CTkTabview):
         with zipfile.ZipFile(vocoder_zip, "r") as zip_ref:
             zip_ref.extractall(vocoder_folder)
         os.remove(vocoder_zip)
+
+        response = requests.get(oldvocoder_url, stream = True)
+        total_size = int(response.headers.get("content-length", 0))
+        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading previous NSF-HifiGAN for compatibility") as progress_bar:
+            with open("nsf_hifigan_44.1k_hop512_128bin_2024.02.zip", "wb") as f:
+                for chunk in response.iter_content(chunk_size = 1024):
+                    if chunk:
+                        f.write(chunk)
+                        progress_bar.update(len(chunk))
+        with zipfile.ZipFile(vocoder_zip, "r") as zip_ref:
+            zip_ref.extractall(vocoder_folder)
+        os.remove(oldvocoder_zip)
 
         response = requests.get(rmvpe_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
@@ -1118,11 +1153,11 @@ class tabview(ctk.CTkTabview):
         enable_random_aug = randaug.get()
         enable_stretch_aug = stretchaug.get()
         duration = traindur.get()
-        energy = trainbren.get()
+        breathiness = trainbre.get()
+        energy = trainene.get()
         pitch = trainpitch.get()
         tension = trainten.get()
         voicing = trainvoc.get()
-        shallow = shallow_diff.get()
         pre_type = vr.get()
         ds = preferds.get()
         backbone = wavenet.get()
@@ -1196,7 +1231,7 @@ class tabview(ctk.CTkTabview):
             #sounds like a lot of users can go higher but 9 is a good start(Aster)
             bitch_ass_config["val_check_interval"] = int(save_interval)
             bitch_ass_config["use_energy_embed"] = energy
-            bitch_ass_config["use_breathiness_embed"] = energy
+            bitch_ass_config["use_breathiness_embed"] = breathiness
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
             bitch_ass_config["tension_logit_max"] = 8 #nobody is hitting the original default, lowering this reduces the nastiness at high tension
@@ -1205,8 +1240,6 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["voicing_smooth_width"] = 0.06
             bitch_ass_config["breathiness_smooth_width"] = 0.06
             bitch_ass_config["energy_smooth_width"] = 0.06
-            bitch_ass_config["use_shallow_diffusion"] = shallow
-            bitch_ass_config["shallow_diffusion_args"]["val_gt_start"] = shallow
             bitch_ass_config["diff_accelerator"] = "unipc"
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
@@ -1277,7 +1310,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["val_check_interval"] = int(save_interval)
             bitch_ass_config["predict_dur"] = duration
             bitch_ass_config["predict_energy"] = energy
-            bitch_ass_config["predict_breathiness"] = energy
+            bitch_ass_config["predict_breathiness"] = breathiness
             bitch_ass_config["predict_pitch"] = pitch
             bitch_ass_config["predict_tension"] = tension
             bitch_ass_config["predict_voicing"] = voicing
@@ -1343,14 +1376,19 @@ class tabview(ctk.CTkTabview):
         #you thought you were done reading GUI code. wrong.
         global editor
         editor = ctk.CTkToplevel(self)
-        editor.geometry("360x360")
+        if is_windows():
+            editor.geometry("360x360")
+        elif is_macos():
+            editor.geometry("400x400")
+        elif is_linux():
+            editor.geometry("445x420")
         editor.title("DiffTrainer Langloader")
         editor.resizable(False, False)
         with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
                 global langloader
                 langloader = yaml.safe_load(load_lang)
         dictframe = ctk.CTkFrame(master=editor)
-        dictframe.grid(row=0, column=0, columnspan=3, pady=(7,0))
+        dictframe.grid(row=0, column=0, columnspan=3, pady=(7,0), padx=7)
         tooltip_dict = CTkToolTip(dictframe, message=(self.L('dicts2')), font = self.font)
         dictlabel= ctk.CTkLabel(dictframe, text=(self.L('dicts')), font=self.font)
         dictlabel.grid(row=0, column=0, padx=7, sticky=tk.N)
@@ -1734,7 +1772,7 @@ class tabview(ctk.CTkTabview):
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
 
-        print("\nmaking directories...")
+        print("making directories...")
         try:
             ou_name = ou_name_var.get()
             ou_name_stripped = "".join(ou_name.split()) #takes the spaces out so cmd doesn't get confused
