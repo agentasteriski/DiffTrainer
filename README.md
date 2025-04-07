@@ -2,6 +2,8 @@
 Known issues:
 - langloader editor usually hides behind main window
 - ~~honestly langloader is just ugly and bad~~ improved as of 0.3.14(01/16/25)
+- if you type in the save interval or batch size boxes, an error appears in the terminal window
+  - no actual impact, just enter your number and ignore it
 - if you load one dataset, change your mind and load another, it fails to write the config
 - (Linux only) if the text and buttons appear jagged:
   - in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`
