@@ -1,5 +1,8 @@
 # Changelog
-
+## 0.3.24
+- moved set config edits to setup rather than configuration
+  - now if you edit things like smooth_width in the default config files, it won't be overwritten the next time you save that config
+ 
 ## 0.3.23
 - redirect diffsinger download to main branch
 - download pc-nsf-hifigan in addition to previous nsf-hifigan
