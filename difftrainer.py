@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.23"
-releasedate = "4/4/2025"
+version = "0.3.24"
+releasedate = "4/11/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -644,7 +644,7 @@ class tabview(ctk.CTkTabview):
         vocoder_folder = "DiffSinger/checkpoints"
 
         oldvocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
-        oldvocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
+        oldvocoder_zip = os.path.join(os.getcwd(), oldvocoder_url.split("/")[-1])
 
         rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
         rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])
@@ -746,7 +746,7 @@ class tabview(ctk.CTkTabview):
                     if chunk:
                         f.write(chunk)
                         progress_bar.update(len(chunk))
-        with zipfile.ZipFile(vocoder_zip, "r") as zip_ref:
+        with zipfile.ZipFile(oldvocoder_zip, "r") as zip_ref:
             zip_ref.extractall(vocoder_folder)
         os.remove(oldvocoder_zip)
 
@@ -817,15 +817,6 @@ class tabview(ctk.CTkTabview):
             if os.path.isfile(source):
                 shutil.copy(source, dest)
         shutil.rmtree(dicts_subsubfolder, ignore_errors=False)
-        #if os.path.exists(dicts_subfolder_name):
-            #os.rename(dicts_subfolder_name, "dictionaries2")
-        #for filename in os.listdir("dictionaries2"):
-            #if filename.endswith(".yaml") or filename.endswith(".txt"):
-                #filepath = os.path.join("dictionaries2", filename)
-            #if os.path.isfile(filepath):
-                #shutil.move(filepath, "DiffSinger/dictionaries")
-            #shutil.rmtree("dictionaries")
-        #shutil.rmtree("dictionaries2")
 
         if os.path.exists("db_converter_config.yaml"):
             os.remove("db_converter_config.yaml")
@@ -848,6 +839,42 @@ class tabview(ctk.CTkTabview):
         }
         with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
             yaml.dump(converter_config, config)
+
+        print("Adding the secret sauce...")
+        with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as config1:
+            base_config = yaml.safe_load(config1)
+        base_config["pe"] = "rmvpe"
+        base_config["f0_max"] = 1600
+        with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as config1:
+            yaml.dump(base_config, config1, default_flow_style=False, sort_keys=False)
+        with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config2:
+            aco_config = yaml.safe_load(config2)
+        aco_config["main_loss_type"] = "l1"
+        aco_config["tension_smooth_width"] = 0.06 #original default 0.12, lowering it reduces vocal modes coming out the same
+        aco_config["voicing_smooth_width"] = 0.06
+        aco_config["breathiness_smooth_width"] = 0.06
+        aco_config["energy_smooth_width"] = 0.06
+        aco_config["diff_accelerator"] = "unipc"
+        with open("DiffSinger/configs/acoustic.yaml", "w", encoding = "utf-8") as config2:
+            yaml.dump(aco_config, config2, default_flow_style=False, sort_keys=False)
+        with open("DiffSinger/configs/variance.yaml", "r", encoding = "utf-8") as config3:
+            var_config = yaml.safe_load(config3)
+        var_config["main_loss_type"] = "l1"
+        var_config["tension_logit_max"] = 8 #nobody is hitting the original default, lowering this reduces the nastiness at high tension(tbh could/should still go lower for a lot of people)
+        var_config["tension_logit_min"] = -8 #haven't heard as many issues with low tension but just for good measure
+        var_config["tension_smooth_width"] = 0.06 
+        var_config["voicing_smooth_width"] = 0.06
+        var_config["breathiness_smooth_width"] = 0.06
+        var_config["energy_smooth_width"] = 0.06
+        var_config["diff_accelerator"] = "unipc"
+        with open("DiffSinger/configs/variance.yaml", "w", encoding = "utf-8") as config3:
+            yaml.dump(var_config, config3, default_flow_style=False, sort_keys=False)
+        new_f0_max=1600
+        with open("DiffSinger/utils/binarizer_utils.py", "r", encoding = "utf-8") as f:
+            f0_read = f.read()
+        up_f0_val = re.sub(r"f0_max\s*=\s*.*", f"f0_max={new_f0_max},", f0_read)
+        with open("DiffSinger/utils/binarizer_utils.py", "w", encoding = "utf-8") as f:
+            f.write(up_f0_val)
 
         #no idea how to do this on other OS and honestly idc, it's here for the bit
         if is_windows():
@@ -1191,12 +1218,6 @@ class tabview(ctk.CTkTabview):
 
 
         if selected_config_type == 1:
-            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
-                based = yaml.safe_load(baseconfig)
-            based["pe"] = "rmvpe"
-            based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
-            with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
-                    yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
             merged_loc = os.path.join("DiffSinger/dictionaries", lang["merge_list"])
@@ -1210,9 +1231,6 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["use_spk_id"] = True
             else:
                 bitch_ass_config["use_spk_id"] = False
-            bitch_ass_config["diff_loss_type"] = "l1"
-            bitch_ass_config["main_loss_type"] = "l1"
-            bitch_ass_config["f0_max"] = 1600
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
             bitch_ass_config["num_lang"] = len(lang["dictionaries"])
@@ -1234,18 +1252,10 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_breathiness_embed"] = breathiness
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
-            bitch_ass_config["tension_logit_max"] = 8 #nobody is hitting the original default, lowering this reduces the nastiness at high tension
-            bitch_ass_config["tension_logit_min"] = -8 #haven't heard as many issues with low tension but just for good measure
-            bitch_ass_config["tension_smooth_width"] = 0.06 #original default 0.12, lowering it reduces vocal modes coming out the same
-            bitch_ass_config["voicing_smooth_width"] = 0.06
-            bitch_ass_config["breathiness_smooth_width"] = 0.06
-            bitch_ass_config["energy_smooth_width"] = 0.06
-            bitch_ass_config["diff_accelerator"] = "unipc"
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
             else:
                 bitch_ass_config["hnsep"] = "world"
-            bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
             if backbone==True:
                 #switches to wavenet backbone at default recommended settings
                 #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
@@ -1275,12 +1285,6 @@ class tabview(ctk.CTkTabview):
                 print("wrote acoustic config!")
 
         else:
-            with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as baseconfig:
-                based = yaml.safe_load(baseconfig)
-            based["pe"] = "rmvpe"
-            based["pe_ckpt"] = "checkpoints/rmvpe/model.pt"
-            with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as baseconfig:
-                    yaml.dump(based, baseconfig, sort_keys=False)
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
                 lang = yaml.safe_load(langloader)
             merged_loc = os.path.join("DiffSinger/dictionaries", lang["merge_list"])
@@ -1304,7 +1308,6 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["use_lang_id"] = False
             else:
                 bitch_ass_config["use_lang_id"] = True
-            bitch_ass_config["f0_max"] = 1600
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["max_batch_size"] = int(batch)
             bitch_ass_config["val_check_interval"] = int(save_interval)
@@ -1315,19 +1318,11 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["predict_tension"] = tension
             bitch_ass_config["predict_voicing"] = voicing
             bitch_ass_config["use_melody_encoder"] = pitch
-            bitch_ass_config["tension_logit_max"] = 8
-            bitch_ass_config["tension_logit_min"] = -8
-            bitch_ass_config["tension_smooth_width"] = 0.06
-            bitch_ass_config["voicing_smooth_width"] = 0.06
-            bitch_ass_config["breathiness_smooth_width"] = 0.06
-            bitch_ass_config["energy_smooth_width"] = 0.06
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
-            bitch_ass_config["diff_accelerator"] = "unipc"
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
             else:
                 bitch_ass_config["hnsep"] = "world"
-            bitch_ass_config["hnsep_ckpt"] = "checkpoints/vr/model.pt"
             if backbone==True:
                 #switches to lynxnet at default recommended settings
                 #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
@@ -1365,12 +1360,7 @@ class tabview(ctk.CTkTabview):
                     yaml.dump(bitch_ass_config, config, default_flow_style=False, sort_keys=False)
                 print("wrote variance config!")
 
-        new_f0_max=1600
-        with open("DiffSinger/utils/binarizer_utils.py", "r", encoding = "utf-8") as f:
-            f0_read = f.read()
-        up_f0_val = re.sub(r"f0_max\s*=\s*.*", f"f0_max={new_f0_max},", f0_read)
-        with open("DiffSinger/utils/binarizer_utils.py", "w", encoding = "utf-8") as f:
-            f.write(up_f0_val)
+        
         
     def langeditor(self):
         #you thought you were done reading GUI code. wrong.
