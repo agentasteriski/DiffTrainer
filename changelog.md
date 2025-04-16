@@ -1,10 +1,15 @@
 # Changelog
+
+## 0.3.25
+- added CUDA 12.4 to detection in setup
+- redirect DiffSinger download to v2-backport backup
+
 ## 0.3.24
 - moved set config edits to setup rather than configuration
   - now if you edit things like smooth_width in the default config files, it won't be overwritten the next time you save that config
  
 ## 0.3.23
-- redirect diffsinger download to main branch
+- redirect DiffSinger download to main branch
 - download pc-nsf-hifigan in addition to previous nsf-hifigan
 - split breathiness/energy toggle
 - added kitchen sink config
@@ -17,7 +22,7 @@
 - QuickInference overhaul
 
 ## 0.3.14
-- added config strings to match Diffsinger update(requires running update tools)
+- added config strings to match DiffSinger update(requires running update tools)
 - updated langloader window
   - still uses langloader/merged.yaml, just has a nicer editor
   - it still usually pops up hidden behind the main window, sorry
@@ -29,10 +34,10 @@
 ## 0.3.0(multidict beta)
 - new config format for multidict setup
 - new settings files: langloader.yaml and merged.yaml
-  - langloader: fixed file name/location. editable directly in difftrainer. lists dictionary files and global phonemes
+  - langloader: fixed file name/location. editable directly in DiffTrainer. lists dictionary files and global phonemes
   - merged: flexible file name/location(specified in langloader.yaml). lists groups of phonemes to merge
 ## 0.2.4
-- added backbone toggle(requires Diffsinger update 11/16/24)
+- added backbone toggle(requires DiffSinger update 11/16/24)
 ## 0.2.1
 - automated environment activation(environment names are now hardcoded, all users must use conda)
 ## 0.2.0
