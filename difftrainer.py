@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.24"
-releasedate = "4/11/2025"
+version = "0.3.25"
+releasedate = "4/16/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -635,9 +635,9 @@ class tabview(ctk.CTkTabview):
         uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
         uta_script_folder_name = "nnsvs-db-converter-main"
 
-        diffsinger_url = "https://github.com/openvpi/DiffSinger/archive/refs/heads/main.zip"
+        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/version2-backport.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-main"
+        diffsinger_script_folder_name = "DiffSinger-version2-backport"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
@@ -713,7 +713,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("main.zip", "wb") as f:
+            with open("version2-backport.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
