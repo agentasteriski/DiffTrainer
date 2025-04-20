@@ -1,4 +1,40 @@
 # Changelog
+## 0.3.25
+- added CUDA 12.4 to detection in setup
+- redirect DiffSinger download to v2-backport backup
+
+## 0.3.24
+- moved set config edits to setup rather than configuration
+  - now if you edit things like smooth_width in the default config files, it won't be overwritten the next time you save that config
+ 
+## 0.3.23
+- redirect DiffSinger download to main branch
+- download pc-nsf-hifigan in addition to previous nsf-hifigan
+- split breathiness/energy toggle
+- added kitchen sink config
+
+## 0.3.18
+- automatic update will update core dependencies if needed
+- configs come out in the same order they went in
+
+## 0.3.17-ish
+- QuickInference overhaul
+
+## 0.3.14
+- added config strings to match DiffSinger update(requires running update tools)
+- updated langloader window
+  - still uses langloader/merged.yaml, just has a nicer editor
+  - it still usually pops up hidden behind the main window, sorry
+## 0.3.13
+- sorry I always forget to update this section
+- there's probably a few changes that should be mentioned but I forgot
+- should actually work on Linux/Mac now
+- automates merging speakers in spk_map.json
+## 0.3.0(multidict beta)
+- new config format for multidict setup
+- new settings files: langloader.yaml and merged.yaml
+  - langloader: fixed file name/location. editable directly in DiffTrainer. lists dictionary files and global phonemes
+  - merged: flexible file name/location(specified in langloader.yaml). lists groups of phonemes to merge
 ## 0.2.11
 - automatic update will update dependencies if needed
 - configs come out in the same order they went in
