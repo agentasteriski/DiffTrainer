@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.25"
-releasedate = "4/16/2025"
+version = "0.3.26"
+releasedate = "4/20/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path

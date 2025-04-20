@@ -37,7 +37,8 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - As of v0.2.1, the names of the environments are hardcoded requirements.
 
 ## known bug on Linux
-
+- if the text and buttons appear jagged:
+  - in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`
 
 ## language support
 DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) to allow GUI language selection. All users are welcome to translate the text found in [en_US](/strings/en_US.yaml) to other languages and submit a pull request.
