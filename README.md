@@ -1,15 +1,3 @@
-# soon to be main branch!
-Known issues:
-- langloader editor usually hides behind main window
-- ~~honestly langloader is just ugly and bad~~ improved as of 0.3.14(01/16/25)
-- if you type in the save interval or batch size boxes, an error appears in the terminal window
-  - no actual impact, just enter your number and ignore it
-- if you load one dataset, change your mind and load another, it fails to write the config
-- do not name checkpoint folders just "acoustic" or "variance", it conflicts with the onnx export cleanup
-- (Linux only) if the text and buttons appear jagged:
-  - in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`
-- (Mac only) dependency of a dependency `libcst` no longer packaged for x86
-  - add `libcst` to upper half of environmentA/B.yml before running setup_conda_envs.py(unsure if this will continue to work or what other impacts the outdated version has)
 
 **English** *[中文（正體）](./README-zh.md)*
 
@@ -36,9 +24,18 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
   - "Update Tools" on the first tab to complete the install
 - As of v0.2.1, the names of the environments are hardcoded requirements.
 
-## known bug on Linux
-- if the text and buttons appear jagged:
+Known issues:
+- langloader editor usually hides behind main window
+- ~~honestly langloader is just ugly and bad~~ improved as of 0.3.14(01/16/25)
+- if you type in the save interval or batch size boxes, an error appears in the terminal window
+  - no actual impact, just enter your number and ignore it
+- if you load one dataset, change your mind and load another, it fails to write the config
+- do not name checkpoint folders just "acoustic" or "variance", it conflicts with the onnx export cleanup
+- (Linux only) if the text and buttons appear jagged:
   - in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`
+- (Mac only) dependency of a dependency `libcst` no longer packaged for x86
+  - add `libcst` to upper half of environmentA/B.yml before running setup_conda_envs.py(unsure if this will continue to work or what other impacts the outdated version has)
+
 
 ## language support
 DiffTrainer uses [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) to allow GUI language selection. All users are welcome to translate the text found in [en_US](/strings/en_US.yaml) to other languages and submit a pull request.
