@@ -11,7 +11,7 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.26"
+version = "0.3.27"
 releasedate = "4/20/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
@@ -1770,18 +1770,21 @@ class tabview(ctk.CTkTabview):
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
             if not os.path.exists(f"{main_stuff}/dsmain"):
-                os.makedirs(f"{main_stuff}/dsmain/embeds/acoustic") #these embed folders wind up empty if it's single speaker
-                os.makedirs(f"{main_stuff}/dsmain/embeds/variance") #but it doesn't hurt anything and I don't feel like making it conditional
+                os.makedirs(f"{main_stuff}/dsmain")
+                os.makedirs(f"{main_stuff}/embeds") #these embed folders wind up empty if it's single speaker
                 os.makedirs(f"{main_stuff}/dsdur")
+                os.makedirs(f"{main_stuff}/dsdur/embeds") #but it doesn't hurt anything and I don't feel like making it conditional
                 try:
                     if os.path.exists(f"{var_folder_onnx}/variance.onnx"):
                         os.makedirs(f"{main_stuff}/dsvariance")
+                        os.makedirs(f"{main_stuff}/dsvariance/embeds")
                     else: pass
                 except Exception as e:
                     print(f"Error creating directories: {e}")
                 try:
                     if os.path.exists(f"{var_folder_onnx}/pitch.onnx"):
                         os.makedirs(f"{main_stuff}/dspitch")
+                        os.makedirs(f"{main_stuff}/dspitch/embeds")
                     else: pass
                 except Exception as e:
                     print(f"Error creating directories: {e}")
@@ -1808,14 +1811,14 @@ class tabview(ctk.CTkTabview):
         try:
             acoustic_emb_files = [file for file in os.listdir(aco_folder_onnx) if file.endswith(".emb")]
             for emb_file in acoustic_emb_files:
-                shutil.copy(f"{aco_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/acoustic")
+                shutil.copy(f"{aco_folder_onnx}/{emb_file}", f"{main_stuff}/embeds")
             acoustic_emb_files = os.listdir(aco_folder_onnx)
             acoustic_embeds = []
             acoustic_color_suffix = []
             for file in acoustic_emb_files:
                 if file.endswith(".emb"):
                     acoustic_emb = os.path.splitext(file)[0]
-                    acoustic_embeds.append("dsmain/embeds/acoustic/" + acoustic_emb)
+                    acoustic_embeds.append("embeds/" + acoustic_emb)
                     acoustic_color_suffix.append(acoustic_emb)
         except Exception as e:
                     print(f"Error moving acoustic embeds: {e}")
@@ -1824,21 +1827,25 @@ class tabview(ctk.CTkTabview):
         print("\nmoving variance files...")
         try:
             var_emb_files = [file for file in os.listdir(var_folder_onnx) if file.endswith(".emb")]
-            for emb_file in var_emb_files:
-                shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/variance")
             if os.path.exists(f"{var_folder_onnx}/dur.onnx"):
                 shutil.copy(f"{var_folder_onnx}/dur.onnx", f"{main_stuff}/dsdur")
+                for emb_file in var_emb_files:
+                    shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dsdur/embeds")
             if os.path.exists(f"{var_folder_onnx}/variance.onnx"):
                 shutil.copy(f"{var_folder_onnx}/variance.onnx", f"{main_stuff}/dsvariance")
+                for emb_file in var_emb_files:
+                    shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dsvariance/embeds")
             if os.path.exists(f"{var_folder_onnx}/pitch.onnx"):
                 shutil.copy(f"{var_folder_onnx}/pitch.onnx", f"{main_stuff}/dspitch")
+                for emb_file in var_emb_files:
+                    shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dspitch/embeds")
             variance_emb_files = os.listdir(var_folder_onnx)
             variance_embeds = []
             variance_color_suffix = []
             for file in variance_emb_files:
                 if file.endswith(".emb"):
                     variance_emb = os.path.splitext(file)[0]
-                    variance_embeds.append("../dsmain/embeds/variance/" + variance_emb)
+                    variance_embeds.append("embeds/" + variance_emb)
                     variance_color_suffix.append(variance_emb)
         except Exception as e:
             print(f"Error moving variance files: {e}")
@@ -2003,20 +2010,21 @@ class tabview(ctk.CTkTabview):
             if not os.path.exists(main_stuff):
                 os.makedirs(main_stuff)
             if not os.path.exists(f"{main_stuff}/dsmain"):
-                os.makedirs(f"{main_stuff}/dsmain/embeds/acoustic")
-                os.makedirs(f"{main_stuff}/dsmain/embeds/duration")
+                os.makedirs(f"{main_stuff}/dsmain")
+                os.makedirs(f"{main_stuff}/embeds")
                 os.makedirs(f"{main_stuff}/dsdur")
+                os.makedirs(f"{main_stuff}/dsdur/embeds/")
                 try:
                     if var_folder_onnx: #treats var as fully separate from dur in this version
-                        os.makedirs(f"{main_stuff}/dsmain/embeds/variance")
                         os.makedirs(f"{main_stuff}/dsvariance")
+                        os.makedirs(f"{main_stuff}/dsvariance/embeds")
                     else: pass
                 except Exception as e:
                     print(f"Error creating directories: {e}")
                 try:
                     if pitch_folder_onnx: #same with pitch
-                        os.makedirs(f"{main_stuff}/dsmain/embeds/pitch")
                         os.makedirs(f"{main_stuff}/dspitch")
+                        os.makedirs(f"{main_stuff}/dspitch/embeds")
                     else: pass
                 except Exception as e:
                     print(f"Error creating directories: {e}")
@@ -2043,14 +2051,14 @@ class tabview(ctk.CTkTabview):
         try:
             acoustic_emb_files = [file for file in os.listdir(aco_folder_onnx) if file.endswith(".emb")]
             for emb_file in acoustic_emb_files:
-                shutil.copy(f"{aco_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/acoustic")
+                shutil.copy(f"{aco_folder_onnx}/{emb_file}", f"{main_stuff}/embeds")
             acoustic_emb_files = os.listdir(aco_folder_onnx)
             acoustic_embeds = []
             acoustic_color_suffix = []
             for file in acoustic_emb_files:
                 if file.endswith(".emb"):
                     acoustic_emb = os.path.splitext(file)[0]
-                    acoustic_embeds.append("dsmain/embeds/acoustic/" + acoustic_emb)
+                    acoustic_embeds.append("embeds/" + acoustic_emb)
                     acoustic_color_suffix.append(acoustic_emb)
         except Exception as e:
                     print(f"Error moving acoustic embeds: {e}")
@@ -2059,7 +2067,7 @@ class tabview(ctk.CTkTabview):
         try:
             dur_emb_files = [file for file in os.listdir(dur_folder_onnx) if file.endswith(".emb")]
             for emb_file in dur_emb_files:
-                shutil.copy(f"{dur_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/duration")
+                shutil.copy(f"{dur_folder_onnx}/{emb_file}", f"{main_stuff}/dsdur/embeds")
             shutil.copy(f"{dur_folder_onnx}/dur.onnx", f"{main_stuff}/dsdur")
             duration_emb_files = os.listdir(dur_folder_onnx)
             duration_embeds = []
@@ -2067,7 +2075,7 @@ class tabview(ctk.CTkTabview):
             for file in duration_emb_files:
                 if file.endswith(".emb"):
                     duration_emb = os.path.splitext(file)[0]
-                    duration_embeds.append("../dsmain/embeds/duration/" + duration_emb)
+                    duration_embeds.append("embeds/" + duration_emb)
                     duration_color_suffix.append(duration_emb)
         except Exception as e:
             print(f"Error moving duration files: {e}")
@@ -2077,7 +2085,7 @@ class tabview(ctk.CTkTabview):
         try:
             var_emb_files = [file for file in os.listdir(var_folder_onnx) if file.endswith(".emb")]
             for emb_file in var_emb_files:
-                shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/variance")
+                shutil.copy(f"{var_folder_onnx}/{emb_file}", f"{main_stuff}/dsvariance/embeds")
             shutil.copy(f"{var_folder_onnx}/variance.onnx", f"{main_stuff}/dsvariance")
             shutil.copy(f"{var_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsvariance")
             shutil.copy(f"{var_folder_onnx}/phonemes.json", f"{main_stuff}/dsvariance") #multidict merge shenanigans can require multiple different phonemes.json
@@ -2087,7 +2095,7 @@ class tabview(ctk.CTkTabview):
             for file in variance_emb_files:
                 if file.endswith(".emb"):
                     variance_emb = os.path.splitext(file)[0]
-                    variance_embeds.append("../dsmain/embeds/variance/" + variance_emb)
+                    variance_embeds.append("embeds/" + variance_emb)
                     variance_color_suffix.append(variance_emb)
         except Exception as e:
             print(f"Error moving variance files: {e}")
@@ -2096,7 +2104,7 @@ class tabview(ctk.CTkTabview):
         try:
             pitch_emb_files = [file for file in os.listdir(pitch_folder_onnx) if file.endswith(".emb")]
             for emb_file in pitch_emb_files:
-                shutil.copy(f"{pitch_folder_onnx}/{emb_file}", f"{main_stuff}/dsmain/embeds/pitch")
+                shutil.copy(f"{pitch_folder_onnx}/{emb_file}", f"{main_stuff}/dspitch/embeds")
             shutil.copy(f"{pitch_folder_onnx}/pitch.onnx", f"{main_stuff}/dspitch")
             shutil.copy(f"{pitch_folder_onnx}/linguistic.onnx", f"{main_stuff}/dspitch")
             shutil.copy(f"{pitch_folder_onnx}/phonemes.json", f"{main_stuff}/dspitch")
@@ -2106,7 +2114,7 @@ class tabview(ctk.CTkTabview):
             for file in pitch_emb_files:
                 if file.endswith(".emb"):
                     pitch_emb = os.path.splitext(file)[0]
-                    pitch_embeds.append("../dsmain/embeds/pitch/" + pitch_emb)
+                    pitch_embeds.append("embeds/" + pitch_emb)
                     pitch_color_suffix.append(pitch_emb)
         except Exception as e:
             print(f"Error moving pitch files: {e}")
