@@ -244,7 +244,7 @@ def ds():
         global renderedQ
         rendered = os.path.join(dsloc, dsname2) + ".wav"
         renderedQ = '"{}"'.format(rendered)
-        
+
 def run_cmdA(cmd):
         if is_windows():
             cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
@@ -257,6 +257,7 @@ def run_cmdA(cmd):
 def render():
       os.chdir(diffolder)
       spkname = spk.get()
+      langname = lcode.get()
       pdur = overdur.get()
       ppit = overpit.get()
       pbre = overbre.get()
@@ -264,7 +265,7 @@ def render():
       pten = overten.get()
       pvoc = overvoc.get()
       if varckptQ != '':
-            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinputQ, '--exp', varckptQ, '--spk', spkname, '--out', dslocQ, '--title', postvarQ]
+            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinputQ, '--exp', varckptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', postvarQ]
             if pdur == True:
                  cmd1.append('--predict')
                  cmd1.append('dur')
@@ -298,14 +299,14 @@ def render():
             print(L('inf1'))
             command1 = ' '.join(cmd1)
             run_cmdA(command1)
-            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvardsQ, '--exp', acockptQ, '--spk', spkname, '--out', dslocQ, '--title', dsname2Q]
+            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvardsQ, '--exp', acockptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', dsname2Q]
             command2 = ' '.join(cmd2)
             run_cmdA(command2)
             print(L('inf2'))
         
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
       else:
-            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--out', dslocQ, '--title', dsname2Q]
+            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', dsname2Q]
             command3 = ' '.join(cmd3)
             print(L('inf2'))
             run_cmdA(command3)
@@ -316,6 +317,7 @@ def replay():
         subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
     except subprocess.CalledProcessError:
          print(L('replayerror'))
+
 
 
 
@@ -363,9 +365,15 @@ tenbox = ctk.CTkCheckBox(overwriteframe, text="ten", variable=overten, font=font
 tenbox.grid(row=3, column=0, padx=(5,0), pady=(0,5))
 vocbox = ctk.CTkCheckBox(overwriteframe, text="voc", variable=overvoc, font=font)
 vocbox.grid(row=3, column=1, padx=(5,0), pady=(0,5))
+
+
+
 spk = tk.StringVar(value=L('spk'))
 box = ctk.CTkEntry(app, textvariable=spk, font=font)
-box.grid(row=2, column=0, padx=10, pady=10, columnspan=2)
+box.grid(row=2, column=0, padx=10, pady=10)
+lcode = tk.StringVar(value=L('langcode'))
+box2 = ctk.CTkEntry(app, textvariable=lcode, font=font)
+box2.grid(row=2, column=1, padx=10, pady=10)
 button3 = ctk.CTkButton(app, text=L('getds'), command=ds, font=font)
 button3.grid(row=3, column=0, padx=10, pady=10)
 button4 = ctk.CTkButton(app, text=L('render'), command=render, font=font)

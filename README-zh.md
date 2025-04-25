@@ -1,5 +1,12 @@
-# [重要更新資訊](https://github.com/agentasteriski/DiffTrainer/blob/main/ANNOUNCEMENT-zh.md)
 ![DiffTrainer](https://github.com/agentasteriski/DiffTrainer/blob/main/assets/difftrainerlogo.png?raw=true)
+
+# 多辭典測試版
+非常粗糙。已知問題：
+- 甚至不確定我們做得對嗎
+- langloader 編輯器通常隱藏在主視窗後面
+- 老實說 langloader 又醜又糟糕
+- 如果您載入一個資料集，然後改變主意並載入另一個資料集，則無法寫入配置
+
 
 *[English](./README.md)* **中文（正體）**
 
@@ -37,6 +44,6 @@ DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/t
 - 更好的自述文件
 
 最終
-- 高級匯出
+- ~~高級匯出~~
 - 更多翻譯
-- 一個不 amogus 的圖標
+- ~~一個不 amogus 的圖標~~

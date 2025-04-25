@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 main_path = os.getcwd()
 
-gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/singledict-archived/difftrainer.py")
+gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/main/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
 github_version = github_version.group(1)
 
@@ -14,7 +14,7 @@ with open("difftrainer.py", "r", encoding = "utf-8") as gui_local:
 local_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_local)
 local_version = local_version.group(1)
 
-reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/singledict-archived/requirements.txt"
+reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/main/requirements.txt"
 reqresponse = requests.get(reqs_url)
 with open('requirements_compare.txt', 'wb') as f:
             f.write(reqresponse.content)
@@ -31,14 +31,18 @@ try:
 except:
 	print("Error removing temporary comparison file")
 
+
 if local_version >= github_version:
 	pass
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest DiffTrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update DiffTrainer?")
 	if update_prompt:
-		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/singledict-archived.zip"
+		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/main.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
-		folder = "DiffTrainer-singledict-archived"
+		folder = "DiffTrainer-main"
+
+
+
 
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
@@ -69,6 +73,7 @@ else:
 			for filename in os.listdir(main_path) if filename.endswith(".py")]
 			[shutil.move(os.path.join(folder, filename), main_path)
         	for filename in os.listdir(folder) if filename.endswith(".py")]
+			
 			shutil.rmtree(folder)
 
 		if update_reqs == True:
