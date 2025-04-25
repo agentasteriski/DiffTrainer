@@ -20,7 +20,8 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 - OpenUtau匯出腳本
 ## 安裝選項
 ### 如果您有 NVIDIA GPU：
-- 確保已安裝了 [CUDA Toolkit](https://developer.nvidia.com/cuda-11-8-0-download-archive)
+- 確保安裝了相容版本的 [CUDA Toolkit](https://developer.nvidia.com/cuda-11-8-0-download-archive)
+  - 目前相容版本：11.8、12.1、12.4、12.6
 - 繼續下一個“如果”
 
 ### 如果你從未用過Python：
@@ -31,7 +32,7 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 ### 如果你用過Python：
 - DiffTrainer 預設使用 Miniconda 來管理衝突的套件要求。
 - 要使用現有的 conda 安裝：
-  - 將requirements.txt安裝到基礎環境
+  - 將requirements.txt安裝到基礎環境（強烈建議 3.10，其他版本可能仍適用於基礎環境）
   - 執行setup_conda_envs.py來配置所需的環境
   - 選擇第一個選項卡上的“更新工具”以完成安裝
 - 從 v0.2.1 開始，環境名稱是硬編碼要求。
