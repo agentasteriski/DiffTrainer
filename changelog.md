@@ -1,4 +1,8 @@
 # Changelog
+
+## 0.3.28
+- add custom error when selecting samples so I don't have to explain ValueError every day
+
 ## 0.3.27
 - fix OU exports only using first speaker for pitch
   
