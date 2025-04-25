@@ -36,6 +36,18 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
   - 選擇第一個選項卡上的“更新工具”以完成安裝
 - 從 v0.2.1 開始，環境名稱是硬編碼要求。
 
+已知問題：
+- langloader 編輯器通常隱藏在主視窗後面
+- ~~說實話，langloader 實在太醜太糟了~~ 已從 0.3.14（2025 年 1 月 16 日）開始改進
+- 如果您在儲存間隔或批次大小方塊中輸入，終端機視窗中會出現錯誤
+- 沒有實際影響，只需輸入您的數字並忽略它
+- 如果您載入了一個資料集，然後改變主意並載入了另一個資料集，則無法寫入配置
+- 不要將檢查點資料夾命名為“acoustic”或“variance”，這會與 onnx 匯出清理衝突
+- （僅限 Linux）如果文字和按鈕出現鋸齒狀：
+- 在基礎環境中，`conda install --channel=conda-forge tk[build=xft_*]`
+- （僅限 Mac）依賴項 `libcs​​t` 的依賴項不再針對 x86 打包
+- 在執行 setup_conda_envs.py 之前，將 `libcs​​` 添加到 environmentA/B.yml 的上半部（不確定這是否會繼續工作或舊版本有什麼其他影響）
+
 ## 語言支持
 DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) 來允許 GUI 語言選擇。 歡迎所有使用者將 [en_US](/strings/en_US.yaml) 中找到的文字翻譯為其他語言並提交拉取請求。
 
