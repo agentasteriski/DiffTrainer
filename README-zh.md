@@ -1,13 +1,5 @@
 ![DiffTrainer](https://github.com/agentasteriski/DiffTrainer/blob/main/assets/difftrainerlogo.png?raw=true)
 
-# 多辭典測試版
-非常粗糙。已知問題：
-- 甚至不確定我們做得對嗎
-- langloader 編輯器通常隱藏在主視窗後面
-- 老實說 langloader 又醜又糟糕
-- 如果您載入一個資料集，然後改變主意並載入另一個資料集，則無法寫入配置
-
-
 *[English](./README.md)* **中文（正體）**
 
 ⚠中文版本的自述文件内容并不一定是最新的並且可能存在有翻譯的錯誤，如果中文版本與英文原版有什麽出入的話以英文原版爲準
