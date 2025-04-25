@@ -1,4 +1,4 @@
-# 新公告 3/28/25：合併即將到來
+# 新公告 3/28/25：合併即將到來 ( *[English](./ANNOUNCEMENT.md)* )
 ![Image](https://github.com/user-attachments/assets/017e89e2-4b73-4766-8294-95c7b4ae644d)
 ### DiffTrainer 的處理方式如下:
 - 主分支（目前為single-dict）將進行更新，將更新函數重新導向至新分支 singledict-archive 和 DiffSinger 的存檔副本。
