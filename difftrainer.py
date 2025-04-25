@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.27"
-releasedate = "4/20/2025"
+version = "0.3.28"
+releasedate = "4/25/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1143,15 +1143,15 @@ class tabview(ctk.CTkTabview):
             raw_dir = os.path.join(data_folder, folder_name)
             spk_rows.append(ctk.CTkFrame(master=self.subframe2, width=340))
             spk_rows[folder_id].grid(row=folder_id,sticky="EW", pady=3)
-            spk_name_box = ctk.CTkEntry(master=spk_rows[folder_id], width=100)
+            spk_name_box = ctk.CTkEntry(master=spk_rows[folder_id], width=100, font = self.font)
             spk_name_box.insert(0, folder_name)
             spk_name_box.grid(column=0, row=0, padx=15, pady=3)
             #default selectable languages currently match localizations
             #might change it to the default phoneme lists instead
             #does a Swedish DiffSinger even exist yet?
-            spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "ja", "zh", "ko", "es", "pt", "sv", "tl"])
+            spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "ja", "zh", "ko", "es", "pt", "sv", "tl"], font = self.font)
             spk_lang_select.grid(column=1, row=0, padx=10)
-            spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20)
+            spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20, font = self.font)
             spk_id_select.insert(0, folder_id)
             spk_id_select.grid(column=2, row=0, padx=15)
             self.spk_info[spk] =(raw_dir, folder_name, spk_lang_select, spk_id_select)
@@ -1192,6 +1192,7 @@ class tabview(ctk.CTkTabview):
         batch = batch_size.get()
         selected_config_type = trainselect.get()
         allspeakers = []
+        enoughsamples = True
 
         for spk, (raw_dir, folder_name, spk_lang_select, spk_id_select) in self.spk_info.items():
             spk_lang = spk_lang_select.get()
@@ -1205,7 +1206,9 @@ class tabview(ctk.CTkTabview):
                 for row in csv_reader:
                     if len(row) > 0:
                         prefixes.append(row[0])
-                test_prefixes = random.sample(prefixes, 3)
+                try: test_prefixes = random.sample(prefixes, 3)
+                except ValueError: 
+                    raise ValueError(f"{self.L('sampleerror')} {spk}!")
                 #tried using less than 3 way back and it just errored, not sure what I'm missing there
             spk_block = {
                 "raw_data_dir": raw_dir,
