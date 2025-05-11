@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.getcwd()
-version = "0.3.29"
-releasedate = "5/7/2025"
+version = "0.3.30"
+releasedate = "5/10/2025"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -2230,7 +2230,7 @@ class tabview(ctk.CTkTabview):
                         file.write("linguistic: linguistic.onnx\n")
                         file.write("pitch: pitch.onnx\n")
                         file.write("use_expr: true\n")
-                    with open(pitch_config, "r", encoding = "utf-8") as config:
+                    with open(f"{pitch_folder_onnx}/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         pitch_config_data = yaml.safe_load(config)
                     predict_dur = pitch_config_data.get("predict_dur")
                     use_note_rest = pitch_config_data.get("use_note_rest")
