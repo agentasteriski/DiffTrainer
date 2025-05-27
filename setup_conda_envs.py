@@ -152,6 +152,24 @@ try:
                 run_cmdA(command1)
                 run_cmdA(command2)
                 break
+            elif version == "12.8":
+                print("Preferred Torch version not available for this CUDA version, installing latest")
+                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu128", "--no-warn-script-location"]
+                nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                command1 = " ".join(torch)
+                command2 = " ".join(nottorch)
+                run_cmdA(command1)
+                run_cmdA(command2)
+                break
+            elif version > "12.8":
+                print("CUDA version not supported as of 05/27/25, trying 12.8")
+                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu128", "--no-warn-script-location"]
+                nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                command1 = " ".join(torch)
+                command2 = " ".join(nottorch)
+                run_cmdA(command1)
+                run_cmdA(command2)
+                break
             else:
                 print("Unsupported CUDA version detected! Installing CPU Torch")
                 torch = ["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "torchaudio==2.3.1", "--no-warn-script-location"]
