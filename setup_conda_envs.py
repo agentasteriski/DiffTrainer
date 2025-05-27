@@ -9,7 +9,7 @@ def is_windows():
 def is_macos():
     return sys.platform.startswith("darwin")
 
-mainpath = os.getcwd()
+mainpath = os.path.dirname(__file__)
 if is_windows():
     username = os.environ.get('USERNAME')
     if os.path.exists(os.path.join(mainpath, "miniconda")):
@@ -33,10 +33,10 @@ elif is_macos():
         conda_path = "conda"
 elif is_linux():
     username = os.environ.get('USER')
-    if os.path.exists(os.path.join("Users", username, "anaconda3")):
-        conda_path = os.path.join("Users", username, "anaconda3", "etc", "profile.d", "conda.sh")
-    elif os.path.exists(os.path.join("Users", username, "miniconda3")):
-        conda_path = os.path.join("Users", username, "miniconda3", "etc", "profile.d", "conda.sh")
+    if os.path.exists(os.path.join("home", username, "anaconda3")):
+        conda_path = os.path.join("home", username, "anaconda3", "etc", "profile.d", "conda.sh")
+    elif os.path.exists(os.path.join("home", username, "miniconda3")):
+        conda_path = os.path.join("home", username, "miniconda3", "etc", "profile.d", "conda.sh")
     else: 
         conda_path = "conda"
 ###create envs###

@@ -3,7 +3,7 @@ from tqdm import tqdm
 import re
 from tkinter import messagebox
 
-main_path = os.getcwd()
+main_path = os.path.dirname(__file__)
 
 gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/main/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
