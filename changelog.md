@@ -4,6 +4,7 @@
 - muon_lynxnet2
   - redirect DiffSinger download
   - change alt. backbone toggle to dropdown selection(defaults to lynxnet2)
+  - using lynxnet2 requires updating tools, can be used on older versions if lynxnet/wavenet is manually selected
 
 ## 0.3.31
 - better main path(possibly fixing "amnesia" bug)
