@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.path.dirname(__file__)
-version = "0.3.31"
-releasedate = "5/27/2025"
+version = "0.3.32"
+releasedate = "6/6/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -295,16 +295,18 @@ class tabview(ctk.CTkTabview):
         global preferds
         preferds = tk.BooleanVar()
         self.confbox9 = ctk.CTkCheckBox(master=self.subframe, text="prefer_ds", variable=preferds, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox9.grid(row=5, column=1, columnspan=2, pady=5)
+        self.confbox9.grid(row=5, column=1, padx=(3,0), pady=5)
         global vr
         vr = tk.BooleanVar()
         self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = True, offvalue = False, font = self.font)
         self.confbox10.grid(row=3, column=0, columnspan=2, pady=15)
         self.tooltip = CTkToolTip(self.confbox10, message=(self.L('vr2')), font = self.font)
-        global wavenet
-        wavenet = tk.BooleanVar()
-        self.confbox11 = ctk.CTkCheckBox(master=self.subframe, text=(self.L('wavenet')), variable=wavenet, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox11.grid(row=5, column=2, columnspan=2, pady=15)
+        global backbone
+        backbone = tk.StringVar()
+        self.confbox11 = ctk.CTkComboBox(master=self.subframe, values=["lynxnet2", "wavenet", "lynxnet"], variable=backbone, font = self.font, dropdown_font = self.font)
+        self.confbox11.set("lynxnet2")
+        self.confbox11.configure(state="disabled")
+        self.confbox11.grid(row=5, column=2, columnspan=2, pady=5)
         self.tooltip = CTkToolTip(self.confbox11, message=(self.L('wavenet2')), font = self.font)
         self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="dummy", state=tk.DISABLED, font=self.font)
         self.confbox12.grid(row=4, column=3, pady=5, padx=(0,3))
@@ -635,9 +637,9 @@ class tabview(ctk.CTkTabview):
         uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
         uta_script_folder_name = "nnsvs-db-converter-main"
 
-        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/version2-backport.zip"
+        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/muon_lynxnet2.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-version2-backport"
+        diffsinger_script_folder_name = "DiffSinger-muon_lynxnet2"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
@@ -713,7 +715,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("version2-backport.zip", "wb") as f:
+            with open("muon_lynxnet2.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -855,6 +857,8 @@ class tabview(ctk.CTkTabview):
         aco_config["breathiness_smooth_width"] = 0.06
         aco_config["energy_smooth_width"] = 0.06
         aco_config["diff_accelerator"] = "unipc"
+        aco_config["augmentation_args"]["random_pitch_shifting"]["range"] = [-3.0, 3.0]
+        aco_config["augmentation_args"]["random_pitch_shifting"]["scale"] = 0.25
         with open("DiffSinger/configs/acoustic.yaml", "w", encoding = "utf-8") as config2:
             yaml.dump(aco_config, config2, default_flow_style=False, sort_keys=False)
         with open("DiffSinger/configs/variance.yaml", "r", encoding = "utf-8") as config3:
@@ -1188,12 +1192,11 @@ class tabview(ctk.CTkTabview):
         voicing = trainvoc.get()
         pre_type = vr.get()
         ds = preferds.get()
-        backbone = wavenet.get()
+        backbone_type = backbone.get()
         save_interval = save_int.get()
         batch = batch_size.get()
         selected_config_type = trainselect.get()
         allspeakers = []
-        enoughsamples = True
 
         for spk, (raw_dir, folder_name, spk_lang_select, spk_id_select) in self.spk_info.items():
             spk_lang = spk_lang_select.get()
@@ -1260,14 +1263,14 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["hnsep"] = "vr"
             else:
                 bitch_ass_config["hnsep"] = "world"
-            if backbone==True:
+            if backbone_type == "wavenet":
                 #switches to wavenet backbone at default recommended settings
                 #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
                 bitch_ass_config["backbone_type"] = "wavenet"
                 bitch_ass_config["backbone_args"]["num_channels"] = 512
                 bitch_ass_config["backbone_args"]["num_layers"] = 20
                 bitch_ass_config["backbone_args"]["dilation_cycle_length"] = 4
-            else:
+            elif backbone_type == "lynxnet":
                 #keeps lynxnet backbone at default recommended settings
                 #some people complain they're too heavy but I think they were trying to train on weak cards
                 bitch_ass_config["backbone_type"] = "lynxnet"
@@ -1276,6 +1279,16 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["backbone_args"]["kernel_size"] = 31
                 bitch_ass_config["backbone_args"]["dropout_rate"] = 0.0
                 bitch_ass_config["backbone_args"]["strong_cond"] = True
+            elif backbone_type == "lynxnet2":
+                #keeps lynxnet backbone at default recommended settings
+                #some people complain they're too heavy but I think they were trying to train on weak cards
+                bitch_ass_config["backbone_type"] = "lynxnet2"
+                bitch_ass_config["backbone_args"]["num_channels"] = 1024
+                bitch_ass_config["backbone_args"]["num_layers"] = 6
+                bitch_ass_config["backbone_args"]["kernel_size"] = 31
+                bitch_ass_config["backbone_args"]["dropout_rate"] = 0.0
+                bitch_ass_config["backbone_args"]["use_conditioner_cache"] = True
+                bitch_ass_config["backbone_args"]["glu_type"] = 'atanglu'
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()
                 customname0 = ("DiffSinger/configs/", toomanyconfignames, ".yaml")
@@ -1327,9 +1340,19 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["hnsep"] = "vr"
             else:
                 bitch_ass_config["hnsep"] = "world"
-            if backbone==True:
+            if backbone_type== "wavenet":
                 #switches to lynxnet at default recommended settings
                 #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
+                bitch_ass_config["variances_prediction_args"]["backbone_type"] = "wavenet"
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 192
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 10
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 4
+                bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "wavenet"
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 256
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 20
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 5
+   
+            elif backbone_type == "lynxnet":
                 bitch_ass_config["variances_prediction_args"]["backbone_type"] = "lynxnet"
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 384
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 6
@@ -1340,16 +1363,20 @@ class tabview(ctk.CTkTabview):
                 bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 6
                 bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dropout_rate'] = 0.0
                 bitch_ass_config["pitch_prediction_args"]["backbone_args"]['strong_cond'] = True
-   
-            else:
-                bitch_ass_config["variances_prediction_args"]["backbone_type"] = "wavenet"
-                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 192
-                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 10
-                bitch_ass_config["variances_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 4
-                bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "wavenet"
-                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 256
-                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 20
-                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dilation_cycle_length'] = 5
+            
+            elif backbone_type == "lynxnet2":
+                bitch_ass_config["variances_prediction_args"]["backbone_type"] = "lynxnet2"
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 384
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]['dropout_rate'] = 0.0
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]["use_conditioner_cache"] = True
+                bitch_ass_config["variances_prediction_args"]["backbone_args"]["glu_type"] = 'atanglu'
+                bitch_ass_config["pitch_prediction_args"]["backbone_type"] = "lynxnet2"
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_channels'] = 512
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['num_layers'] = 6
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]['dropout_rate'] = 0.0
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]["use_conditioner_cache"] = True
+                bitch_ass_config["pitch_prediction_args"]["backbone_args"]["glu_type"] = 'atanglu'
 
             if adv_on.get() == "on":
                 toomanyconfignames = config_name.get()

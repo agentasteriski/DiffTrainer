@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.32
+- muon_lynxnet2
+  - redirect DiffSinger download
+  - change alt. backbone toggle to dropdown selection(defaults to lynxnet2)
+  - using lynxnet2 requires updating tools, can be used on older versions if lynxnet/wavenet is manually selected
+
+## 0.3.31
+- better main path(possibly fixing "amnesia" bug)
+- conda path fix for Linux
+- support CUDA 12.8, try 12.8 if higher
+  
+## 0.3.30
+- move use_note_rest to correct stage in advanced OU export
+  
+## 0.3.29
+- fix reloading datasets during configuration
+  
 ## 0.3.28
 - add custom error when selecting samples so I don't have to explain ValueError every day
 
