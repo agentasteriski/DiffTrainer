@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme("assets/ds_gui.json")
 main_path = os.path.dirname(__file__)
-version = "0.3.32"
-releasedate = "6/6/25"
+version = "0.3.33"
+releasedate = "6/12/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1425,7 +1425,10 @@ class tabview(ctk.CTkTabview):
         langadd.grid(row=0, column=0, pady=7, padx=13)
         langdel = ctk.CTkButton(buttonframe1, text=(self.L('del_dict')), command=self.remove_entry, font=self.font)
         langdel.grid(row=0, column=2, pady=7, padx=13)
-        formatted_phonemes = ', '.join(langloader["extra_phonemes"])
+        try: 
+            formatted_phonemes = ', '.join(langloader["extra_phonemes"])
+        except TypeError:
+            formatted_phonemes = ""
         exphframe = ctk.CTkFrame(master=editor)
         exphframe.grid(row=2, column=0, columnspan=3, padx=13, pady=7)
         tooltip_ext = CTkToolTip(exphframe, message=(self.L('ext_ph2')), font = self.font)
@@ -1473,7 +1476,9 @@ class tabview(ctk.CTkTabview):
 
     def updatelangloader(self):
         new_phonemes_str = exphbox.get()
-        new_phonemes_list = [item.strip() for item in new_phonemes_str.split(',')]
+        new_phonemes_list = []
+        if new_phonemes_str and new_phonemes_str.strip():
+            new_phonemes_list = [item.strip() for item in new_phonemes_str.split(',')]
         langloader["extra_phonemes"] = new_phonemes_list
         langloader["merge_list"] = mergebox.get()
         with open("DiffSinger/dictionaries/langloader.yaml", "w", encoding="utf-8") as langdump:
