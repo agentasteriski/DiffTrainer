@@ -1,5 +1,6 @@
 customtkinter
 ctkmessagebox
+ctklistbox
 ctktooltip
 ez-localizr
 tk
