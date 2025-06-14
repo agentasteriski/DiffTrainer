@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.3.33
+- fix extra_phonemes creating a fake phoneme `['']`
+
 ## 0.3.32
 - muon_lynxnet2
   - redirect DiffSinger download
