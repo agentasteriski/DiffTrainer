@@ -28,11 +28,12 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - langloader editor usually hides behind main window
 - ~~honestly langloader is just ugly and bad~~ improved as of 0.3.14(1/16/25)
 - if you type in the save interval or batch size boxes, an error appears in the terminal window
-  - no actual impact, just enter your number and ignore it
+  - no actual impact, just enter your number and ignore itconda
 - ~~if you load one dataset, change your mind and load another, it fails to write the config~~ fixed in 0.3.29(5/7/25)
 - do not name checkpoint folders just "acoustic" or "variance", it conflicts with the onnx export cleanup
 - (Linux only) if the text and buttons appear jagged:
-  - in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`
+  - ~~in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`~~ ***NO LONGER RECOMMENDED.*** this used to work but now renders the entire conda install non-functional.
+  - no current fix, it's just ugly.
 - (Intel Mac only) dependency of a dependency `libcst` no longer packaged for x86
   - add `libcst` to upper half of environmentA/B.yml before running setup_conda_envs.py(unsure if this will continue to work or what other impacts the outdated version has)
 
