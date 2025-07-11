@@ -10,9 +10,10 @@ from collections import defaultdict
 
 
 ctk.set_default_color_theme("assets/ds_gui.json")
+ctk.DrawEngine.preferred_drawing_method = "circle_shapes"
 main_path = os.path.dirname(__file__)
-version = "0.3.33"
-releasedate = "6/12/25"
+version = "0.3.34"
+releasedate = "7/10/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -470,8 +471,10 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ousave')), command=self.get_OU_folder, font = self.font)
         self.button.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')), font = self.font)
+        self.checkbox = ctk.CTkCheckBox(master=self.frame16, text=f"(Experimental)\nWrite base dsdict", font = self.font)
+        self.checkbox.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ouexport')), command=self.run_adv_config, font = self.font)
-        self.button.grid(row=3, column=1, padx=10, pady=10)
+        self.button.grid(row=3, column=1, columnspan=2, padx=10, pady=10)
 
     #keeps the checkboxes in config tab locked until advanced config is enabled
     def changeState(self):
