@@ -29,7 +29,7 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - langloader editor usually hides behind main window
 - ~~honestly langloader is just ugly and bad~~ improved as of 0.3.14(1/16/25)
 - if you type in the save interval or batch size boxes, an error appears in the terminal window
-  - no actual impact, just enter your number and ignore itconda
+  - no actual impact, just enter your number and ignore it
 - ~~if you load one dataset, change your mind and load another, it fails to write the config~~ fixed in 0.3.29(5/7/25)
 - do not name checkpoint folders just "acoustic" or "variance", it conflicts with the onnx export cleanup
 - (Linux only) if the text and buttons appear jagged:
