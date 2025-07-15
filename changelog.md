@@ -1,4 +1,10 @@
 # Changelog
+## 0.3.35
+- move torch in env B back to setup script instead of directly in .yml to force the CPU version
+- force creation of onnx folder
+
+## 0.3.34
+- new technically optional but recommended base env for Linux users(assets/linuxbaseenv.yml, creates difftrainerBase)
 
 ## 0.3.33
 - fix extra_phonemes creating a fake phoneme `['']`
