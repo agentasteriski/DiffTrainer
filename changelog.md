@@ -1,6 +1,7 @@
 # Changelog
 ## 0.3.35
 - move torch in env B back to setup script instead of directly in .yml to force the CPU version
+- support "in between" CUDA versions(versions not officially supported by Pytorch but between supported versions, rounds down to the nearest supported version)
 - force creation of onnx folder
 
 ## 0.3.34
