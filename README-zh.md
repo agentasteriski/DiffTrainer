@@ -24,7 +24,8 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 ### 如果你用過Python：
 - DiffTrainer 預設使用 Miniconda 來管理衝突的套件要求。
 - 要使用現有的 conda 安裝：
-  - 將requirements.txt安裝到基礎環境（強烈建議 3.10，其他版本可能仍適用於基礎環境）
+  - (Windows/Mac) 安裝 requirements.txt 到基礎環境（強烈建議 3.10，其他版本可能仍適用於基礎環境）
+  - (Linux) requirements.txt 仍然有效，但有圖形錯誤（如下所述）。僅用於啟動的固定環境位於資產資料夾中
   - 執行setup_conda_envs.py來配置所需的環境
   - 選擇第一個選項卡上的“更新工具”以完成安裝
 - 從 v0.2.1 開始，環境名稱是硬編碼要求。
@@ -37,7 +38,9 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 - ~~如果您載入了一個資料集，然後改變主意並載入了另一個資料集，則無法寫入配置~~ 已於 0.3.29 (5/7/25) 修復
 - 不要將檢查點資料夾命名為“acoustic”或“variance”，這會與 onnx 匯出清理衝突
 - （僅限 Linux）如果文字和按鈕出現鋸齒狀：
-- 在基礎環境中，`conda install --channel=conda-forge tk[build=xft_*]`
+  - ~~在基礎環境中，`conda install --channel=conda-forge tk[build=xft_*]`~~ ***不再推薦。 *** 這曾經有效，但現在導致整個 conda 安裝不起作用。
+  - 已於 7/10/25 改善，但尚未完全修復。您可以使用 assets/linuxbaseenv.yml 建立固定環境，但隨後必須從 difftrainerBase 啟動
+  - 例如. `conda env create -f assets/linuxbaseenv.yml`
 - （僅限 Intel Mac）依賴項 `libcs​​t` 的依賴項不再針對 x86 打包
 - 在執行 setup_conda_envs.py 之前，將 `libcs​​` 添加到 environmentA/B.yml 的上半部（不確定這是否會繼續工作或舊版本有什麼其他影響）
 
