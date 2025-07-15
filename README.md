@@ -19,7 +19,8 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 ### If you have used Python:
 - DiffTrainer by default uses Miniconda to manage conflicting package requirements.
 - To use an existing conda installation:
-  - install requirements.txt to base environment(3.10 strongly recommended, other versions may still work for the base environment)
+  - (Windows/Mac) install requirements.txt to base environment(3.10 strongly recommended, other versions may still work for the base environment)
+  - (Linux) requirements.txt still works, but has graphical bugs(described below). a fixed environment only for launching is in the assets folder
   - run setup_conda_envs.py to configure the required environments
   - "Update Tools" on the first tab to complete the install
 - As of v0.2.1, the names of the environments are hardcoded requirements.
@@ -32,7 +33,9 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - ~~if you load one dataset, change your mind and load another, it fails to write the config~~ fixed in 0.3.29(5/7/25)
 - do not name checkpoint folders just "acoustic" or "variance", it conflicts with the onnx export cleanup
 - (Linux only) if the text and buttons appear jagged:
-  - in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`
+  - ~~in the base environment, `conda install --channel=conda-forge tk[build=xft_*]`~~ ***NO LONGER RECOMMENDED.*** this used to work but now renders the entire conda install non-functional.
+  - improved 7/10/25, but not fully fixed. you can use assets/linuxbaseenv.yml to create a fixed environment, but then you have to launch from difftrainerBase
+  - ex. `conda env create -f assets/linuxbaseenv.yml`
 - (Intel Mac only) dependency of a dependency `libcst` no longer packaged for x86
   - add `libcst` to upper half of environmentA/B.yml before running setup_conda_envs.py(unsure if this will continue to work or what other impacts the outdated version has)
 

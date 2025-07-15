@@ -118,7 +118,7 @@ try:
             release = line.split(',')[-2]
             version = release.split()[1]
             print("CUDA version:", version)
-            if version == "11.8":
+            if "11.8" <= version < "12.1":
                 torch = ["pip", "install", "torch==2.3.1+cu118", "torchvision==0.18.1+cu118", "torchaudio==2.3.1", "--extra-index-url", "https://download.pytorch.org/whl/cu118", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
@@ -126,7 +126,7 @@ try:
                 run_cmdA(command1)
                 run_cmdA(command2)
                 break
-            elif version == "12.1":
+            elif "12.1" <= version < "12.4":
                 torch = ["pip", "install", "torch==2.3.1+cu121", "torchvision==0.18.1+cu121", "torchaudio==2.3.1", "--extra-index-url", "https://download.pytorch.org/whl/cu121", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
@@ -134,7 +134,7 @@ try:
                 run_cmdA(command1)
                 run_cmdA(command2)
                 break
-            elif version == "12.4":
+            elif "12.4" <= version < "12.6":
                 print("Preferred Torch version not available for this CUDA version, installing latest")
                 torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu124", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
@@ -143,7 +143,7 @@ try:
                 run_cmdA(command1)
                 run_cmdA(command2)
                 break
-            elif version == "12.6":
+            elif "12.6" <= version < "12.8":
                 print("Preferred Torch version not available for this CUDA version, installing latest")
                 torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu126", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
@@ -206,4 +206,16 @@ except (FileNotFoundError, subprocess.CalledProcessError):
         run_cmdA(command2)
 deac = [conda_path, "deactivate"]
 deactivate = " ".join(deac)
+run_cmdBase(deactivate)
+
+print("Setting up ONNX environment...")
+if is_macos:
+    torch = ["pip", "install", "torch==1.13.1", "torchvision==0.14.1", "torchaudio==0.13.1", "--no-warn-script-location"]
+else: 
+    torch = ["pip", "install", "torch==1.13.1+cpu", "torchvision==0.14.1+cpu", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cpu", "--no-warn-script-location"]
+nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+command1 = " ".join(torch)
+command2 = " ".join(nottorch)
+run_cmdB(command1)
+run_cmdB(command2)
 run_cmdBase(deactivate)

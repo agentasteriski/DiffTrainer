@@ -6,7 +6,6 @@ dependencies:
   - pyyaml
   - requests
   - pillow
-  - click
   - h5py
   - matplotlib
   - "numpy<2.0.0"
@@ -15,7 +14,6 @@ dependencies:
   - tensorboard
   - tensorboardX
   - torchmetrics
-  - protobuf
   - pip
   - pip:
     - customtkinter
@@ -26,9 +24,5 @@ dependencies:
     - "lightning~=2.1.0"
     - MonkeyType==23.3.0
     - "onnxsim~=0.4.36"
-    - onnxruntime
     - praat-parselmouth==0.4.3
     - pyworld==0.3.4
-    - "torch==1.13.1"
-    - "torchvision==0.14.1"
-    - "torchaudio==0.13.1"
