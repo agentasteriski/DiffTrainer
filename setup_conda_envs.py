@@ -97,7 +97,7 @@ try:
     output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
     lines = output.split("\n")
     for line in lines:
-        if "difftrainerb" in line.lower():
+        if "difftrainerB" in line:
             command = [conda_path, "remove", "-n", "difftrainerB", "--all", "--yes"]
             yeet = " ".join(command)
             run_cmdBase(yeet)
