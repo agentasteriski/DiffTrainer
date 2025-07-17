@@ -12,8 +12,8 @@ from collections import defaultdict
 ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
 ctk.DrawEngine.preferred_drawing_method = "circle_shapes"
 main_path = os.path.dirname(__file__)
-version = "0.3.36"
-releasedate = "7/15/25"
+version = "0.3.37"
+releasedate = "7/16/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1202,7 +1202,6 @@ class tabview(ctk.CTkTabview):
         for spk, (raw_dir, folder_name, spk_lang_select, spk_id_select) in self.spk_info.items():
             spk_lang = spk_lang_select.get()
             merged_id = int(spk_id_select.get())
-            num_spk = merged_id +1
             prefixes = []
             trns = os.path.join(raw_dir, 'transcriptions.csv')
             with open(trns, "r", newline="", encoding = "utf-8") as csv_file:
@@ -1224,6 +1223,10 @@ class tabview(ctk.CTkTabview):
                 }
             allspeakers.append(spk_block)
 
+        unique_ids = set()
+        for spk_block in allspeakers:
+            unique_ids.add(spk_block["spk_id"])
+        num_spk = len(unique_ids)
 
         if selected_config_type == 1:
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
@@ -1553,6 +1556,7 @@ class tabview(ctk.CTkTabview):
             os.chdir("DiffSinger")
             #os.environ["PYTHONPATH"] = "."
             #os.environ["CUDA_VISIBLE_DEVICES"] = cuda
+            # this was part of a fix for a bug that i totally misattributed, undummy those lines if you really want torch 2.3.1 still
             if not configpath or not ckpt_save_dir:
                 self.label.config(text="Please select your config and the data you would like to train first!")
                 return
