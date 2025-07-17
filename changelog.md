@@ -1,5 +1,11 @@
 # Changelog
-## 0.3.35
+
+## 0.3.37
+- [turns out Torch 2.3.1 was actually the worst possible choice](https://github.com/pytorch/pytorch/issues/122085)
+- users with CUDA 11.8/12.1 should re-run setup_conda_envs.py
+- also calculate `num_spk` correctly now
+
+## 0.3.36
 - move torch in env B back to setup script instead of directly in .yml to force the CPU version
 - support "in between" CUDA versions(versions not officially supported by Pytorch but between supported versions, rounds down to the nearest supported version)
 - force creation of onnx folder
