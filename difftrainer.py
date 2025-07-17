@@ -9,11 +9,11 @@ from ezlocalizr import ezlocalizr
 from collections import defaultdict
 
 
-ctk.set_default_color_theme("assets/ds_gui.json")
+ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
 ctk.DrawEngine.preferred_drawing_method = "circle_shapes"
 main_path = os.path.dirname(__file__)
-version = "0.3.35"
-releasedate = "7/12/25"
+version = "0.3.37"
+releasedate = "7/16/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1202,7 +1202,6 @@ class tabview(ctk.CTkTabview):
         for spk, (raw_dir, folder_name, spk_lang_select, spk_id_select) in self.spk_info.items():
             spk_lang = spk_lang_select.get()
             merged_id = int(spk_id_select.get())
-            num_spk = merged_id +1
             prefixes = []
             trns = os.path.join(raw_dir, 'transcriptions.csv')
             with open(trns, "r", newline="", encoding = "utf-8") as csv_file:
@@ -1224,6 +1223,10 @@ class tabview(ctk.CTkTabview):
                 }
             allspeakers.append(spk_block)
 
+        unique_ids = set()
+        for spk_block in allspeakers:
+            unique_ids.add(spk_block["spk_id"])
+        num_spk = len(unique_ids)
 
         if selected_config_type == 1:
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
@@ -1551,8 +1554,9 @@ class tabview(ctk.CTkTabview):
                 cuda = "-1"
             os.chdir(main_path)
             os.chdir("DiffSinger")
-            os.environ["PYTHONPATH"] = "."
-            os.environ["CUDA_VISIBLE_DEVICES"] = cuda
+            #os.environ["PYTHONPATH"] = "."
+            #os.environ["CUDA_VISIBLE_DEVICES"] = cuda
+            # this was part of a fix for a bug that i totally misattributed, undummy those lines if you really want torch 2.3.1 still
             if not configpath or not ckpt_save_dir:
                 self.label.config(text="Please select your config and the data you would like to train first!")
                 return
@@ -1579,6 +1583,7 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
+            os.makedirs(onnx_folder_dir)
             spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
             with open(spkmap, "r") as file:
                 data = json.load(file)
@@ -1671,6 +1676,7 @@ class tabview(ctk.CTkTabview):
                 onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
                 os.rename(onnx_folder_dir, onnx_bak)
                 print("backing up existing onnx folder...")
+            os.makedirs(onnx_folder_dir)
             spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
             # Fixing spk_map so the onnx can export
             with open(spkmap, "r") as file:

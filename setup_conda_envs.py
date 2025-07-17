@@ -97,7 +97,7 @@ try:
     output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
     lines = output.split("\n")
     for line in lines:
-        if "difftrainerb" in line.lower():
+        if "difftrainerB" in line:
             command = [conda_path, "remove", "-n", "difftrainerB", "--all", "--yes"]
             yeet = " ".join(command)
             run_cmdBase(yeet)
@@ -119,7 +119,7 @@ try:
             version = release.split()[1]
             print("CUDA version:", version)
             if "11.8" <= version < "12.1":
-                torch = ["pip", "install", "torch==2.3.1+cu118", "torchvision==0.18.1+cu118", "torchaudio==2.3.1", "--extra-index-url", "https://download.pytorch.org/whl/cu118", "--no-warn-script-location"]
+                torch = ["pip", "install", "torch==2.4.0+cu118", "torchvision==0.19.0+cu118", "torchaudio==2.4.0", "--extra-index-url", "https://download.pytorch.org/whl/cu118", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -127,7 +127,7 @@ try:
                 run_cmdA(command2)
                 break
             elif "12.1" <= version < "12.4":
-                torch = ["pip", "install", "torch==2.3.1+cu121", "torchvision==0.18.1+cu121", "torchaudio==2.3.1", "--extra-index-url", "https://download.pytorch.org/whl/cu121", "--no-warn-script-location"]
+                torch = ["pip", "install", "torch==2.4.0+cu121", "torchvision==0.19.0+cu121", "torchaudio==2.4.0", "--extra-index-url", "https://download.pytorch.org/whl/cu121", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -135,8 +135,7 @@ try:
                 run_cmdA(command2)
                 break
             elif "12.4" <= version < "12.6":
-                print("Preferred Torch version not available for this CUDA version, installing latest")
-                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu124", "--no-warn-script-location"]
+                torch = ["pip", "install", "torch==2.4.0+cu124", "torchvision==0.19.0+cu124", "torchaudio==2.4.0", "--extra-index-url", "https://download.pytorch.org/whl/cu124", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -172,7 +171,7 @@ try:
                 break
             else:
                 print("Unsupported CUDA version detected! Installing CPU Torch")
-                torch = ["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "torchaudio==2.3.1", "--no-warn-script-location"]
+                torch = ["pip", "install", "torch==2.4.0", "torchvision==0.19.0", "torchaudio==2.4.0", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -181,7 +180,7 @@ try:
                 break
     else:
         print("CUDA version not found")
-        torch = ["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "torchaudio==2.3.1", "--no-warn-script-location"]
+        torch = ["pip", "install", "torch==2.4.0", "torchvision==0.19.0", "torchaudio==2.4.0", "--no-warn-script-location"]
         nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
         command1 = " ".join(torch)
         command2 = " ".join(nottorch)
@@ -198,7 +197,7 @@ except (FileNotFoundError, subprocess.CalledProcessError):
         run_cmdA(command1)
         run_cmdA(command2)
     else:
-        torch = ["pip", "install", "torch==2.3.1", "torchvision==0.18.1", "torchaudio==2.3.1", "--no-warn-script-location"]
+        torch = ["pip", "install", "torch==2.4.0", "torchvision==0.19.0", "torchaudio==2.4.0", "--no-warn-script-location"]
         nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
         command1 = " ".join(torch)
         command2 = " ".join(nottorch)
