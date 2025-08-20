@@ -3,6 +3,7 @@
 ## 0.3.38
 - fix `use_lang_id` in dsdur/dspitch/dsvariance when using multiple languages but NOT merging phonemes
 - force alphabetical order in loading speakers
+- language list matches premade base dictionaries instead of localizations
 
 ## 0.3.37
 - [turns out Torch 2.3.1 was actually the worst possible choice](https://github.com/pytorch/pytorch/issues/122085)
