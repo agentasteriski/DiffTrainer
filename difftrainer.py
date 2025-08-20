@@ -12,8 +12,8 @@ from collections import defaultdict
 ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
 ctk.DrawEngine.preferred_drawing_method = "circle_shapes"
 main_path = os.path.dirname(__file__)
-version = "0.3.37"
-releasedate = "7/16/25"
+version = "0.3.38"
+releasedate = "8/19/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1140,7 +1140,7 @@ class tabview(ctk.CTkTabview):
         for widget in self.subframe2.winfo_children():
             widget.destroy()
         self.spk_info = {}
-        spk_folders = [f for f in os.listdir(data_folder) if os.path.isdir(os.path.join(data_folder, f)) and not f.startswith('.')]
+        spk_folders = [f for f in sorted(os.listdir(data_folder)) if os.path.isdir(os.path.join(data_folder, f)) and not f.startswith('.')]
         spk_rows = []
         for spk in spk_folders:
             folder_to_id = {spk: i for i, spk in enumerate(spk_folders)}
@@ -1155,7 +1155,7 @@ class tabview(ctk.CTkTabview):
             #default selectable languages currently match localizations
             #might change it to the default phoneme lists instead
             #does a Swedish DiffSinger even exist yet?
-            spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "ja", "zh", "ko", "es", "pt", "sv", "tl"], font = self.font)
+            spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "es", "fr", "ja", "ko", "th", "zh"], font = self.font)
             spk_lang_select.grid(column=1, row=0, padx=10)
             spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20, font = self.font)
             spk_id_select.insert(0, folder_id)
@@ -1514,18 +1514,13 @@ class tabview(ctk.CTkTabview):
                 if "release" in line.lower():
                     version = line.split()[-1]
                     print("CUDA version:", version)
-                    cuda = "0"
                     break
             else:
                 print("CUDA version not found")
-                cuda = "-1"
         except (FileNotFoundError, subprocess.CalledProcessError):
             print("CUDA is not available")
-            cuda = "-1"
         os.chdir(main_path)
         os.chdir("DiffSinger")
-        os.environ["PYTHONPATH"] = "."
-        os.environ["CUDA_VISIBLE_DEVICES"] = cuda
         cmdstage = ["python", 'scripts/binarize.py', '--config', configpath]
         command = " ".join(cmdstage)
         run_cmdA(command)
@@ -1940,7 +1935,7 @@ class tabview(ctk.CTkTabview):
             hop_size2 = variance_config_data.get("hop_size")
             use_note_rest = variance_config_data.get("use_note_rest")
             use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
-            use_lang_id = acoustic_config_data.get("use_lang_id")
+            use_lang_id = variance_config_data.get("use_lang_id")
 
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as file:
                 file.write("phonemes: ../dsmain/phonemes.json\n")
@@ -2208,7 +2203,7 @@ class tabview(ctk.CTkTabview):
             sample_rate2 = variance_config_data.get("sample_rate")
             hop_size2 = variance_config_data.get("hop_size")
             use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
-            use_lang_id = acoustic_config_data.get("use_lang_id")
+            use_lang_id = variance_config_data.get("use_lang_id")
 
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as file:
                 file.write("phonemes: ../dsmain/phonemes.json\n") #dur gets the main one
@@ -2229,13 +2224,14 @@ class tabview(ctk.CTkTabview):
 
             try:
                 if var_folder_onnx:
-                    with open(var_config, "r", encoding = "utf-8") as config:
+                    with open(f"{var_folder_onnx}/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         var_config_data = yaml.safe_load(config)
                     predict_voicing = var_config_data.get("predict_voicing")
                     predict_tension = var_config_data.get("predict_tension")
                     predict_energy = var_config_data.get("predict_energy")
                     predict_breathiness = var_config_data.get("predict_breathiness")
                     predict_dur = var_config_data.get("predict_dur")
+                    use_lang_var = var_config_data.get("use_lang_id")
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
                         file.write("phonemes: phonemes.json\n") #multidict merging shenanigans can require separate phonemes.json
                         file.write("languages: ../dsmain/languages.json\n")
@@ -2251,7 +2247,7 @@ class tabview(ctk.CTkTabview):
                     dsvariance_config["predict_tension"] = predict_tension
                     dsvariance_config["predict_energy"] = predict_energy
                     dsvariance_config["predict_breathiness"] = predict_breathiness
-                    dsvariance_config["use_lang_id"] = use_lang_id
+                    dsvariance_config["use_lang_id"] = use_lang_var
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
@@ -2273,13 +2269,14 @@ class tabview(ctk.CTkTabview):
                         pitch_config_data = yaml.safe_load(config)
                     predict_dur = pitch_config_data.get("predict_dur")
                     use_note_rest = pitch_config_data.get("use_note_rest")
+                    use_lang_pitch = pitch_config_data.get("use_lang_id")
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         dspitch_config = yaml.safe_load(config)
                     dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
                     dspitch_config["sample_rate"] = sample_rate
                     dspitch_config["hop_size"] = hop_size
                     dspitch_config["predict_dur"] = predict_dur
-                    dspitch_config["use_lang_id"] = use_lang_id
+                    dspitch_config["use_lang_id"] = use_lang_pitch
                     if subbanks:
                         dspitch_config["speakers"] = pitch_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
