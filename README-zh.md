@@ -13,7 +13,7 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 ## 安裝選項
 ### 如果您有 NVIDIA GPU：
 - 確保安裝了相容版本的 [CUDA Toolkit](https://developer.nvidia.com/cuda-11-8-0-download-archive)
-  - 目前相容版本：11.8、12.1、12.4、12.6
+  - 目前相容版本：11.8、12.1、12.4、12.6、12.8、12.9
 - 繼續下一個“如果”
 
 ### 如果你從未用過Python：
