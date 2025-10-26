@@ -143,8 +143,8 @@ try:
                 run_cmdA(command2)
                 break
             elif "12.6" <= version < "12.8":
-                print("Preferred Torch version not available for this CUDA version, installing latest")
-                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu126", "--no-warn-script-location"]
+                #print("Preferred Torch version not available for this CUDA version, installing latest")
+                torch = ["pip", "install", "torch==2.8.0+cu126", "torchvision==0.23.0+cu126", "torchaudio==2.8.0", "--extra-index-url", "https://download.pytorch.org/whl/cu126", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -152,8 +152,8 @@ try:
                 run_cmdA(command2)
                 break
             elif version == "12.8":
-                print("Preferred Torch version not available for this CUDA version, installing latest")
-                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu128", "--no-warn-script-location"]
+                #print("Preferred Torch version not available for this CUDA version, installing latest")
+                torch = ["pip", "install", "torch==2.8.0+cu128", "torchvision==0.23.0+cu128", "torchaudio==2.8.0", "--extra-index-url", "https://download.pytorch.org/whl/cu128", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -161,8 +161,8 @@ try:
                 run_cmdA(command2)
                 break
             elif version == "12.9":
-                print("Preferred Torch version not available for this CUDA version, installing latest")
-                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu129", "--no-warn-script-location"]
+                #print("Preferred Torch version not available for this CUDA version, installing latest")
+                torch = ["pip", "install", "torch==2.8.0+cu129", "torchvision==0.23.0+cu129", "torchaudio==2.8.0", "--extra-index-url", "https://download.pytorch.org/whl/cu129", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -170,8 +170,8 @@ try:
                 run_cmdA(command2)
                 break
             elif version > "12.9":
-                print("CUDA version not supported as of 09/19/25, trying 12.9")
-                torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--extra-index-url", "https://download.pytorch.org/whl/cu128", "--no-warn-script-location"]
+                print("CUDA version not supported, trying 12.9")
+                torch = ["pip", "install", "torch==2.8.0+cu129", "torchvision==0.23.0+cu129", "torchaudio==2.8.0", "--extra-index-url", "https://download.pytorch.org/whl/cu129", "--no-warn-script-location"]
                 nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
@@ -199,7 +199,7 @@ except (FileNotFoundError, subprocess.CalledProcessError):
     print("CUDA is not available")
     if is_macos():
         print("Mac detected! Installing latest available for this CPU")
-        torch = ["pip", "install", "torch", "torchvision", "torchaudio", "--no-warn-script-location"]
+        torch = ["pip", "install", "torch<=2.8.0", "torchvision<=0.23.0", "torchaudio<=2.8.0", "--no-warn-script-location"]
         nottorch = ["pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
         command1 = " ".join(torch)
         command2 = " ".join(nottorch)
