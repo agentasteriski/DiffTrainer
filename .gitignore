@@ -162,5 +162,8 @@ cython_debug/
 
 # Custom gitignore items for this repo
 */guisettings.yaml
-ANNOUNCEMENT.md
-ANNOUNCEMENT-zh.md
+DiffSinger/
+raw_data/
+SOME/
+nnsvs_db_converter/
+db_converter_config.yaml

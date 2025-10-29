@@ -9,14 +9,16 @@ tab_ttl_6: "Export Singer(advanced)"
 
 # About tab
 vers: "version"
-install: "Full install"
-install2: "Installs DiffSinger, Uta's Converter, SOME, and all Python requirements.\n Running this a second time will delete and replace all files."
+install: "Full install" #no longer used, can skip
+install2: "Installs DiffSinger, Uta's Converter, SOME, and all Python requirements.\n Running this a second time will delete and replace all files." #no longer used, can skip
 changelog: "View changelog"
 update: "Update tools"
 update2: "Installs DiffSinger, Uta's Converter, SOME, but not the Python requirements.\n Running this a second time will delete and replace all files."
+cred_lead: "Maintainer:"
+cred_tools: "Additional credits"
 cred_front: "Front end:"
 cred_back: "Back end:"
-cred_trans: "N/A"
+cred_trans: "Translation: N/A"
 restart: "(restart to apply)"
 #note: string should not be longer than this or it will be cut off
 

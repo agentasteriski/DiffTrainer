@@ -5,7 +5,7 @@ from tkinter import messagebox
 
 main_path = os.path.dirname(__file__)
 
-gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/main/difftrainer.py")
+gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/rewrite/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
 github_version = github_version.group(1)
 
@@ -14,7 +14,7 @@ with open("difftrainer.py", "r", encoding = "utf-8") as gui_local:
 local_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_local)
 local_version = local_version.group(1)
 
-reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/main/requirements.txt"
+reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/rewrite/requirements.txt"
 reqresponse = requests.get(reqs_url)
 with open('requirements_compare.txt', 'wb') as f:
             f.write(reqresponse.content)
@@ -37,9 +37,9 @@ if local_version >= github_version:
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest DiffTrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update DiffTrainer?")
 	if update_prompt:
-		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/main.zip"
+		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/rewrite.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
-		folder = "DiffTrainer-main"
+		folder = "DiffTrainer-rewrite"
 
 
 
@@ -61,6 +61,8 @@ else:
 			shutil.move(f"{folder}/strings", main_path)
 			shutil.rmtree("assets")
 			shutil.move(f"{folder}/assets", main_path)
+			shutil.rmtree("modules")
+			shutil.move(f"{folder}/modules", main_path)
 			[os.remove(filename)
 			for filename in os.listdir(main_path) if filename.endswith(".bat")]
 			[shutil.move(os.path.join(folder, filename), main_path)
