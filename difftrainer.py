@@ -1,17 +1,20 @@
-import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, sys
+import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, sys, importlib
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
 from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
+from CTkListbox import CTkListbox
 from ezlocalizr import ezlocalizr
-from modules import onnxexport, basicexport, advexport
+from dt_modules import onnxexport, basicexport, advexport
 
 
 
 
 main_path = os.path.dirname(__file__)
+ds_path = os.path.join(main_path, "DiffSinger")
+realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
 version = "0.4.0"
 releasedate = "10/29/25"
@@ -437,8 +440,12 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('ousave')), command=self.get_OU_folder, font = self.font)
         self.button.grid(row=1, column=1, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')), font = self.font)
+        global autodsdictvar
+        autodsdictvar = tk.BooleanVar()
+        self.checkbox = ctk.CTkCheckBox(master=self.frame13, text=f"(Experimental)\nWrite base dsdicts", font = self.font, variable = autodsdictvar)
+        self.checkbox.grid(row=2, column=1, padx=10, pady=10)
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('ouexport')), command=self.run_OU_config, font = self.font)
-        self.button.grid(row=2, column=1, padx=10, pady=10)
+        self.button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
         ##EXPORT 2 ELECTRIC BOOGALOO
         self.frame15 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
@@ -481,9 +488,9 @@ class tabview(ctk.CTkTabview):
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ousave')), command=self.get_OU_folder, font = self.font)
         self.button.grid(row=2, column=1, columnspan=2, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')), font = self.font)
-        global autodsdictvar
-        autodsdictvar = tk.BooleanVar()
-        self.checkbox = ctk.CTkCheckBox(master=self.frame16, text=f"(Experimental)\nWrite base dsdicts", font = self.font, variable = autodsdictvar)
+        global autodsdictvar2
+        autodsdictvar2 = tk.BooleanVar()
+        self.checkbox = ctk.CTkCheckBox(master=self.frame16, text=f"(Experimental)\nWrite base dsdicts", font = self.font, variable = autodsdictvar2)
         self.checkbox.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ouexport')), command=self.run_adv_config, font = self.font)
         self.button.grid(row=3, column=1, columnspan=2, padx=10, pady=10)
@@ -597,30 +604,6 @@ class tabview(ctk.CTkTabview):
         else:
             print("Please select a preset or enable custom configuration!")
 
-    #runs a command through env A
-    global run_cmdA
-    def run_cmdA(cmd):
-        if is_windows():
-            cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
-        elif is_linux() or is_macos():
-            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerA && {cmd}'
-        try:
-            subprocess.run(cmd, check=True, shell=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error running command: {e}")
-
-    #runs a command through env B
-    global run_cmdB
-    def run_cmdB(cmd):
-        if is_windows():
-            cmd = f'{conda_path} activate difftrainerB >nul && {cmd}'
-        elif is_linux() or is_macos():
-            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerB && {cmd}'
-        try:
-            subprocess.run(cmd, check=True, shell=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error running command: {e}")
-
 ###COMMANDS###
     global all_shits_not_wav_n_lab
     all_shits_not_wav_n_lab = "raw_data/diffsinger_db"
@@ -652,9 +635,9 @@ class tabview(ctk.CTkTabview):
         uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
         uta_script_folder_name = "nnsvs-db-converter-main"
 
-        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/muon_lynxnet2.zip"
+        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/mix-LN.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-muon_lynxnet2"
+        diffsinger_script_folder_name = "DiffSinger-mix-LN"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
@@ -730,7 +713,7 @@ class tabview(ctk.CTkTabview):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("muon_lynxnet2.zip", "wb") as f:
+            with open("mix-LN.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -1048,7 +1031,7 @@ class tabview(ctk.CTkTabview):
                         print("segmenting data...")
                         #dear god please work
                         converterpy = os.path.join("nnsvs-db-converter", "db_converter.py")
-                        cmdstage = ["python", converterpy, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
+                        cmdstage = [realpython, converterpy, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
                         if self.estimatemidivar.get() == "default":
                             estimate_midi_print = "Default"
                             cmdstage.append("-m")
@@ -1092,7 +1075,7 @@ class tabview(ctk.CTkTabview):
                             f"detect breath: {detect_breath_print}\n",
                             f"export label: {write_label_print}\n"
                             )
-                        run_cmdA(command)
+                        subprocess.run(command, check=True, shell=True)
             except Exception as e:
                 print(f"Error during segmentation: {e}")
             try:
@@ -1125,9 +1108,9 @@ class tabview(ctk.CTkTabview):
                             speaker_path = os.path.join(self.all_shits, speaker)
                             if os.path.isdir(speaker_path):
                                 print("loading SOME...")
-                                cmdstage = ["python", "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
+                                cmdstage = [realpython, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
                                 command2 = " ".join(cmdstage)
-                                run_cmdA(command2)
+                                subprocess.run(command2, check=True, shell=True)
                     else:
                         pass
             except Exception as e:
@@ -1407,12 +1390,15 @@ class tabview(ctk.CTkTabview):
         global editor
         editor = ctk.CTkToplevel(self)
         if is_windows():
-            editor.geometry("360x360")
+            editor.geometry("380x360")
         elif is_macos():
             editor.geometry("400x400")
         elif is_linux():
             editor.geometry("445x420")
         editor.title("DiffTrainer Langloader")
+        editor.iconpath = ImageTk.PhotoImage(file=os.path.join(main_path, "assets","hard-drive.png"))
+        editor.wm_iconbitmap()
+        editor.iconphoto(False, editor.iconpath)
         editor.resizable(False, False)
         with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
                 global langloader
@@ -1424,7 +1410,7 @@ class tabview(ctk.CTkTabview):
         dictlabel.grid(row=0, column=0, padx=7, sticky=tk.N)
         tooltip_dict2 = CTkToolTip(dictlabel, message=(self.L('dicts2')), font = self.font)
         global dictbox
-        dictbox = tk.Listbox(dictframe, width=30)
+        dictbox = CTkListbox(dictframe, width=200, font = self.font)
         dictbox.grid(row=0, column=1, padx=13, pady=7)
         for key in langloader['dictionaries']:
             dictbox.insert(tk.END, f"{key}: {langloader['dictionaries'][key]}")
@@ -1460,6 +1446,7 @@ class tabview(ctk.CTkTabview):
         mergebox.insert(tk.END, (langloader["merge_list"]))
         langsave = ctk.CTkButton(editor, text=(self.L('langsave')), command=self.updatelangloader, font=self.font)
         langsave.grid(row=5, column=1, pady=7)
+        editor.lift()
 
     def update_dictbox(self):
         dictbox.delete(0, tk.END)
@@ -1467,9 +1454,11 @@ class tabview(ctk.CTkTabview):
             dictbox.insert(tk.END, f"{key}: {langloader['dictionaries'][key]}")
     
     def add_entry(self):
-        language = tk.simpledialog.askstring("Input", "Enter the language code:")
+        languagebox = ctk.CTkInputDialog(text=(self.L('enterdict1')), title=(self.L('input')), font=self.font)
+        language = languagebox.get_input()
         if language:
-            phoneme_file = tk.simpledialog.askstring("Input", f"Enter the file path for {language}:")
+            phonemebox = ctk.CTkInputDialog(text=(self.L('enterdict2')), title=(self.L('input')), font=self.font)
+            phoneme_file = phonemebox.get_input()
             if phoneme_file:
                 langloader['dictionaries'][language] = phoneme_file
                 self.update_dictbox()
@@ -1524,11 +1513,12 @@ class tabview(ctk.CTkTabview):
                 print("CUDA version not found")
         except (FileNotFoundError, subprocess.CalledProcessError):
             print("CUDA is not available")
-        os.chdir(main_path)
-        os.chdir("DiffSinger")
-        cmdstage = ["python", 'scripts/binarize.py', '--config', configpath]
+        os.chdir(ds_path)
+        os.environ["PYTHONPATH"] = ds_path
+        sys.path.insert(0, ds_path)
+        cmdstage = [realpython, 'scripts/binarize.py', '--config', configpath]
         command = " ".join(cmdstage)
-        run_cmdA(command)
+        subprocess.run(command, check=True, shell=True)
         os.chdir(main_path)
 
     def load_config_function(self):
@@ -1537,6 +1527,9 @@ class tabview(ctk.CTkTabview):
         print(configpath)
 
     def train_function(self):
+            if not configpath or not ckpt_save_dir:
+                self.label.config(text="Please select your config and the data you would like to train first!")
+                return
             try:
                 output = subprocess.check_output(["nvcc", "--version"], stderr=subprocess.STDOUT).decode()
                 lines = output.split("\n")
@@ -1549,33 +1542,34 @@ class tabview(ctk.CTkTabview):
                     print("CUDA version not found")
             except (FileNotFoundError, subprocess.CalledProcessError):
                 print("CUDA is not available")
-            os.chdir(main_path)
-            os.chdir("DiffSinger")
-            if not configpath or not ckpt_save_dir:
-                self.label.config(text="Please select your config and the data you would like to train first!")
-                return
-            cmdstage = ["python", 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset']
-            command = " ".join(cmdstage)
-            run_cmdA(command)
+            try:
+                os.chdir(ds_path)
+                os.environ["PYTHONPATH"] = str(ds_path)
+                sys.path.insert(0, str(ds_path))
+                cmdstage = [realpython, 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset']
+                command = " ".join(cmdstage)
+                subprocess.run(command, check=True, shell=True)
+            except KeyboardInterrupt:
+                print("Training ended by user.")
 
     def run_onnx_export(self):
-            os.chdir(main_path)
-            os.chdir("DiffSinger")
-            os.environ["PYTHONPATH"] = "."
+            os.chdir(ds_path)
+            os.environ["PYTHONPATH"] = str(ds_path)
+            sys.path.insert(0, str(ds_path))
             onnxexport.prep_onnx_export(ckpt_save_dir)
             command = onnxexport.writecmd(ckpt_save_dir, expselect)
-            run_cmdB(command)
+            subprocess.run(command, check=True, shell=True)
             onnxexport.onnx_cleanup(ckpt_save_dir)
             print("Done!")
             os.chdir(main_path)
 
     def run_onnx_export2(self):
-            os.chdir(main_path)
-            os.chdir("DiffSinger")
-            os.environ["PYTHONPATH"] = "."
+            os.chdir(ds_path)
+            os.environ["PYTHONPATH"] = str(ds_path)
+            sys.path.insert(0, str(ds_path))
             onnxexport.prep_onnx_export(ckpt_save_dir)
             command = onnxexport.writecmd(ckpt_save_dir, expselect2)
-            run_cmdB(command)
+            subprocess.run(command, check=True, shell=True)
             onnxexport.onnx_cleanup(ckpt_save_dir)
             print("Done!")
             os.chdir(main_path)
@@ -1618,7 +1612,7 @@ class tabview(ctk.CTkTabview):
         os.chdir("DiffSinger")
         os.environ["PYTHONPATH"] = "."
 
-        advexport.run_adv_config(ou_name_var2=ou_name_var2, ou_export_location=self.ou_export_location, aco_folder_dir=self.aco_folder_dir, dur_folder_dir=self.dur_folder_dir, var_folder_dir=self.var_folder_dir, pitch_folder_dir=self.pitch_folder_dir, vocoder_onnx=self.vocoder_onnx, autodsdictvar=autodsdictvar)
+        advexport.run_adv_config(ou_name_var2=ou_name_var2, ou_export_location=self.ou_export_location, aco_folder_dir=self.aco_folder_dir, dur_folder_dir=self.dur_folder_dir, var_folder_dir=self.var_folder_dir, pitch_folder_dir=self.pitch_folder_dir, vocoder_onnx=self.vocoder_onnx, autodsdictvar2=autodsdictvar2)
 
 
 

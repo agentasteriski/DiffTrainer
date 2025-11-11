@@ -78,6 +78,9 @@ maxbatch: "Max batch size"
 maxbatch2: "How many files the training will process at once.\nRecommended values vary heavily by system, but try starting with 9 for acoustic and 24 for variance.\nThis value can be changed without reprocessing the binaries."
 saveconf: "Save configuration"
 sampleerror: "Not enough samples in" #as in not enough samples in spk_name
+input: "Input"
+enterdict1: "Enter the language code:"
+enterdict2: "Enter the filepath for the new dictionary:"
 
 dicts: "Dictionaries:"
 dicts2: "Make sure to list only the dictionaries for languages being used. \nSelect a dictionary to remove by clicking the line to highlight it."

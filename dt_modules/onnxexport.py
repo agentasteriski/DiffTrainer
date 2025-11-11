@@ -1,6 +1,7 @@
-import os, json, shutil
+import os, json, shutil, sys
 from collections import defaultdict
 
+realpython = sys.executable
 
 def prep_onnx_export(ckpt_save_dir):
     onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
@@ -40,7 +41,7 @@ def prep_onnx_export(ckpt_save_dir):
         json.dump(result, file)
 
 def writecmd(ckpt_save_dir, expselect):
-    cmdstage = ["python", 'scripts/export.py']
+    cmdstage = [realpython, 'scripts/export.py']
     export_check = expselect.get()
     ckpt_save_abs = os.path.abspath(ckpt_save_dir)
     onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")

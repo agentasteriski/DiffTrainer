@@ -12,6 +12,7 @@ else:
 main_path = os.getcwd()
 diffolder = f"{main_path}/DiffSinger"
 ckpts = f"{main_path}/DiffSinger/checkpoints"
+realpython = sys.executable
 
 username = os.environ.get('USERNAME')
 def is_linux():
@@ -245,15 +246,7 @@ def ds():
         rendered = os.path.join(dsloc, dsname2) + ".wav"
         renderedQ = '"{}"'.format(rendered)
 
-def run_cmdA(cmd):
-        if is_windows():
-            cmd = f'{conda_path} activate difftrainerA >nul && {cmd}'
-        elif is_linux() or is_macos():
-            cmd = f'eval "$(conda shell.bash hook)" && {conda_path} activate difftrainerA && {cmd}'
-        try:
-            subprocess.run(cmd, check=True, shell=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error running command: {e}")
+
 def render():
       os.chdir(diffolder)
       spkname = spk.get()
@@ -265,7 +258,7 @@ def render():
       pten = overten.get()
       pvoc = overvoc.get()
       if varckptQ != '':
-            cmd1 = ['python', 'scripts/infer.py', 'variance', dsinputQ, '--exp', varckptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', postvarQ]
+            cmd1 = [realpython, 'scripts/infer.py', 'variance', dsinputQ, '--exp', varckptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', postvarQ]
             if pdur == True:
                  cmd1.append('--predict')
                  cmd1.append('dur')
@@ -298,18 +291,18 @@ def render():
                  cmd1.append('voicing')
             print(L('inf1'))
             command1 = ' '.join(cmd1)
-            run_cmdA(command1)
-            cmd2 = ['python', 'scripts/infer.py', 'acoustic', postvardsQ, '--exp', acockptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', dsname2Q]
+            subprocess.run(command1)
+            cmd2 = [realpython, 'scripts/infer.py', 'acoustic', postvardsQ, '--exp', acockptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', dsname2Q]
             command2 = ' '.join(cmd2)
-            run_cmdA(command2)
+            subprocess.run(command2)
             print(L('inf2'))
         
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
       else:
-            cmd3 = ['python', 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', dsname2Q]
+            cmd3 = [realpython, 'scripts/infer.py', 'acoustic', dsinputQ, '--exp', acockptQ, '--spk', spkname, '--lang', langname, '--out', dslocQ, '--title', dsname2Q]
             command3 = ' '.join(cmd3)
             print(L('inf2'))
-            run_cmdA(command3)
+            subprocess.run(command3)
             subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer {renderedQ}).PlaySync();'])
 
 def replay():

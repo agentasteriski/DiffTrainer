@@ -1,5 +1,5 @@
 import os, shutil, yaml, glob
-from modules import autodsdict # type: ignore (stops vscode from whining)
+from dt_modules import autodsdict # type: ignore (stops vscode from whining)
 
 def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_dir, vocoder_onnx=None, autodsdictvar=None):
         print("making directories...")
@@ -146,6 +146,7 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
             use_note_rest = variance_config_data.get("use_note_rest")
             use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
             use_lang_id = acoustic_config_data.get("use_lang_id")
+            hidden_size = variance_config_data.get("hidden_size")
 
             with open(os.path.join(dsdur, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
                 file.write("phonemes: ../dsmain/phonemes.json\n")
@@ -156,6 +157,7 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
                 dsdur_config = yaml.safe_load(config)
             dsdur_config["use_continuous_acceleration"] = use_continuous_acceleration
             dsdur_config["sample_rate"] = sample_rate2
+            dsdur_config["hidden_size"] = hidden_size
             dsdur_config["hop_size"] = hop_size2
             dsdur_config["predict_dur"] = True #this is the dur config, if it doesn't predict_dur wtf does it do
             dsdur_config["use_lang_id"] = use_lang_id
@@ -182,6 +184,7 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
                         dsvariance_config = yaml.safe_load(config)
                     dsvariance_config["use_continuous_acceleration"] = use_continuous_acceleration
                     dsvariance_config["sample_rate"] = sample_rate
+                    dsvariance_config["hidden_size"] = hidden_size
                     dsvariance_config["hop_size"] = hop_size
                     dsvariance_config["predict_dur"] = predict_dur
                     dsvariance_config["predict_voicing"] = predict_voicing
@@ -211,6 +214,7 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
                         dspitch_config = yaml.safe_load(config)
                     dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
                     dspitch_config["sample_rate"] = sample_rate
+                    dspitch_config["hidden_size"] = hidden_size
                     dspitch_config["hop_size"] = hop_size
                     dspitch_config["predict_dur"] = predict_dur
                     dspitch_config["use_lang_id"] = use_lang_id
