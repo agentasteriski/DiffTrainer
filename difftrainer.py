@@ -10,10 +10,9 @@ from collections import defaultdict
 
 
 ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
-ctk.DrawEngine.preferred_drawing_method = "circle_shapes"
 main_path = os.path.dirname(__file__)
-version = "0.3.38"
-releasedate = "8/19/25"
+version = "0.3.39"
+releasedate = "11/16/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -45,6 +44,7 @@ elif is_macos():
         conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
     else: conda_path = "conda"
 elif is_linux():
+    ctk.DrawEngine.preferred_drawing_method = "circle_shapes" #bc it's for a linux bug
     username = os.environ.get('USER')
     if os.path.exists(os.path.join("home", username, "anaconda3")):
         conda_path = os.path.join("home", username, "anaconda3", "etc", "profile.d", "conda.sh")
@@ -131,7 +131,7 @@ class tabview(ctk.CTkTabview):
         self.label.grid(row=1, column=1)
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('changelog'), font = self.font)
         self.button.grid(row=2, column=0, padx=50)
-        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/main/changelog.md"))
+        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/multidict/changelog.md"))
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
@@ -283,9 +283,9 @@ class tabview(ctk.CTkTabview):
         self.confbox6 =  ctk.CTkCheckBox(master=self.subframe, text="dur", variable=traindur, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox6.grid(row=2, column=1, pady=5, padx=(3,0))
         self.tooltip = CTkToolTip(self.confbox6, message="predict_dur", font=self.font)
-        global stretchaug
-        stretchaug = tk.BooleanVar()
-        self.confbox7 =  ctk.CTkCheckBox(master=self.subframe, text="vel", variable=stretchaug, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
+        global timeaug
+        timeaug = tk.BooleanVar()
+        self.confbox7 =  ctk.CTkCheckBox(master=self.subframe, text="vel", variable=timeaug, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox7.grid(row=2, column=3, pady=5, padx=(0,3))
         self.tooltip = CTkToolTip(self.confbox7, message="random_time_stretching/use_speed_embed(velocity)", font=self.font)
         global trainene
@@ -309,9 +309,11 @@ class tabview(ctk.CTkTabview):
         self.confbox11.configure(state="disabled")
         self.confbox11.grid(row=5, column=2, columnspan=2, pady=5)
         self.tooltip = CTkToolTip(self.confbox11, message=(self.L('wavenet2')), font = self.font)
-        self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="dummy", state=tk.DISABLED, font=self.font)
+        global trainstretch
+        trainstretch = tk.BooleanVar()
+        self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="stretch", variable=trainstretch, onvalue = True, offvalue = False, state=tk.DISABLED, font=self.font)
         self.confbox12.grid(row=4, column=3, pady=5, padx=(0,3))
-        self.tooltip = CTkToolTip(self.confbox12, message=(self.L('dummy')), font = self.font)
+        self.tooltip = CTkToolTip(self.confbox12, message=(self.L('stretch')), font = self.font)
 
         self.frame14 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -488,6 +490,7 @@ class tabview(ctk.CTkTabview):
             self.confbox8.configure(state=tk.NORMAL)
             self.confbox9.configure(state=tk.NORMAL)
             self.confbox11.configure(state=tk.NORMAL)
+            self.confbox12.configure(state=tk.NORMAL)
             self.confnamebox.configure(state=tk.NORMAL)
         elif adv_on.get() == "off":
             self.confbox1.configure(state=tk.DISABLED)
@@ -500,6 +503,7 @@ class tabview(ctk.CTkTabview):
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
             self.confbox11.configure(state=tk.DISABLED)
+            self.confbox12.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
         else:
             self.confbox1.configure(state=tk.DISABLED)
@@ -512,6 +516,7 @@ class tabview(ctk.CTkTabview):
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
             self.confbox11.configure(state=tk.DISABLED)
+            self.confbox12.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
 
     #checks and unchecks boxes based on selected config
@@ -1184,13 +1189,14 @@ class tabview(ctk.CTkTabview):
         print("writing config...")
 
         enable_random_aug = randaug.get()
-        enable_stretch_aug = stretchaug.get()
+        enable_time_aug = timeaug.get()
         duration = traindur.get()
         breathiness = trainbre.get()
         energy = trainene.get()
         pitch = trainpitch.get()
         tension = trainten.get()
         voicing = trainvoc.get()
+        stretch = trainstretch.get()
         pre_type = vr.get()
         ds = preferds.get()
         backbone_type = backbone.get()
@@ -1252,9 +1258,9 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
             bitch_ass_config["merged_phoneme_groups"] = merges["merged_phoneme_groups"]
             bitch_ass_config["augmentation_args"]["random_pitch_shifting"]["enabled"] = enable_random_aug
-            bitch_ass_config["augmentation_args"]["random_time_stretching"]["enabled"] = enable_stretch_aug
+            bitch_ass_config["augmentation_args"]["random_time_stretching"]["enabled"] = enable_time_aug
             bitch_ass_config["use_key_shift_embed"] = enable_random_aug
-            bitch_ass_config["use_speed_embed"] = enable_stretch_aug
+            bitch_ass_config["use_speed_embed"] = enable_time_aug
             bitch_ass_config["max_batch_size"] = int(batch)
             #ive never tried reaching the limit so ill trust kei's setting for this(MLo7)
             #sounds like a lot of users can go higher but 9 is a good start(Aster)
@@ -1263,6 +1269,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_breathiness_embed"] = breathiness
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
+            bitch_ass_config["use_stretch_embed"] = stretch
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
             else:
@@ -1338,6 +1345,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["predict_pitch"] = pitch
             bitch_ass_config["predict_tension"] = tension
             bitch_ass_config["predict_voicing"] = voicing
+            bitch_ass_config["use_stretch_embed"] = stretch
             bitch_ass_config["use_melody_encoder"] = pitch
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             if pre_type==True:
@@ -2334,4 +2342,3 @@ class App(ctk.CTk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-
