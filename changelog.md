@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.40
+- fix hidden size in OU configs
+- langloader loads on top!
+
 ## 0.3.39
 - dummy box has become the stretch embed
 - adds CUDA 12.9 support
