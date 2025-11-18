@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
 main_path = os.path.dirname(__file__)
-version = "0.3.39"
-releasedate = "11/16/25"
+version = "0.3.40"
+releasedate = "11/18/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1463,6 +1463,7 @@ class tabview(ctk.CTkTabview):
         mergebox.insert(tk.END, (langloader["merge_list"]))
         langsave = ctk.CTkButton(editor, text=(self.L('langsave')), command=self.updatelangloader, font=self.font)
         langsave.grid(row=5, column=1, pady=7)
+        editor.lift()
 
     def update_dictbox(self):
         dictbox.delete(0, tk.END)
@@ -1849,7 +1850,6 @@ class tabview(ctk.CTkTabview):
             shutil.copy(f"{aco_folder_onnx}/languages.json", f"{main_stuff}/dsmain")
             shutil.copy(f"{aco_folder_onnx}/dsconfig.yaml", main_stuff) #just straight up uses the original acoustic dsconfig as the one for the main folder
             shutil.copy(f"{var_folder_onnx}/linguistic.onnx", f"{main_stuff}/dsmain")
-
         except Exception as e:
             print(f"Error moving core files: {e}")
 
@@ -1944,6 +1944,7 @@ class tabview(ctk.CTkTabview):
             use_note_rest = variance_config_data.get("use_note_rest")
             use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
             use_lang_id = variance_config_data.get("use_lang_id")
+            hidden_size = variance_config_data.get("hidden_size")
 
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as file:
                 file.write("phonemes: ../dsmain/phonemes.json\n")
@@ -1957,6 +1958,7 @@ class tabview(ctk.CTkTabview):
             dsdur_config["hop_size"] = hop_size2
             dsdur_config["predict_dur"] = True #this is the dur config, if it doesn't predict_dur wtf does it do
             dsdur_config["use_lang_id"] = use_lang_id
+            dsdur_config["hidden_size"] = hidden_size
             if subbanks:
                 dsdur_config["speakers"] = variance_embeds #points it to the correct embeds for dur
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
@@ -1987,6 +1989,7 @@ class tabview(ctk.CTkTabview):
                     dsvariance_config["predict_energy"] = predict_energy
                     dsvariance_config["predict_breathiness"] = predict_breathiness
                     dsvariance_config["use_lang_id"] = use_lang_id
+                    dsvariance_config["hidden_size"] = hidden_size
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
@@ -2012,6 +2015,7 @@ class tabview(ctk.CTkTabview):
                     dspitch_config["hop_size"] = hop_size
                     dspitch_config["predict_dur"] = predict_dur
                     dspitch_config["use_lang_id"] = use_lang_id
+                    dspitch_config["hidden_size"] = hidden_size
                     if subbanks:
                         dspitch_config["speakers"] = variance_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
@@ -2212,6 +2216,7 @@ class tabview(ctk.CTkTabview):
             hop_size2 = variance_config_data.get("hop_size")
             use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
             use_lang_id = variance_config_data.get("use_lang_id")
+            hidden_size = variance_config_data.get("hidden_size")
 
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as file:
                 file.write("phonemes: ../dsmain/phonemes.json\n") #dur gets the main one
@@ -2225,6 +2230,7 @@ class tabview(ctk.CTkTabview):
             dsdur_config["hop_size"] = hop_size2
             dsdur_config["predict_dur"] = True
             dsdur_config["use_lang_id"] = use_lang_id
+            dsdur_config["hidden_size"] = hidden_size
             if subbanks:
                 dsdur_config["speakers"] = duration_embeds
             with open(f"{main_stuff}/dsdur/dsconfig.yaml", "w", encoding = "utf-8") as config:
@@ -2240,6 +2246,7 @@ class tabview(ctk.CTkTabview):
                     predict_breathiness = var_config_data.get("predict_breathiness")
                     predict_dur = var_config_data.get("predict_dur")
                     use_lang_var = var_config_data.get("use_lang_id")
+                    hidden_size = var_config_data.get("hidden_size")
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as file:
                         file.write("phonemes: phonemes.json\n") #multidict merging shenanigans can require separate phonemes.json
                         file.write("languages: ../dsmain/languages.json\n")
@@ -2256,6 +2263,7 @@ class tabview(ctk.CTkTabview):
                     dsvariance_config["predict_energy"] = predict_energy
                     dsvariance_config["predict_breathiness"] = predict_breathiness
                     dsvariance_config["use_lang_id"] = use_lang_var
+                    dsvariance_config["hidden_size"] = hidden_size
                     if subbanks:
                         dsvariance_config["speakers"] = variance_embeds
                     with open(f"{main_stuff}/dsvariance/dsconfig.yaml", "w", encoding = "utf-8") as config:
@@ -2278,6 +2286,7 @@ class tabview(ctk.CTkTabview):
                     predict_dur = pitch_config_data.get("predict_dur")
                     use_note_rest = pitch_config_data.get("use_note_rest")
                     use_lang_pitch = pitch_config_data.get("use_lang_id")
+                    hidden_size = pitch_config_data.get("hidden_size")
                     with open(f"{main_stuff}/dspitch/dsconfig.yaml", "r", encoding = "utf-8") as config:
                         dspitch_config = yaml.safe_load(config)
                     dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration
@@ -2285,6 +2294,7 @@ class tabview(ctk.CTkTabview):
                     dspitch_config["hop_size"] = hop_size
                     dspitch_config["predict_dur"] = predict_dur
                     dspitch_config["use_lang_id"] = use_lang_pitch
+                    dspitch_config["hidden_size"] = hidden_size
                     if subbanks:
                         dspitch_config["speakers"] = pitch_embeds
                     dspitch_config["use_note_rest"] = use_note_rest
@@ -2342,4 +2352,3 @@ class App(ctk.CTk):
 if __name__ == "__main__":
     app = App()
     app.mainloop()
-
