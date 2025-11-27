@@ -139,7 +139,7 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
                 acoustic_config_data = yaml.safe_load(config) #copies most of the main dsconfig
             sample_rate = acoustic_config_data.get("audio_sample_rate")
             hop_size = acoustic_config_data.get("hop_size")
-            with open(var_config, "r", encoding = "utf-8") as config:
+            with open(os.path.join(var_folder_onnx, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
                 variance_config_data = yaml.safe_load(config)
             sample_rate2 = variance_config_data.get("sample_rate")
             hop_size2 = variance_config_data.get("hop_size")

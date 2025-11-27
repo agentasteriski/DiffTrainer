@@ -19,8 +19,7 @@ ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
 version = "0.4.0"
 releasedate = "10/29/25"
 
-#checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
-#if it's not there then it better be in path
+#after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
     return sys.platform.startswith("linux")
 def is_windows():
@@ -28,36 +27,7 @@ def is_windows():
 def is_macos():
     return sys.platform.startswith("darwin")
 
-global conda_path
-conda_path = None
-
-if is_windows():
-    username = os.environ.get('USERNAME')
-    if os.path.exists(os.path.join(main_path, "miniconda")):
-        conda_path = os.path.join(main_path, "miniconda", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "anaconda3")):
-        conda_path = os.path.join("C:", os.sep, "ProgramData", "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", os.sep, "ProgramData", "miniconda3")):
-        conda_path = os.path.join("C:", os.sep, "ProgramData", "miniconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "anaconda3")):
-        conda_path = os.path.join("C:", os.sep, "Users", username, "anaconda3", "condabin", "conda.bat")
-    elif os.path.exists(os.path.join("C:", os.sep, "Users", username, "miniconda3")):
-        conda_path = os.path.join("C:", os.sep, "Users", username, "miniconda3", "condabin", "conda.bat")
-    else: 
-        conda_path = "conda"
-elif is_macos():
-    if os.path.exists(os.path.join("opt", "miniconda3")):
-        conda_path = os.path.join("opt", "miniconda3", "etc", "profile.d", "conda.sh")
-    elif os.path.exists(os.path.join("opt", "anaconda3")):
-        conda_path = os.path.join("opt", "anaconda3", "etc", "profile.d", "conda.sh")
-    else: conda_path = "conda"
-elif is_linux():
-    username = os.environ.get('USER')
-    if os.path.exists(os.path.join("home", username, "anaconda3")):
-        conda_path = os.path.join("home", username, "anaconda3", "etc", "profile.d", "conda.sh")
-    elif os.path.exists(os.path.join("home", username, "miniconda3")):
-        conda_path = os.path.join("home", username, "miniconda3", "etc", "profile.d", "conda.sh")
-    else: conda_path = "conda"
+if is_linux():
     ctk.DrawEngine.preferred_drawing_method = "circle_shapes" #helps de-uglyfy ctk in linux+base conda if not using the real fix
 
 #starts with English before overriding the language with whatever's in the settings
@@ -1333,8 +1303,6 @@ class tabview(ctk.CTkTabview):
             else:
                 bitch_ass_config["hnsep"] = "world"
             if backbone_type== "wavenet":
-                #switches to lynxnet at default recommended settings
-                #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
                 bitch_ass_config["variances_prediction_args"]["backbone_type"] = "wavenet"
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_channels'] = 192
                 bitch_ass_config["variances_prediction_args"]["backbone_args"]['num_layers'] = 10
@@ -1518,7 +1486,8 @@ class tabview(ctk.CTkTabview):
         sys.path.insert(0, ds_path)
         cmdstage = [realpython, 'scripts/binarize.py', '--config', configpath]
         command = " ".join(cmdstage)
-        subprocess.run(command, check=True, shell=True)
+        try: subprocess.run(command, check=True, shell=True)
+        except: print("Binarization stoped due to error.")
         os.chdir(main_path)
 
     def load_config_function(self):
@@ -1549,8 +1518,10 @@ class tabview(ctk.CTkTabview):
                 cmdstage = [realpython, 'scripts/train.py', '--config', configpath, '--exp_name', ckpt_save_dir, '--reset']
                 command = " ".join(cmdstage)
                 subprocess.run(command, check=True, shell=True)
-            except KeyboardInterrupt:
+            except KeyboardInterrupt: #this doesn't even work
                 print("Training ended by user.")
+            except Exception: print("Training ended.")
+            os.chdir(main_path)
 
     def run_onnx_export(self):
             os.chdir(ds_path)
