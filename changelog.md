@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.40
+- fix hidden size in OU configs
+- langloader loads on top!
+
+## 0.3.39
+- dummy box has become the stretch embed
+- adds CUDA 12.9 support
+- caps Torch to 2.8
+
 ## 0.3.38
 - fix `use_lang_id` in dsdur/dspitch/dsvariance when using multiple languages but NOT merging phonemes
 - force alphabetical order in loading speakers
