@@ -13,7 +13,7 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 ## 安裝選項
 ### 如果您有 NVIDIA GPU：
 - 確保安裝了相容版本的 [CUDA Toolkit](https://developer.nvidia.com/cuda-11-8-0-download-archive)
-  - 目前相容版本：11.8、12.1、12.4、12.6
+  - 目前相容版本：11.8、12.1、12.4、12.6、12.8、12.9
 - 繼續下一個“如果”
 
 ### 如果你從未用過Python：
@@ -24,22 +24,25 @@ DiffTrainer 將 DiffSinger 最有用的工具整合到一個簡單的圖形包�
 ### 如果你用過Python：
 - DiffTrainer 預設使用 Miniconda 來管理衝突的套件要求。
 - 要使用現有的 conda 安裝：
-  - 將requirements.txt安裝到基礎環境（強烈建議 3.10，其他版本可能仍適用於基礎環境）
+  - (Windows/Mac) 安裝 requirements.txt 到基礎環境（強烈建議 3.10，其他版本可能仍適用於基礎環境）
+  - (Linux) requirements.txt 仍然有效，但有圖形錯誤（如下所述）。僅用於啟動的固定環境位於資產資料夾中
   - 執行setup_conda_envs.py來配置所需的環境
   - 選擇第一個選項卡上的“更新工具”以完成安裝
 - 從 v0.2.1 開始，環境名稱是硬編碼要求。
 
-已知問題：
+## 已知問題：
 - langloader 編輯器通常隱藏在主視窗後面
-- ~~說實話，langloader 實在太醜太糟了~~ 已從 0.3.14（2025 年 1 月 16 日）開始改進
+- ~~說實話，langloader 實在太醜太糟了~~ 已從 0.3.14 (1/16/25) 開始改進
 - 如果您在儲存間隔或批次大小方塊中輸入，終端機視窗中會出現錯誤
 - 沒有實際影響，只需輸入您的數字並忽略它
-- 如果您載入了一個資料集，然後改變主意並載入了另一個資料集，則無法寫入配置
+- ~~如果您載入了一個資料集，然後改變主意並載入了另一個資料集，則無法寫入配置~~ 已於 0.3.29 (5/7/25) 修復
 - 不要將檢查點資料夾命名為“acoustic”或“variance”，這會與 onnx 匯出清理衝突
 - （僅限 Linux）如果文字和按鈕出現鋸齒狀：
-- 在基礎環境中，`conda install --channel=conda-forge tk[build=xft_*]`
-- （僅限 Mac）依賴項 `libcs​​t` 的依賴項不再針對 x86 打包
-- 在執行 setup_conda_envs.py 之前，將 `libcs​​` 添加到 environmentA/B.yml 的上半部（不確定這是否會繼續工作或舊版本有什麼其他影響）
+  - ~~在基礎環境中，`conda install --channel=conda-forge tk[build=xft_*]`~~ ***不再推薦。 *** 這曾經有效，但現在導致整個 conda 安裝不起作用。
+  - 已於 7/10/25 改善，但尚未完全修復。您可以使用 assets/linuxbaseenv.yml 建立固定環境，但隨後必須從 difftrainerBase 啟動
+  - 例如. `conda env create -f assets/linuxbaseenv.yml`
+- （僅限 Intel Mac）依賴項 `libcs​​t` 的依賴項不再針對 x86 打包
+  - 在執行 setup_conda_envs.py 之前，將 `libcs​​` 添加到 environmentA/B.yml 的上半部（不確定這是否會繼續工作或舊版本有什麼其他影響）
 
 ## 語言支持
 DiffTrainer 使用 [ez-localizr](https://github.com/spicytigermeat/ez-localizr/tree/main) 來允許 GUI 語言選擇。 歡迎所有使用者將 [en_US](/strings/en_US.yaml) 中找到的文字翻譯為其他語言並提交拉取請求。
