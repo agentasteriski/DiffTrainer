@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.41
+- improve handing of tagged phonemes during conversion
+- removed config edits that were already added upstream
+
 ## 0.3.40
 - fix hidden size in OU configs
 - langloader loads on top!
