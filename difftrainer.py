@@ -941,14 +941,21 @@ class tabview(ctk.CTkTabview):
 
                 with open(dict_path, "r", encoding = "utf-8") as f:
                     for line in f:
-                        phoneme, _ = line.strip().split("\t")
-                        if phoneme[0] in vowel_types:
-                            vowel_data.append(phoneme)
-                        elif phoneme[0] in liquid_types:
-                            liquid_data.append(phoneme)
+                        phoneme_raw, _ = line.strip().split("\t")
+                        if "/" in phoneme_raw:
+                            # Split on '/', take the second half
+                            phoneme = phoneme_raw.split("/")[1] 
                         else:
-                            consonant_data.append(phoneme)
-
+                            # Use the phoneme as is
+                            phoneme = phoneme_raw
+                            
+                        # Sort by short name but add full name to list
+                        if phoneme[0] in vowel_types:
+                            vowel_data.append(phoneme_raw)
+                        elif phoneme[0] in liquid_types:
+                            liquid_data.append(phoneme_raw)
+                        else:
+                            consonant_data.append(phoneme_raw)
                 vowel_data.sort()
                 liquid_data.sort()
                 consonant_data.sort()
@@ -1529,7 +1536,9 @@ class tabview(ctk.CTkTabview):
             sys.path.insert(0, str(ds_path))
             onnxexport.prep_onnx_export(ckpt_save_dir)
             command = onnxexport.writecmd(ckpt_save_dir, expselect)
-            subprocess.run(command, check=True, shell=True)
+            try: subprocess.run(command, check=True, shell=True)
+            except: 
+                print("Error exporting onnx")
             onnxexport.onnx_cleanup(ckpt_save_dir)
             print("Done!")
             os.chdir(main_path)
