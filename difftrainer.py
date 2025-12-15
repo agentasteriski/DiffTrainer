@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
 main_path = os.path.dirname(__file__)
-version = "0.3.40"
-releasedate = "11/18/25"
+version = "0.3.41"
+releasedate = "12/15/25"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -858,10 +858,6 @@ class tabview(ctk.CTkTabview):
         with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config2:
             aco_config = yaml.safe_load(config2)
         aco_config["main_loss_type"] = "l1"
-        aco_config["tension_smooth_width"] = 0.06 #original default 0.12, lowering it reduces vocal modes coming out the same
-        aco_config["voicing_smooth_width"] = 0.06
-        aco_config["breathiness_smooth_width"] = 0.06
-        aco_config["energy_smooth_width"] = 0.06
         aco_config["diff_accelerator"] = "unipc"
         aco_config["augmentation_args"]["random_pitch_shifting"]["range"] = [-3.0, 3.0]
         aco_config["augmentation_args"]["random_pitch_shifting"]["scale"] = 0.25
@@ -872,10 +868,6 @@ class tabview(ctk.CTkTabview):
         var_config["main_loss_type"] = "l1"
         var_config["tension_logit_max"] = 8 #nobody is hitting the original default, lowering this reduces the nastiness at high tension(tbh could/should still go lower for a lot of people)
         var_config["tension_logit_min"] = -8 #haven't heard as many issues with low tension but just for good measure
-        var_config["tension_smooth_width"] = 0.06 
-        var_config["voicing_smooth_width"] = 0.06
-        var_config["breathiness_smooth_width"] = 0.06
-        var_config["energy_smooth_width"] = 0.06
         var_config["diff_accelerator"] = "unipc"
         with open("DiffSinger/configs/variance.yaml", "w", encoding = "utf-8") as config3:
             yaml.dump(var_config, config3, default_flow_style=False, sort_keys=False)
@@ -988,14 +980,21 @@ class tabview(ctk.CTkTabview):
 
                 with open(dict_path, "r", encoding = "utf-8") as f:
                     for line in f:
-                        phoneme, _ = line.strip().split("\t")
-                        if phoneme[0] in vowel_types:
-                            vowel_data.append(phoneme)
-                        elif phoneme[0] in liquid_types:
-                            liquid_data.append(phoneme)
+                        phoneme_raw, _ = line.strip().split("\t")
+                        if "/" in phoneme_raw:
+                            # Split on '/', take the second part
+                            phoneme = phoneme_raw.split("/")[1] 
                         else:
-                            consonant_data.append(phoneme)
-
+                            # Use the phoneme as is
+                            phoneme = phoneme_raw
+                            
+                        # Sort by short name but add full name to list
+                        if phoneme[0] in vowel_types:
+                            vowel_data.append(phoneme_raw)
+                        elif phoneme[0] in liquid_types:
+                            liquid_data.append(phoneme_raw)
+                        else:
+                            consonant_data.append(phoneme_raw)
                 vowel_data.sort()
                 liquid_data.sort()
                 consonant_data.sort()
