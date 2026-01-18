@@ -376,21 +376,31 @@ class tabview(ctk.CTkTabview):
 
         ##EXPORT
         self.frame12 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_5')))
-        self.frame12.grid(column=0, row=0, padx=90, pady=10)
+        self.frame12.grid(column=0, row=0, padx=130, pady=10)
         self.expselect_option = tk.IntVar(value=0)
         self.acobutton = ctk.CTkRadioButton(master=self.frame12, text=(self.L('aco')), variable=self.expselect_option, value=1, font = self.font)
         self.acobutton.grid(row=0, column=0, padx=10)
         self.tooltip = CTkToolTip(self.acobutton, message=(self.L('acotip')), font = self.font)
         self.varbutton = ctk.CTkRadioButton(master=self.frame12, text=(self.L('var')), variable=self.expselect_option, value=2, font = self.font)
-        self.varbutton.grid(row=1, column=0, padx=10)
+        self.varbutton.grid(row=1, column=0, padx=10, pady=(0,10))
         self.tooltip = CTkToolTip(self.varbutton, message=(self.L('vartip')), font = self.font)
+        global drop_on
+        drop_on = tk.StringVar()
+        self.droptoggle = ctk.CTkSwitch(master=self.frame12, text="OPTIONAL: Drop speakers", variable=drop_on, onvalue="on", offvalue="off", command=self.changeState2, font = self.font)
+        self.droptoggle.grid(row=0, column=1, padx=10)
+        global dropspk
+        dropspk = tk.StringVar(value="speakers_to_drop")
+        self.dropbox = ctk.CTkEntry(master=self.frame12, textvariable=dropspk, font=self.font, state=tk.DISABLED)
+        self.dropbox.grid(row=1, column=1, padx=10, pady=(0,10))
+
         global expselect
         expselect = self.expselect_option
         self.button = ctk.CTkButton(master=self.frame12, text=(self.L('step2')), command=self.ckpt_folder_save, font = self.font)
-        self.button.grid(row=0, column=1, rowspan=2, padx=10)
+        self.button.grid(row=2, column=0, padx=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('step2-2alt')), font = self.font)
         self.button = ctk.CTkButton(master=self.frame12, text=(self.L('onnx')), command=self.run_onnx_export, font = self.font)
-        self.button.grid(row=0, column=2, rowspan=2, padx=10)
+        self.button.grid(row=2, column=1, padx=10)
+        
         self.frame13 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_5')))
         self.frame13.grid(row=3, column=0, pady=10)
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('getaco')), command=self.get_aco_folder, font = self.font)
@@ -444,6 +454,7 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('dur')), command=self.get_dur_folder, font = self.font)
         self.button.grid(row=0, column=1, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('pit')), command=self.get_pitch_folder, font = self.font)
         self.button.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
         self.tooltip = CTkToolTip(self.button, message=(self.L('getaco2')), font = self.font)
@@ -504,6 +515,16 @@ class tabview(ctk.CTkTabview):
             self.confbox9.configure(state=tk.DISABLED)
             self.confbox11.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
+
+#this one's for dropping speakers
+    def changeState2(self):
+        print("Toggling speaker dropping", adv_on.get())
+        if drop_on.get() == "on":
+            self.dropbox.configure(state=tk.NORMAL)
+        elif drop_on.get() == "off":
+            self.dropbox.configure(state=tk.DISABLED)
+        else:
+            self.dropbox.configure(state=tk.DISABLED)
 
     #checks and unchecks boxes based on selected config
     def combobox_callback(self, choice):
@@ -1534,8 +1555,13 @@ class tabview(ctk.CTkTabview):
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)
             sys.path.insert(0, str(ds_path))
+            if drop_on == "on":
+                drop_command = onnxexport.drop_speakers(ckpt_save_dir, dropspk)
+                try: subprocess.run(drop_command, check=True, shell=True)
+                except: 
+                    print("Error dropping speakers")
             onnxexport.prep_onnx_export(ckpt_save_dir)
-            command = onnxexport.writecmd(ckpt_save_dir, expselect)
+            command = onnxexport.writecmd(ckpt_save_dir, expselect, drop_on)
             try: subprocess.run(command, check=True, shell=True)
             except: 
                 print("Error exporting onnx")
