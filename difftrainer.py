@@ -428,7 +428,7 @@ class tabview(ctk.CTkTabview):
 
         ##EXPORT 2 ELECTRIC BOOGALOO
         self.frame15 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_6')))
-        self.frame15.grid(column=0, row=0, padx=90, pady=10)
+        self.frame15.grid(column=0, row=0, padx=130, pady=10)
         self.expselect_option2 = tk.IntVar(value=0)
         self.acobutton = ctk.CTkRadioButton(master=self.frame15, text=(self.L('aco')), variable=self.expselect_option2, value=1, font = self.font)
         self.acobutton.grid(row=0, column=0, padx=10)
