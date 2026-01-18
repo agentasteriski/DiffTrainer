@@ -28,9 +28,10 @@ def get_latest_checkpoint_path(ckpt_save_dir):
 def drop_speakers(ckpt_save_dir, dropspk):
     todrop = get_latest_checkpoint_path(ckpt_save_dir)
     dropspk_list = []
-    if dropspk and dropspk.strip():
-        dropspk_list = [item.strip() for item in dropspk.split(',')]
-    dropspk_string = ','.join(dropspk_list)
+    #if dropspk and dropspk.strip():
+    #    dropspk_list = [item.strip() for item in dropspk.split(',')]
+    #dropspk_string = ','.join(dropspk_list)
+    dropspk_string = dropspk.get()
     droppath = os.path.join(ckpt_save_dir, "model_ckpt_steps_1.ckpt")
     cmdstage = [realpython, 'scripts/drop_spk.py', todrop, droppath, "--drop", dropspk_string, "--fill", "zeros", "--overwrite"]
     drop_command = " ".join(cmdstage)
@@ -38,6 +39,7 @@ def drop_speakers(ckpt_save_dir, dropspk):
 
 def prep_onnx_export(ckpt_save_dir):
     onnx_folder_dir = os.path.join(ckpt_save_dir, "onnx")
+    onnx_bak = os.path.join(ckpt_save_dir, "onnx_old")
     if os.path.exists(onnx_folder_dir):
         counter = 1
         while os.path.exists(onnx_bak):
@@ -87,7 +89,7 @@ def writecmd(ckpt_save_dir, expselect, drop_on):
         cmdstage.append('acoustic')
         cmdstage.append('--exp')
         cmdstage.append(ckpt_save_abs)
-        if drop_on == "on":
+        if drop_on.get() == "on":
             cmdstage.append('--ckpt')
             cmdstage.append('1')
         cmdstage.append('--out')
@@ -97,7 +99,7 @@ def writecmd(ckpt_save_dir, expselect, drop_on):
         cmdstage.append('variance')
         cmdstage.append('--exp')
         cmdstage.append(ckpt_save_abs)
-        if drop_on == True:
+        if drop_on.get() == "on":
             cmdstage.append('--ckpt')
             cmdstage.append('1')
         cmdstage.append('--out')
