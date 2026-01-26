@@ -21,6 +21,8 @@ if exist "%cd%\miniconda" (
 	echo Conda not located, proceeding anyways...
 )
 
+call %conda_hook%
+
 echo Activating environment...
-call %conda_hook% & conda activate difftrainer && python check_update.py
+call conda activate difftrainer && python check_update.py
 pause
