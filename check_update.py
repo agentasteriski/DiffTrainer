@@ -1,9 +1,10 @@
-import requests, os, zipfile, shutil, subprocess
+import requests, os, zipfile, shutil, subprocess, sys
 from tqdm import tqdm
 import re
 from tkinter import messagebox
 
 main_path = os.path.dirname(__file__)
+realpython = sys.executable
 
 gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/rewrite/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
@@ -61,8 +62,8 @@ else:
 			shutil.move(f"{folder}/strings", main_path)
 			shutil.rmtree("assets")
 			shutil.move(f"{folder}/assets", main_path)
-			shutil.rmtree("modules")
-			shutil.move(f"{folder}/modules", main_path)
+			shutil.rmtree("dt_modules")
+			shutil.move(f"{folder}/dt_modules", main_path)
 			[os.remove(filename)
 			for filename in os.listdir(main_path) if filename.endswith(".bat")]
 			[shutil.move(os.path.join(folder, filename), main_path)
@@ -80,7 +81,7 @@ else:
 
 		if update_reqs == True:
 			try:
-				subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
+				subprocess.check_call([realpython, '-m', 'pip', 'install', '-r', 'requirements.txt'])
 			except subprocess.CalledProcessError as e:
 				print(f"Error updating dependencies: {e}")
 

@@ -20,8 +20,13 @@ if exist "%cd%\miniconda" (
 ) else (
 	echo Conda not located, proceeding anyways...
 )
-call %conda_hook%
 
-echo Activating environment...
-call conda activate difftrainer && python quickinference.py
+call %conda_hook%
+echo removing existing environment...
+call conda remove -n difftrainer --all
+
+echo reinstalling requirements...
+call conda env create --file %cd%\assets\environment.yml
+
+call conda activate difftrainer && python auto_torch.py
 pause

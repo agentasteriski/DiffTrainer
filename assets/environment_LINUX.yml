@@ -1,5 +1,6 @@
 name: difftrainer
 channels:
+  - defaults
   - conda-forge
 dependencies:
   - python=3.10
@@ -14,6 +15,7 @@ dependencies:
   - "numpy<2.0.0"
   - "onnx~=1.16.0"
   - "scipy>=1.10.0"
+  - resampy
   - tensorboard
   - tensorboardX
   - torchmetrics

@@ -4,7 +4,7 @@ set "download_url=https://repo.anaconda.com/miniconda/Miniconda3-py310_24.5.0-0-
 set "installer_name=miniconda_installer.exe"
 set "install_path=%cd%\miniconda"
 set "conda_python=%cd%\miniconda\python.exe"
-set "conda_pip=%cd%\miniconda\Scripts\pip.exe"
+set "conda_hook=%cd%\miniconda\scripts\activate.bat"
 
 echo downloading miniconda installer...
 powershell -ExecutionPolicy Bypass -command "invoke-webrequest -uri %download_url% -outfile %installer_name%"
@@ -16,11 +16,13 @@ echo installing miniconda...
 echo cleaning up...
 del %installer_name%
 
-echo installing GUI's requirements...
-%conda_pip% install -r requirements.txt --no-warn-script-location
+call %conda_hook%
+
+echo installing requirements...
+call conda env create --file %cd%\assets\environment.yml
 
 :: continuing everything else in python <333
-%conda_python% setup_conda_envs.py
+call conda activate difftrainer && python auto_torch.py
 
 echo miniconda setup complete.
 

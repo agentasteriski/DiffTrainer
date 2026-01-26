@@ -1,10 +1,31 @@
+# It is recommended to use Conda and assets/environment.yml(or environment_LINUX) instead of requirements.txt.
+
 customtkinter
 ctkmessagebox
 ctklistbox
 ctktooltip
 ez-localizr
 tk
-tdqm
+tqdm
 pyyaml
 requests
 pillow
+click
+einops==0.6.1
+h5py
+librosa<0.10.0
+lightning~=2.3.0
+matplotlib
+MonkeyType==23.3.0
+numpy<2.0.0
+onnx~=1.16.0
+onnxsim~=0.4.36
+praat-parselmouth==0.4.3
+pyworld==0.3.4
+resampy
+scipy>=1.10.0
+tensorboard
+tensorboardX
+torchmetrics
+
+#PyTorch >=2.4 <=2.8 also required. auto_torch.py will detect the recommended version for your system and install it to the environment it is run from.
