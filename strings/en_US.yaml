@@ -7,6 +7,7 @@ tab_ttl_4: "Preprocess&Train"
 tab_ttl_5: "Export Singer(basic)"
 tab_ttl_6: "Export Singer(advanced)"
 
+
 # About tab
 vers: "version"
 install: "Full install" #no longer used, can skip
@@ -14,6 +15,8 @@ install2: "Installs DiffSinger, Uta's Converter, SOME, and all Python requiremen
 changelog: "View changelog"
 update: "Update tools"
 update2: "Installs DiffSinger, Uta's Converter, SOME, but not the Python requirements.\n Running this a second time will delete and replace all files."
+setup_completo1: "DiffSinger Tools Installed"
+setup_completo2: "DiffTrainer is now ready for use."
 cred_lead: "Maintainer:"
 cred_tools: "Additional credits"
 cred_front: "Front end:"
@@ -24,7 +27,7 @@ restart: "(restart to apply)"
 
 #Data Prep tab
 silperseg: "Max no. of silences per segment"
-silperseg2: "How many instances of AP/SP will be allowed in a single segment.\nThe next silence will start a new segment."
+silperseg2: "How many instances of SP will be allowed in a single segment.\nThe next silence will start a new segment."
 length_sil: "Max length of silences(seconds)"
 length_sil2: "How long each silence is allowed to be.\nLonger silences will be split.\nThis is not an exact value, and may be shorter or longer if needed."
 length_seg: "Max length of segments(seconds)"
@@ -44,6 +47,8 @@ rawdata: "Select raw data folder"
 rawdata2: "Must be located in raw_data. This should be one folder for the whole model, \nwith subfolders for each speaker containing both .wav and .lab files."
 prepdata: "Prepare data"
 prepdata2: "Run the process to prepare the data in Diffsinger format."
+segdone1: "DiffTrainer: Conversion Complete"
+segdone2: "Your data is now ready for use with DiffSinger."
 
 #Config tab
 type: "Type:"
@@ -105,7 +110,11 @@ warning2: "To stop training, press Ctrl+C in the command line window."
 patchlabel: "Optional patch:"
 patchbutton: "Use Tensor cores"
 patchtip: "For more recent Nvidia GPUs.\nIf you get a message about using tensor cores at the beginning of training, this patch may improve performance slightly."
-
+binarydone1: "DiffTrainer: Preprocessing Complete"
+binarydone2: "Your data is now ready for training."
+binaryerror1: "DiffTrainer: Error Preprocessing"
+generalerror2: "See terminal window for details."
+trainerror1: "DiffTrainer: Error Training"
 #Export tab
 ##strings 'aco', 'var', and 'step2' are reused
 acotip: "Exports an acoustic checkpoint to ONNX."

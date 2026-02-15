@@ -4,6 +4,7 @@ def dictgenerator(aco_folder_dir, main_stuff):
     aco_folder_onnx = os.path.join(aco_folder_dir, "onnx")
     phoneme_types_list = {
         "a": "vowel", "i": "vowel", "u": "vowel", "e": "vowel", "o": "vowel",
+        "A": "vowel", "I": "vowel", "U": "vowel", "E": "vowel", "O": "vowel", "N": "vowel", "M": "vowel",
         "b": "stop", "d": "stop", "g": "stop", "k": "stop", "p": "stop", "q": "stop", "t": "stop",
         "c": "affricate", "j": "affricate",
         "f": "fricative", "h": "fricative", "s": "fricative", "v": "fricative", "z": "fricative",

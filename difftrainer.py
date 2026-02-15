@@ -7,6 +7,7 @@ from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from CTkListbox import CTkListbox
 from ezlocalizr import ezlocalizr
+from plyer import notification
 from dt_modules import onnxexport, basicexport, advexport
 
 
@@ -635,6 +636,12 @@ class tabview(ctk.CTkTabview):
     #stops everything from dying when anything touched a Mac
     def is_hidden_folder(folder):
         return folder.startswith('.')
+    
+    def show_notification(self, title, message):
+        try:
+            notification.notify(title=title, message=message, app_name="DiffTrainer") #apparently app_name doesn't even work unless it's compiled. great job team.
+        except Exception as e:
+            print(f"Notification failed: {e}")
 
     def dl_update(self):
         if not os.path.exists(all_shits_not_wav_n_lab):
@@ -877,9 +884,7 @@ class tabview(ctk.CTkTabview):
         with open("DiffSinger/utils/binarizer_utils.py", "w", encoding = "utf-8") as f:
             f.write(up_f0_val)
 
-        #no idea how to do this on other OS and honestly idc, it's here for the bit
-        if is_windows():
-            subprocess.check_call(["powershell", "-c", f'(New-Object Media.SoundPlayer "{main_path}/assets/setup_complete.wav").PlaySync();'])
+        self.show_notification(self.L('setup_completo1'), self.L('setup_completo2'))
 
         print("Setup Complete!")
 
@@ -1130,6 +1135,7 @@ class tabview(ctk.CTkTabview):
                         pass
             except Exception as e:
                     print(f"Error during SOME pitch generation: {e}")
+            self.show_notification(self.L('segdone1'), self.L('segdone2'))
             print("data segmentation complete!")
 
     def grab_data_folder(self):
@@ -1531,8 +1537,12 @@ class tabview(ctk.CTkTabview):
         sys.path.insert(0, ds_path)
         cmdstage = [realpython, 'scripts/binarize.py', '--config', configpath]
         command = " ".join(cmdstage)
-        try: subprocess.run(command, check=True, shell=True)
-        except: print("Binarization stoped due to error.")
+        try: 
+            subprocess.run(command, check=True, shell=True)
+            self.show_notification(self.L('binarydone1'), self.L('binarydone2'))
+        except: 
+            print("Binarization stopped due to error.")
+            self.show_notification(self.L('binaryerror1'), self.L('generalerror2'))
         os.chdir(main_path)
 
     def load_config_function(self):

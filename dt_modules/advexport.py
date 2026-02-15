@@ -155,7 +155,7 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
             dsconfig_data["acoustic"] = "dsmain/acoustic.onnx"
             dsconfig_data["phonemes"] = "dsmain/phonemes.json"
             dsconfig_data["languages"] = "dsmain/languages.json"
-            dsconfig_data["vocoder"] = "nsf_hifigan"
+            dsconfig_data["vocoder"] = "pc_nsf_hifigan_44.1k_hop512_128bin_2025.02"
             dsconfig_data["singer_type"] = "diffsinger"
             if subbanks:
                 dsconfig_data["speakers"] = acoustic_embeds

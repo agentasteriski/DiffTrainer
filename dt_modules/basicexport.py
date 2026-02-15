@@ -124,7 +124,7 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
             dsconfig_data["acoustic"] = "dsmain/acoustic.onnx" #fix those file paths
             dsconfig_data["phonemes"] = "dsmain/phonemes.json" #btw we can't os.path.join here bc windows had to be special and use \ when everyone else uses /
             dsconfig_data["languages"] = "dsmain/languages.json"
-            dsconfig_data["vocoder"] = "nsf_hifigan" #gets overwritten later if there's a custom vocoder
+            dsconfig_data["vocoder"] = "pc_nsf_hifigan_44.1k_hop512_128bin_2025.02" #gets overwritten later if there's a custom vocoder
             dsconfig_data["singer_type"] = "diffsinger"
             if subbanks:
                 dsconfig_data["speakers"] = acoustic_embeds #cleans up the file names

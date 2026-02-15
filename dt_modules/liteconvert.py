@@ -10,7 +10,7 @@ def read_lab_file(lab_path, fs):
     ph_seq = []
     ph_durs = []
     
-    with open(lab_path, 'r') as f:
+    with open(lab_path, 'r', encoding = "utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -25,8 +25,7 @@ def read_lab_file(lab_path, fs):
                 s = float(start_time) / 10000000
                 e = float(end_time) / 10000000
 
-                # Convert time from samples to seconds and calculate duration
-                duration = (e - s) / fs
+                duration = (e - s)
                 
                 ph_seq.append(phoneme)
                 ph_durs.append(str(duration))
@@ -41,7 +40,7 @@ def process_wav_lab_pairs(base_path, output_csv):
     lab_files.sort(key=lambda x: x.name)
     
     # Prepare CSV file
-    with open(output_csv, 'w', newline='') as csvfile:
+    with open(output_csv, 'w', newline='', encoding = "utf-8") as csvfile:
         fieldnames = ['name', 'ph_seq', 'ph_dur']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
@@ -60,15 +59,17 @@ def process_wav_lab_pairs(base_path, output_csv):
                 
                 # Read phoneme information from .lab file
                 ph_seq, ph_durs = read_lab_file(lab_file, fs)
+
+                basename = lab_file.stem
                 
                 # Write to CSV
                 writer.writerow({
-                    'name': lab_file.stem,
+                    'name': f'{basename}',
                     'ph_seq': ph_seq,
                     'ph_dur': ' '.join(ph_durs)
                 })
                 
-                print(f"Processed: {lab_file.stem}")
+                print(f"Processed: {basename}")
                 
             except Exception as e:
                 print(f"Error processing {lab_file}: {e}")
@@ -76,7 +77,7 @@ def process_wav_lab_pairs(base_path, output_csv):
 # Usage
 if __name__ == "__main__":
     # Set your base path here
-    base_path = "C:/Users/AAAAA/Documents/DiffTrainer-main/raw_data/seven"
+    base_path = "C:/Users/AAAAAAAAA/Documents/GitHub/DiffTrainer/raw_data/test"
     output_csv = "output_transcription.csv"
     
     process_wav_lab_pairs(base_path, output_csv)
