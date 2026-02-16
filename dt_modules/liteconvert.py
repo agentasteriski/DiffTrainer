@@ -3,6 +3,55 @@ import soundfile as sf
 import numpy as np
 from pathlib import Path
 
+def auto_config(base_path):
+    base_dir = Path(base_path)
+
+    phonemes = set()
+    def is_excluded(phoneme):
+        return phoneme in ["pau", "AP", "SP", "sil"]
+    
+    for lab_file in base_dir.rglob("*.lab"):
+        if any(part.startswith('.') for part in lab_file.parts):
+            continue
+            
+        with open(lab_file, "r", encoding="utf-8") as f:
+            for line in f:
+                parts = line.strip().split()
+                if len(parts) >= 3:
+                    phoneme = parts[2]
+                    if not is_excluded(phoneme):
+                        phonemes.add(phoneme)
+    
+    vowel_types = {"a", "i", "u", "e", "o", "N", "M", "NG", "A", "E", "I", "O", "U"}
+    liquid_types = {"y", "w", "l", "r"} # liquids and semivowels
+    vowel_data = []
+    liquid_data = []
+
+    for phoneme_raw in phonemes:
+        if "/" in phoneme_raw:
+            # Split on '/', take the second half
+            phoneme = phoneme_raw.split("/")[1] 
+        else:
+            # Use the phoneme as is
+            phoneme = phoneme_raw
+            
+        # Sort by short name but add full name to list
+        if phoneme[0] in vowel_types:
+            vowel_data.append(phoneme_raw)
+        elif phoneme[0] in liquid_types:
+            liquid_data.append(phoneme_raw)
+        else:
+            continue
+    vowel_data.sort()
+    liquid_data.sort()
+
+    liquid_list = {liquid: True for liquid in liquid_data}
+    phones4json = {"vowels": vowel_data, "liquids": liquid_list}
+    jsonpath = base_dir / "auto_lang_config.json"
+    print(f"Attempting to write to: {jsonpath.absolute()}")
+    with open(jsonpath, "w", encoding = "utf-8") as langconfig:
+        json.dump(phones4json, langconfig, indent=4)
+
 def read_lab_file(lab_path):
     """Read a .lab file and return phoneme sequences and durations"""
     ph_seq = []
@@ -119,7 +168,8 @@ def lab2csv(base_path, langconfig):
     print("Created transcriptions.csv for all speakers!")
 
 if __name__ == "__main__":
-    base_path = "C:/Users/AAAAA/Documents/GitHub/DiffTrainer/raw_data/big_test/test"
-    langconfig = "exampleconfig.json"
+    base_path = "C:/Users/AAAAA/Documents/GitHub/DiffTrainer/raw_data/big_test"
+    langconfig = os.path.join(base_path, "auto_lang_config.json") #or replace that with the location of a custom one
     
+    auto_config(base_path)
     lab2csv(base_path, langconfig)
