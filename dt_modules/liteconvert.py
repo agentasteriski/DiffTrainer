@@ -177,7 +177,7 @@ def lab2csv(base_path, langconfig):
 
 if __name__ == "__main__":
     # to use auto-config: comment out line 181, un-comment 182 and 184
-    base_path = "C:/Users/megdo/Documents/GitHub/DiffTrainer/raw_data/big_test"
+    base_path = "C:/Users/AAAAA/Documents/GitHub/DiffTrainer/raw_data/big_test"
     langconfig = "insert_path_here"
     #langconfig = os.path.join(base_path, "auto_lang_config.json") 
     
