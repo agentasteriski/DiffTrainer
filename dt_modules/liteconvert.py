@@ -1,10 +1,9 @@
-#doesn't work yet, difftrainer.py still uses uta's contraption
-import csv, json
+import os, csv, json
 import soundfile as sf
 import numpy as np
 from pathlib import Path
 
-def read_lab_file(lab_path, fs):
+def read_lab_file(lab_path):
     """Read a .lab file and return phoneme sequences and durations"""
     ph_seq = []
     ph_durs = []
@@ -77,55 +76,50 @@ def phoneme_separation(ph_seq, langconfig):
     
     return ' '.join(map(str, ph_num))
 
-def process_wav_lab_pairs(base_path, output_csv, langconfig):
-    """Process all .wav and .lab pairs in the base path"""
-    
-    # Find all .lab files
-    lab_files = list(Path(base_path).glob('**/*.lab'))
-    lab_files.sort(key=lambda x: x.name)
-    
-    # Prepare CSV file
-    with open(output_csv, 'w', newline='', encoding = "utf-8") as csvfile:
-        fieldnames = ['name', 'ph_seq', 'ph_dur', 'ph_num']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        
-        for lab_file in lab_files:
-            try:
-                # Find corresponding .wav file
-                wav_file = lab_file.with_suffix('.wav')
-                
-                if not wav_file.exists():
-                    print(f"Warning: No matching .wav file found for {lab_file}")
-                    continue
-                
-                # Read audio to get sample rate
-                x, fs = sf.read(wav_file)
-                
-                # Read phoneme information from .lab file
-                ph_seq, ph_durs = read_lab_file(lab_file, fs)
-                ph_num = phoneme_separation(ph_seq, langconfig)
+def lab2csv(base_path, langconfig):
+    """Iterates through subfolders and creates one CSV for each containing .lab files"""
 
-                basename = lab_file.stem
-                
-                # Write to CSV
-                writer.writerow({
-                    'name': f'{basename}',
-                    'ph_seq': ph_seq,
-                    'ph_dur': ph_durs,
-                    'ph_num': ph_num
-                })
-                
-                print(f"Processed: {basename}")
-                
-            except Exception as e:
-                print(f"Error processing {lab_file}: {e}")
+    base_dir = Path(base_path)
+    subdirs = [d for d in base_dir.rglob('*') if d.is_dir()]
+    subdirs.append(base_dir)
 
-# Edit this for standalone usage
+    for subdir in subdirs:
+        lab_files = list(subdir.glob('*.lab'))
+        if not lab_files:
+            continue
+        lab_files.sort(key=lambda x: x.name)
+
+        output_csv = subdir / "transcriptions.csv"
+
+        print(f"Processing speaker {subdir.name}")
+
+        with open(output_csv, 'w', newline='', encoding="utf-8") as csvfile:
+            fieldnames = ['name', 'ph_seq', 'ph_dur', 'ph_num']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            for lab_file in lab_files:
+                try:
+                    wav_file = lab_file.with_suffix('.wav')
+                    if not wav_file.exists():
+                        print(f"Warning: No matching .wav file found for {lab_file}")
+                        continue
+                    
+                    ph_seq, ph_durs = read_lab_file(lab_file)
+                    ph_num = phoneme_separation(ph_seq, langconfig)
+                    
+                    writer.writerow({
+                        'name': lab_file.stem,
+                        'ph_seq': ph_seq,
+                        'ph_dur': ph_durs,
+                        'ph_num': ph_num
+                    })
+                except Exception as e:
+                    print(f"Error in {lab_file.name}: {e}")
+    print("Created transcriptions.csv for all speakers!")
+
 if __name__ == "__main__":
-    base_path = "C:/Users/AAAAA/Documents/GitHub/DiffTrainer/raw_data/test"
-    output_csv = "output_transcription.csv" #only does the csv, folder reorganizing is up to you
+    base_path = "C:/Users/AAAAA/Documents/GitHub/DiffTrainer/raw_data/big_test/test"
     langconfig = "exampleconfig.json"
     
-    process_wav_lab_pairs(base_path, output_csv, langconfig)
-    print(f"CSV file created: {output_csv}")
+    lab2csv(base_path, langconfig)
