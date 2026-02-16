@@ -55,6 +55,12 @@ def read_lab_file(lab_path):
     """Read a .lab file and return phoneme sequences and durations"""
     ph_seq = []
     ph_durs = []
+
+    nnsvsbegone = {
+        "br": "AP",
+        "pau": "SP",
+        "sil": "SP"
+    }
     
     with open(lab_path, 'r', encoding = "utf-8") as f:
         for line in f:
@@ -68,6 +74,9 @@ def read_lab_file(lab_path):
                 start_time = int(parts[0])
                 end_time = int(parts[1])
                 phoneme = parts[2]
+
+                phoneme = nnsvsbegone.get(phoneme, phoneme)
+
                 s = float(start_time) / 10000000
                 e = float(end_time) / 10000000
 
@@ -176,7 +185,7 @@ def lab2csv(base_path, langconfig):
 
 
 if __name__ == "__main__":
-    # to use auto-config: comment out line 181, un-comment 182 and 184
+    # to use auto-config: comment out first langconfig line, un-comment second one and auto_config line
     base_path = "C:/Users/AAAAA/Documents/GitHub/DiffTrainer/raw_data/big_test"
     langconfig = "insert_path_here"
     #langconfig = os.path.join(base_path, "auto_lang_config.json") 
