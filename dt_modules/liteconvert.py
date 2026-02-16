@@ -1,5 +1,4 @@
-import os, csv, json
-import soundfile as sf
+import os, csv, json, shutil
 import numpy as np
 from pathlib import Path
 
@@ -48,7 +47,7 @@ def auto_config(base_path):
     liquid_list = {liquid: True for liquid in liquid_data}
     phones4json = {"vowels": vowel_data, "liquids": liquid_list}
     jsonpath = base_dir / "auto_lang_config.json"
-    print(f"Attempting to write to: {jsonpath.absolute()}")
+    #print(f"Attempting to write to: {jsonpath.absolute()}")
     with open(jsonpath, "w", encoding = "utf-8") as langconfig:
         json.dump(phones4json, langconfig, indent=4)
 
@@ -129,13 +128,17 @@ def lab2csv(base_path, langconfig):
     """Iterates through subfolders and creates one CSV for each containing .lab files"""
 
     base_dir = Path(base_path)
-    subdirs = [d for d in base_dir.rglob('*') if d.is_dir()]
+    subdirs = [d for d in base_dir.rglob('*') if d.is_dir() and d.name != 'wavs']
     subdirs.append(base_dir)
 
     for subdir in subdirs:
         lab_files = list(subdir.glob('*.lab'))
         if not lab_files:
             continue
+
+        wavs_dir = subdir / "wavs"
+        wavs_dir.mkdir(parents=True, exist_ok=True)
+        
         lab_files.sort(key=lambda x: x.name)
 
         output_csv = subdir / "transcriptions.csv"
@@ -163,13 +166,20 @@ def lab2csv(base_path, langconfig):
                         'ph_dur': ph_durs,
                         'ph_num': ph_num
                     })
+                    
+                    shutil.move(str(lab_file), str(wavs_dir / lab_file.name))
+                    shutil.move(str(wav_file), str(wavs_dir / wav_file.name))
+
                 except Exception as e:
                     print(f"Error in {lab_file.name}: {e}")
-    print("Created transcriptions.csv for all speakers!")
+    print("Processed all speakers!")
+
 
 if __name__ == "__main__":
-    base_path = "C:/Users/AAAAA/Documents/GitHub/DiffTrainer/raw_data/big_test"
-    langconfig = os.path.join(base_path, "auto_lang_config.json") #or replace that with the location of a custom one
+    # to use auto-config: comment out line 181, un-comment 182 and 184
+    base_path = "C:/Users/megdo/Documents/GitHub/DiffTrainer/raw_data/big_test"
+    langconfig = "insert_path_here"
+    #langconfig = os.path.join(base_path, "auto_lang_config.json") 
     
-    auto_config(base_path)
+    #auto_config(base_path)
     lab2csv(base_path, langconfig)
