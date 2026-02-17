@@ -181,7 +181,7 @@ def lab2csv(base_path, langconfig):
 
                 except Exception as e:
                     print(f"Error in {lab_file.name}: {e}")
-    print("Processed all speakers!")
+    print("Converted all speakers to DiffSinger format!")
 
 
 if __name__ == "__main__":

@@ -1,14 +1,15 @@
-import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, sys, importlib
+import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, sys
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
+from pathlib import Path
 from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from CTkListbox import CTkListbox
 from ezlocalizr import ezlocalizr
 from plyer import notification
-from dt_modules import onnxexport, basicexport, advexport
+from dt_modules import onnxexport, basicexport, advexport, liteconvert, corpus_segmenter
 
 
 
@@ -63,7 +64,6 @@ class tabview(ctk.CTkTabview):
 
         os.chdir(main_path)
 
-        self.all_shits = r"" #forcing users to select the folder <3
         self.data_folder = r"" #more forces
         self.ckpt_save_dir = r"" #even more forces
         self.trainselect_option = r"" #rawr
@@ -123,11 +123,11 @@ class tabview(ctk.CTkTabview):
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_lead') + " Aster"), font = self.font_ul)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski"))
         self.label.grid(row=3, column=0, pady=30)
-        self.tooltip = CTkToolTip(self.label, message="this is a link")
+        self.tooltip = CTkToolTip(self.label, message="this is a link", font = self.font)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_tools')), font = self.font_ul)
         self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/MLo7Ghinsan")) #replace ghin's link with actual docs later
         self.label.grid(row=3, column=1, pady=30)
-        self.tooltip = CTkToolTip(self.label, message="this is also a link")
+        self.tooltip = CTkToolTip(self.label, message="this is also a link", font = self.font)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = self.L('cred_trans'), font = self.font)
         self.label.grid(row=3, column=2, pady=30)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = self.L('restart'), font = self.font)
@@ -136,66 +136,39 @@ class tabview(ctk.CTkTabview):
         self.langselect.grid(row=4, column=2, sticky=tk.SE)
 
         ##SEGMENT
-
         self.frame1 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
         self.frame1.grid(padx=(35, 10), pady=(10,0))
-        self.label = ctk.CTkLabel(master=self.frame1, text = (self.L('silperseg')), font = self.font)
-        self.label.grid(row=0, column=0)
-        self.tooltip = CTkToolTip(self.label, message=(self.L('silperseg2')), font = self.font)
-        global max_sil
-        max_sil = tk.IntVar()
-        self.maxsil_box = ctk.CTkEntry(master=self.frame1, textvariable = max_sil, width = 40, font = self.font)
-        self.maxsil_box.insert(0, "2")
-        self.maxsil_box.grid(row=2)
-        self.maxsil_slider = ctk.CTkSlider(master=self.frame1, from_=1, to=10, number_of_steps=10, variable=max_sil)
-        self.maxsil_slider.set(2)
-        self.maxsil_slider.grid(row=1)
 
-        self.frame3 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
-        self.frame3.grid(row=1, column=0, padx=(35, 10), pady=(40, 20))
-        self.label = ctk.CTkLabel(master=self.frame3, text = (self.L('length_seg')), font = self.font)
-        self.tooltip = CTkToolTip(self.label, message=(self.L('length_seg2')), font = self.font)
-        self.label.grid(row=0, column=0)
-        global max_seg_ln
-        max_seg_ln = tk.DoubleVar()
-        self.maxseg_box = ctk.CTkEntry(master=self.frame3, textvariable = max_seg_ln, width = 40, font = self.font)
-        self.maxseg_box.insert(0, "2")
-        self.maxseg_box.grid(row=2)
-        self.maxseg_slider = ctk.CTkSlider(master=self.frame3, from_=2, to=20, number_of_steps=18, variable=max_seg_ln)
-        self.maxseg_slider.set(2)
-        self.maxseg_slider.grid(row=1)
+        
+        self.segvar = tk.BooleanVar()
+        self.segtoggle = ctk.CTkCheckBox(master=self.frame1, text=self.L('seg'), variable=self.segvar, font = self.font)
+        self.segtoggle.grid(row=0, column=0)
+        self.tooltip = CTkToolTip(self.segtoggle, message=self.L('seg2'), font = self.font)
+        self.segframe = ctk.CTkFrame(master=self.frame1)
+        self.segframe.grid(row=1, column=0, padx=10, pady=10)
+        self.seglabel = ctk.CTkLabel(master=self.segframe, text=self.L('length_seg'), font = self.font)
+        self.seglabel.grid(row=1, padx=10, pady=5)
+        self.tooltip = CTkToolTip(self.seglabel, message=self.L('length_seg2'), font = self.font)
+        self.seglength = tk.IntVar()
+        self.segbox = ctk.CTkEntry(master=self.segframe, textvariable = self.seglength, width = 60, font = self.font)
+        self.segbox.insert(0, "5")
+        self.segbox.grid(row=3, pady=(0,5))
+        self.batchslider = ctk.CTkSlider(master=self.segframe, from_=1, to=30, number_of_steps=29, variable=self.seglength)
+        self.batchslider.set(5)
+        self.batchslider.grid(row=2)
 
-        self.frame4 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_2')))
-        self.frame4.grid(row=0, column=2, padx=(10, 35), pady=(20, 10), rowspan=2)
-        self.estimatemidi = ctk.CTkLabel(master=self.frame4, text = (self.L('estmidi')), font = self.font)
-        self.estimatemidi.grid(row=0, column=0, padx=5)
-        self.midiframe = ctk.CTkFrame(master=self.frame4)
-        self.midiframe.grid(row=0, column=1)
-        self.estimatemidivar = tk.StringVar()
-        self.estimatemidiA = ctk.CTkRadioButton(master=self.midiframe, text = (self.L('estmidiA')), value = 'default', variable = self.estimatemidivar, font = self.font)
-        self.estimatemidiA.grid(row=0, sticky="w", padx=10)
-        self.tooltip = CTkToolTip(self.estimatemidiA, message=(self.L('estmidiA2')), font=self.font)
-        self.estimatemidiB = ctk.CTkRadioButton(master=self.midiframe, text = (self.L('estmidiB')), value = 'some', variable = self.estimatemidivar, font = self.font)
-        self.estimatemidiB.grid(row=1, sticky="w", padx=10)
-        self.tooltip = CTkToolTip(self.estimatemidiB, message=(self.L('estmidiB2')), font=self.font)
-        self.estimatemidiC = ctk.CTkRadioButton(master=self.midiframe, text = (self.L('estmidiC')), value = 'off', variable = self.estimatemidivar, font = self.font)
-        self.estimatemidiC.grid(row=2, sticky="w", padx=10)
-        self.tooltip = CTkToolTip(self.estimatemidi, message=(self.L('estmidi2')), font = self.font)
-        global estimate_midi
-        estimate_midi = self.estimatemidivar
-        self.detectbreathvar = tk.BooleanVar()
-        self.detectbreath = ctk.CTkCheckBox(master=self.frame4, text = (self.L('detbre')), variable = self.detectbreathvar, font = self.font)
-        self.detectbreath.deselect()
-        self.detectbreath.grid(row=3, column=0, columnspan=2, pady=10)
-        self.tooltip = CTkToolTip(self.detectbreath, message=(self.L('detbre2')), font = self.font)
-        global detectbreath
-        detectbreath = self.detectbreathvar
-        self.button = ctk.CTkButton(master=self.frame4, text = (self.L('rawdata')), command = self.grab_raw_data, font = self.font)
-        self.button.grid(row=4, column=0, columnspan=2)
-        self.tooltip = CTkToolTip(self.button, message=(self.L('rawdata2')), font = self.font)
-        self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_2')), text = (self.L('prepdata')), command = self.run_segment, font = self.font)
-        self.button.grid(row=4, column=1, pady=(5, 15))
-        self.tooltip = CTkToolTip(self.button, message=(self.L('prepdata2')), font = self.font)
+        self.estvar = tk.BooleanVar()
+        self.estmidi = ctk.CTkCheckBox(master=self.frame1, text=self.L('estmidi'), variable=self.estvar, font = self.font)
+        self.estmidi.grid(row=0, column=1, padx=(50,5))
+        self.tooltip = CTkToolTip(self.estmidi, message=self.L('estmidi2'), font = self.font)
+
+        self.rawbutton = ctk.CTkButton(master=self.frame1, text=self.L('rawdata'), command=self.grab_raw_data, font = self.font)
+        self.rawbutton.grid(row=4, column=0, pady=(10,0))
+        self.tooltip = CTkToolTip(self.rawbutton, message=self.L('rawdata2'), font = self.font)
+        self.convertbutton = ctk.CTkButton(master=self.frame1, text=self.L('prepdata'), command= self.convert2csv, font = self.font)
+        self.convertbutton.grid(row=4, column=1, padx=(50,5), pady=(10,0))
+        self.tooltip = CTkToolTip(self.convertbutton, message=self.L('prepdata2'), font = self.font)
+
 
         ##CONFIG
         self.frame5 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
@@ -614,8 +587,7 @@ class tabview(ctk.CTkTabview):
             print("Please select a preset or enable custom configuration!")
 
 ###COMMANDS###
-    global all_shits_not_wav_n_lab
-    all_shits_not_wav_n_lab = "raw_data/diffsinger_db"
+
 
     def refresh(self, choice, master):
         # Better option for updating the display language tbh.
@@ -644,12 +616,6 @@ class tabview(ctk.CTkTabview):
             print(f"Notification failed: {e}")
 
     def dl_update(self):
-        if not os.path.exists(all_shits_not_wav_n_lab):
-          os.makedirs(all_shits_not_wav_n_lab)
-        uta_url = "https://github.com/UtaUtaUtau/nnsvs-db-converter/archive/refs/heads/main.zip"
-        uta_zip = os.path.join(os.getcwd(), uta_url.split("/")[-1])
-        uta_script_folder_name = "nnsvs-db-converter-main"
-
         diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/mix-LN.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
         diffsinger_script_folder_name = "DiffSinger-mix-LN"
@@ -657,9 +623,6 @@ class tabview(ctk.CTkTabview):
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
         vocoder_folder = "DiffSinger/checkpoints"
-
-        oldvocoder_url = "https://github.com/openvpi/vocoders/releases/download/nsf-hifigan-44.1k-hop512-128bin-2024.02/nsf_hifigan_44.1k_hop512_128bin_2024.02.zip"
-        oldvocoder_zip = os.path.join(os.getcwd(), oldvocoder_url.split("/")[-1])
 
         rmvpe_url = "https://github.com/yxlllc/RMVPE/releases/download/230917/rmvpe.zip"
         rmvpe_zip = os.path.join(os.getcwd(), rmvpe_url.split("/")[-1])
@@ -684,16 +647,10 @@ class tabview(ctk.CTkTabview):
         dicts_subfolder_name = "DiffSinger/dictionaries"
         dicts_subsubfolder = os.path.join(dicts_subfolder_name, "difftrainer-dictfiles-main")
 
-        if os.path.exists("nnsvs-db-converter") or os.path.exists("DiffSinger"):
+        if os.path.exists("DiffSinger"):
             user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the DiffSinger folder.")
             if not user_response:
                 return
-
-            if os.path.exists("nnsvs-db-converter"):
-                try:
-                    shutil.rmtree("nnsvs-db-converter")
-                except Exception as e:
-                    print(f"Error deleting the existing 'nnsvs-db-converter' folder: {e}")
 
             if os.path.exists("DiffSinger"):
                 try:
@@ -710,20 +667,6 @@ class tabview(ctk.CTkTabview):
                     shutil.rmtree("dictionaries2")
                 except Exception as e:
                     print(f"Error deleting the existing 'dictionaries2' folder: {e}")
-
-        response = requests.get(uta_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading nnsvs-db-converter") as progress_bar:
-            with open("main.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-        with zipfile.ZipFile(uta_zip, "r") as zip_ref:
-            zip_ref.extractall()
-        os.remove(uta_zip)
-        if os.path.exists(uta_script_folder_name):
-            os.rename(uta_script_folder_name, "nnsvs-db-converter") #renaming stuff cus i dont wanna change my path from the nb much
 
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
@@ -752,18 +695,6 @@ class tabview(ctk.CTkTabview):
         with zipfile.ZipFile(vocoder_zip, "r") as zip_ref:
             zip_ref.extractall(vocoder_folder)
         os.remove(vocoder_zip)
-
-        response = requests.get(oldvocoder_url, stream = True)
-        total_size = int(response.headers.get("content-length", 0))
-        with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading previous NSF-HifiGAN for compatibility") as progress_bar:
-            with open("nsf_hifigan_44.1k_hop512_128bin_2024.02.zip", "wb") as f:
-                for chunk in response.iter_content(chunk_size = 1024):
-                    if chunk:
-                        f.write(chunk)
-                        progress_bar.update(len(chunk))
-        with zipfile.ZipFile(oldvocoder_zip, "r") as zip_ref:
-            zip_ref.extractall(vocoder_folder)
-        os.remove(oldvocoder_zip)
 
         response = requests.get(rmvpe_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
@@ -833,28 +764,6 @@ class tabview(ctk.CTkTabview):
                 shutil.copy(source, dest)
         shutil.rmtree(dicts_subsubfolder, ignore_errors=False)
 
-        if os.path.exists("db_converter_config.yaml"):
-            os.remove("db_converter_config.yaml")
-
-        converter_config = {
-            "use_cents": True,
-            "time_step": 0.005,
-            "f0_min": 40,
-            "f0_max": 1200,
-            "audio_sample_rate": 44100,
-            "voicing_treshold_midi": 0.45,
-            "voicing_treshold_breath": 0.6,
-            "breath_window_size": 0.05,
-            "breath_min_length": 0.1,
-            "breath_db_threshold": -60,
-            "breath_centroid_treshold": 2000,
-            "max-length-relaxation-factor": 0.1,
-            "pitch-extractor": "parselmouth",
-            "write_label": "htk"
-        }
-        with open("db_converter_config.yaml", "w", encoding = "utf-8") as config:
-            yaml.dump(converter_config, config)
-
         print("Adding the secret sauce...")
         with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as config1:
             base_config = yaml.safe_load(config1)
@@ -889,245 +798,37 @@ class tabview(ctk.CTkTabview):
         print("Setup Complete!")
 
 
-
     def grab_raw_data(self):
-        self.all_shits = filedialog.askdirectory(title="Select raw data folder", initialdir = "raw_data")
-        if not os.path.exists(all_shits_not_wav_n_lab):
-            os.makedirs(all_shits_not_wav_n_lab)
-        print("raw data path: " + self.all_shits)
+        self.raw_data = filedialog.askdirectory(title="Select raw data folder", initialdir = "raw_data")
+        print("raw data path: " + self.raw_data)
 
-    #oldest code in the whole thing, questionable phoneme behavior, idk what the purpose of liquids/vowels.txt even is
-    def run_segment(self):
-            if not self.all_shits:
-                messagebox.showinfo("Required", "Please select a a folder containing raw data folder(s) first")
-                return
-            messagebox.showinfo("Warning", 'This process will remove the original .wav and .lab files, please be sure to make a backup for your data before pressing "OK" or closing this window')
-            print("\n")
-            print("process running...")
-            print("editing necessary phonemes for db converter...")
-            # incase if user labeled SP as pau but i think utas script already account SP so meh
-            try:
-                for root, dirs, files in os.walk(self.all_shits):
-                    dirs[:] = [d for d in dirs if not d.startswith('.')]
-                    for filename in files:
-                        if filename.endswith(".lab"):
-                            file_path = os.path.join(root, filename)
-                            with open(file_path, "r", encoding = "utf-8") as file:
-                                file_data = file.read()
-                            file_data = file_data.replace("SP", "pau")
-                            file_data = file_data.replace("br", "AP") #it needs AP instead of br, but if users didnt label breath then whoop their lost
-                            with open(file_path, "w", encoding = "utf-8") as file:
-                                file.write(file_data)
-                # for funny auto dict generator lmao
-                print("generating dictionary from phonemes...")
-                out = "DiffSinger/dictionaries/custom_dict.txt"
-            except Exception as e:
-                    print(f"Error during dictionary generation: {e}")
-
-            phonemes = set()
-
-            def is_excluded(phoneme):
-                return phoneme in ["pau", "AP", "SP", "sil"]
+    def convert2csv(self):
+        segmenting = self.segvar.get()
+        seglength = self.seglength.get()
+        if segmenting == True:
+            base_name = os.path.basename(self.raw_data)
+            segdata_name = base_name + "_segmented"
+            segdata_folder = os.path.join("raw_data", segdata_name)
+            report_path = os.path.join(segdata_folder, "report.txt")
+            corpus_segmenter.process_folder(self.raw_data, segdata_folder, seglength, report_path)
+            liteconvert.auto_config(segdata_folder)
+            auto_config = os.path.join(segdata_folder, "auto_lang_config.json")
+            liteconvert.lab2csv(segdata_folder, auto_config)
 
             try:
-                phoneme_folder_path = self.all_shits
-                for root, dirs, files in os.walk(phoneme_folder_path):
-                    dirs[:] = [d for d in dirs if not d.startswith('.')]
-                    for file in files:
-                        if file.endswith(".lab"):
-                            fpath = os.path.join(root, file)
-                            with open(fpath, "r", encoding = "utf-8") as lab_file:
-                                for line in lab_file:
-                                    line = line.strip()
-                                    if line:
-                                        phoneme = line.split()[2]
-                                        if not is_excluded(phoneme):
-                                            phonemes.add(phoneme)
-                phoneme_folder_path = all_shits_not_wav_n_lab
-                for root, dirs, files in os.walk(phoneme_folder_path):
-                    dirs[:] = [d for d in dirs if not d.startswith('.')]
-                    for file in files:
-                        if file.endswith(".csv"):
-                            fpath = os.path.join(root, file)
-                            with open(fpath, "r", newline="", encoding = "utf-8") as csv_file:
-                                csv_reader = csv.DictReader(csv_file)
-                                for row in csv_reader:
-                                    if "ph_seq" in row:
-                                        ph_seq = row["ph_seq"].strip()
-                                        for phoneme in ph_seq.split():
-                                            if not is_excluded(phoneme):
-                                                phonemes.add(phoneme)
-                phoneme_folder_path = self.all_shits
-                for root, dirs, files in os.walk(phoneme_folder_path):
-                    dirs[:] = [d for d in dirs if not d.startswith('.')]
-                    for file in files:
-                        if file.endswith(".json"):
-                            fpath = os.path.join(root, file)
-                            with open(fpath, "r", encoding = "utf-8") as json_file:
-                                row = json.load(json_file)
-                                ph_seq = row["ph_seq"]
-                                for phoneme in ph_seq.split():
-                                    if not is_excluded(phoneme):
-                                        phonemes.add(phoneme)
-
-                with open(out, "w", encoding = "utf-8") as f:
-                    for phoneme in sorted(phonemes):
-                        f.write(phoneme + "\t" + phoneme + "\n")
-
-                # for vowels and consonants.txt.... well adding luquid type for uta's script
-                dict_path = out
-                vowel_types = {"a", "i", "u", "e", "o", "N", "M", "NG"}
-                liquid_types = {"y", "w", "l", "r"} # r for english labels, it should be fine with jp too
-                vowel_data = []
-                consonant_data = []
-                liquid_data = []
-
-                with open(dict_path, "r", encoding = "utf-8") as f:
-                    for line in f:
-                        phoneme_raw, _ = line.strip().split("\t")
-                        if "/" in phoneme_raw:
-                            # Split on '/', take the second half
-                            phoneme = phoneme_raw.split("/")[1] 
-                        else:
-                            # Use the phoneme as is
-                            phoneme = phoneme_raw
-                            
-                        # Sort by short name but add full name to list
-                        if phoneme[0] in vowel_types:
-                            vowel_data.append(phoneme_raw)
-                        elif phoneme[0] in liquid_types:
-                            liquid_data.append(phoneme_raw)
-                        else:
-                            consonant_data.append(phoneme_raw)
-                vowel_data.sort()
-                liquid_data.sort()
-                consonant_data.sort()
-                directory = os.path.dirname(dict_path)
-
-                # make txt for language json file
-                print("writing vowels.txt...")
-                vowel_txt_path = os.path.join(directory, "vowels.txt")
-                with open(vowel_txt_path, "w", encoding = "utf-8") as f:
-                    f.write(" ".join(vowel_data))
-                print("writing liquids.txt...")
-                liquid_txt_path = os.path.join(directory, "liquids.txt")
-                with open(liquid_txt_path, "w", encoding = "utf-8") as f:
-                    f.write(" ".join(liquid_data))
-                print("writing consonants.txt...")
-                consonant_txt_path = os.path.join(directory, "consonants.txt")
-                with open(consonant_txt_path, "w", encoding = "utf-8") as f:
-                    f.write(" ".join(consonant_data))
-
-                # here's a funny json append
-                with open(vowel_txt_path, "r", encoding="utf-8") as f:
-                    vowel_data = f.read().split()
-                with open(liquid_txt_path, "r", encoding = "utf-8") as f:
-                    liquid_data = f.read().split()
-                with open(consonant_txt_path, "r", encoding = "utf-8") as f:
-                    consonant_data = f.read().split()
-                liquid_list = {liquid: True for liquid in liquid_data} #temp fix, might need more research about the push in timing'''
-                phones4json = {"vowels": vowel_data, "liquids": liquid_list}
-                with open("nnsvs-db-converter/lang.sample.json", "w", encoding = "utf-8") as rawr:
-                    json.dump(phones4json, rawr, indent=4)
-            except Exception as e:
-                    print(f"Error during preparation: {e}")
-            try:
-                with open("db_converter_config.yaml", "r", encoding = "utf-8") as config:
-                    converter = yaml.safe_load(config)
-            except Exception as e:
-                    print(f"Error opening db_converter_config: {e}")
-
-            max_silence = max_sil.get()
-            max_wav_length = max_seg_ln.get()
-
-            try:
-                for raw_folder_name in os.listdir(self.all_shits):
-                    raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
-                    raw_folder_path = os.path.normpath(raw_folder_path)
-                    # Exclude .DS_Store and any other hidden files or directories
-                    if raw_folder_name.startswith('.'):
-                        continue
-                    if any(filename.endswith(".lab") for filename in os.listdir(raw_folder_path)):
-                        print("segmenting data...")
-                        #dear god please work
-                        converterpy = os.path.join("nnsvs-db-converter", "db_converter.py")
-                        cmdstage = [realpython, converterpy, '-l', str(max_wav_length), '-s', str(max_silence), '-L', 'nnsvs-db-converter/lang.sample.json', '-F', '1600', "--folder", raw_folder_path]
-                        if self.estimatemidivar.get() == "default":
-                            estimate_midi_print = "Default"
-                            cmdstage.append("-m")
-                            cmdstage.append("-D")
-                            cmdstage.append("-c")
-                        elif self.estimatemidivar.get() == "some":
-                            estimate_midi_print = "SOME"
-                        else:
-                            estimate_midi_print = "Off"
-                        if self.detectbreathvar.get() == True:
-                            cmdstage.append('-B')
-                            cmdstage.append("-v")
-                            cmdstage.append(str(converter["voicing_treshold_breath"]))
-                            cmdstage.append("-W")
-                            cmdstage.append(str(converter["breath_window_size"]))
-                            cmdstage.append("-b")
-                            cmdstage.append(str(converter["breath_min_length"]))
-                            cmdstage.append("-e")
-                            cmdstage.append(str(converter["breath_db_threshold"]))
-                            cmdstage.append("-C")
-                            cmdstage.append(str(converter["breath_centroid_treshold"]))
-                            detect_breath_print = "True"
-                        else:
-                            detect_breath_print = "False"
-                        if converter["write_label"] == False:
-                            write_label_print = "Not writing labels"
-                        elif converter["write_label"] == "htk":
-                            cmdstage.append("-w htk")
-                            write_label_print = "Write HTK labels"
-                        elif converter["write_label"] == "aud":
-                            cmdstage.append("-w aud")
-                            write_label_print = "Write Audacity labels"
-                        else:
-                            write_label_print = "unknown value, not writing labels"
-                        command = " ".join(cmdstage)
-                        print("\n",
-                            "##### Converter Settings #####\n",
-                            f"max audio segment length: {str(max_wav_length)}\n",
-                            f"max silence amount: {str(max_silence)}\n",
-                            f"estimate midi: {estimate_midi_print}\n",
-                            f"detect breath: {detect_breath_print}\n",
-                            f"export label: {write_label_print}\n"
-                            )
-                        subprocess.run(command, check=True, shell=True)
-            except Exception as e:
-                print(f"Error during segmentation: {e}")
-            try:
-                    #this for folder organization / raw data cleanup
-                    for raw_folder_name in os.listdir(self.all_shits):
-                        # Exclude .DS_Store and any other hidden files or directories
-                        if raw_folder_name.startswith('.'):
-                            continue
-                        raw_folder_path = os.path.join(self.all_shits, raw_folder_name)
-                        raw_folder_path = os.path.normpath(raw_folder_path)
-                        for filename in os.listdir(raw_folder_path):
-                            if filename.endswith(".wav") or filename.endswith(".lab"):
-                                os.remove(os.path.join(raw_folder_path, filename))
-                        diff_singer_db_path = os.path.join(raw_folder_path, "diffsinger_db")
-                        for stuff in os.listdir(diff_singer_db_path):
-                            stuff_path = os.path.join(diff_singer_db_path, stuff)
-                            singer_folder_dat_main = os.path.join(raw_folder_path, stuff)
-                            if os.path.isfile(stuff_path):
-                                shutil.move(stuff_path, singer_folder_dat_main)
-                            elif os.path.isdir(stuff_path):
-                                shutil.move(stuff_path, singer_folder_dat_main)
-                        shutil.rmtree(diff_singer_db_path)
-            except Exception as e:
-                    print(f"Error during file cleanup: {e}")
-            try:
-                    if self.estimatemidivar.get() == "some":
-                        for speaker in os.listdir(self.all_shits):
-                            if speaker.startswith('.'):
+                    estimatemidi = self.estvar.get()
+                    if estimatemidi == True:
+                        #print("should estimate MIDI")
+                        base_dir = Path(segdata_folder)
+                        subdirs = [d for d in base_dir.rglob('*') if d.is_dir() and d.name != 'wavs']
+                        subdirs.append(base_dir)
+                        for speaker in subdirs:
+                            transcription = speaker / 'transcriptions.csv'
+                            if not transcription.exists(): 
                                 continue
-                            speaker_path = os.path.join(self.all_shits, speaker)
+                            speaker_path = str(speaker)
                             if os.path.isdir(speaker_path):
-                                print("loading SOME...")
+                                print(f"running SOME on {speaker}")
                                 cmdstage = [realpython, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
                                 command2 = " ".join(cmdstage)
                                 subprocess.run(command2, check=True, shell=True)
@@ -1136,7 +837,32 @@ class tabview(ctk.CTkTabview):
             except Exception as e:
                     print(f"Error during SOME pitch generation: {e}")
             self.show_notification(self.L('segdone1'), self.L('segdone2'))
-            print("data segmentation complete!")
+
+        else:
+            liteconvert.auto_config(self.raw_data)
+            auto_config = os.path.join(self.raw_data, "auto_lang_config.json")
+            liteconvert.lab2csv(self.raw_data, auto_config)
+            try:
+                    estimatemidi = self.estvar.get()
+                    if estimatemidi == True:
+                        base_dir = Path(self.raw_data)
+                        subdirs = [d for d in base_dir.rglob('*') if d.is_dir() and d.name != 'wavs']
+                        subdirs.append(base_dir)
+                        for speaker in subdirs:
+                            transcription = speaker / 'transcriptions.csv'
+                            if not transcription.exists(): 
+                                continue
+                            speaker_path = str(speaker)
+                            if os.path.isdir(speaker_path):
+                                print(f"running SOME on {speaker}")
+                                cmdstage = [realpython, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
+                                command2 = " ".join(cmdstage)
+                                subprocess.run(command2, check=True, shell=True)
+                    else:
+                        pass
+            except Exception as e:
+                    print(f"Error during SOME pitch generation: {e}")
+            self.show_notification(self.L('segdone1'), self.L('segdone2'))
 
     def grab_data_folder(self):
         global data_folder
