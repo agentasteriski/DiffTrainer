@@ -764,6 +764,9 @@ class tabview(ctk.CTkTabview):
                 shutil.copy(source, dest)
         shutil.rmtree(dicts_subsubfolder, ignore_errors=False)
 
+        try: os.mkdir("raw_data")
+        except FileExistsError: pass
+
         print("Adding the secret sauce...")
         with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as config1:
             base_config = yaml.safe_load(config1)
