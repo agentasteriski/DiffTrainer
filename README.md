@@ -4,9 +4,11 @@ might have new bugs, might bring old bugs back bc I fixed them in the main branc
 ### Key features:
 - moves most of the big functions into separate files
 - generates base dsdicts that actually work most of the time(direct phoneme input only for non-G2P phonemizers)
+- new database conversion tool with fewer restrictions
 ### Goals:
-- get liteconvert(in the files but unused) to work
-- implement Ghin's segmenter instead
+- add vlabeler format(separate wav/lab folder) comaptibility
+- ~~get liteconvert(in the files but unused) to work~~
+- ~~implement Ghin's segmenter instead~~
 - ~~target Mix_LN branch due to single environment required~~
 - ~~un-Conda everything (much harder than it sounds)~~
 

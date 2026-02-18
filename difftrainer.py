@@ -243,9 +243,9 @@ class tabview(ctk.CTkTabview):
         self.confbox6 =  ctk.CTkCheckBox(master=self.subframe, text="dur", variable=traindur, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox6.grid(row=2, column=1, pady=5, padx=(3,0))
         self.tooltip = CTkToolTip(self.confbox6, message="predict_dur", font=self.font)
-        global stretchaug
-        stretchaug = tk.BooleanVar()
-        self.confbox7 =  ctk.CTkCheckBox(master=self.subframe, text="vel", variable=stretchaug, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
+        global timeaug
+        timeaug = tk.BooleanVar()
+        self.confbox7 =  ctk.CTkCheckBox(master=self.subframe, text="vel", variable=timeaug, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
         self.confbox7.grid(row=2, column=3, pady=5, padx=(0,3))
         self.tooltip = CTkToolTip(self.confbox7, message="random_time_stretching/use_speed_embed(velocity)", font=self.font)
         global trainene
@@ -269,9 +269,11 @@ class tabview(ctk.CTkTabview):
         self.confbox11.configure(state="disabled")
         self.confbox11.grid(row=5, column=2, columnspan=2, pady=5)
         self.tooltip = CTkToolTip(self.confbox11, message=(self.L('wavenet2')), font = self.font)
-        self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="dummy", state=tk.DISABLED, font=self.font)
+        global trainstretch
+        trainstretch = tk.BooleanVar()
+        self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="stretch", variable=trainstretch, onvalue = True, offvalue = False, state=tk.DISABLED, font=self.font)
         self.confbox12.grid(row=4, column=3, pady=5, padx=(0,3))
-        self.tooltip = CTkToolTip(self.confbox12, message=(self.L('dummy')), font = self.font)
+        self.tooltip = CTkToolTip(self.confbox12, message=(self.L('stretch')), font = self.font)
 
         self.frame14 = ctk.CTkFrame(master=self.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -471,6 +473,7 @@ class tabview(ctk.CTkTabview):
             self.confbox8.configure(state=tk.NORMAL)
             self.confbox9.configure(state=tk.NORMAL)
             self.confbox11.configure(state=tk.NORMAL)
+            self.confbox12.configure(state=tk.NORMAL)
             self.confnamebox.configure(state=tk.NORMAL)
         elif adv_on.get() == "off":
             self.confbox1.configure(state=tk.DISABLED)
@@ -483,6 +486,7 @@ class tabview(ctk.CTkTabview):
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
             self.confbox11.configure(state=tk.DISABLED)
+            self.confbox12.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
         else:
             self.confbox1.configure(state=tk.DISABLED)
@@ -495,6 +499,7 @@ class tabview(ctk.CTkTabview):
             self.confbox8.configure(state=tk.DISABLED)
             self.confbox9.configure(state=tk.DISABLED)
             self.confbox11.configure(state=tk.DISABLED)
+            self.confbox12.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
 
 #this one's for dropping speakers
@@ -878,26 +883,47 @@ class tabview(ctk.CTkTabview):
         for widget in self.subframe2.winfo_children():
             widget.destroy()
         self.spk_info = {}
-        spk_folders = [f for f in sorted(os.listdir(data_folder)) if os.path.isdir(os.path.join(data_folder, f)) and not f.startswith('.')]
+        subdirs = [f for f in sorted(os.listdir(data_folder)) if os.path.isdir(os.path.join(data_folder, f)) and not f.startswith('.')]
+        spk_folders = []
+        
+        if len(subdirs) == 1 and subdirs[0] == "wavs":
+            #single speaker, no subfolder
+            speaker_name = os.path.basename(data_folder)
+            spk_folders.append({
+                "raw_dir": data_folder,
+                "folder_name": speaker_name,
+                "dict_key": speaker_name
+            })
+        else:
+            #speakers in subfolders
+            for spk in subdirs:
+                spk_folders.append({
+                    "raw_dir": os.path.join(data_folder, spk),
+                    "folder_name": spk,
+                    "dict_key": spk
+                })
+        
         spk_rows = []
-        for spk in spk_folders:
-            folder_to_id = {spk: i for i, spk in enumerate(spk_folders)}
-            folder_name = os.path.basename(spk)
-            folder_id = folder_to_id.get(folder_name, -1)
-            raw_dir = os.path.join(data_folder, folder_name)
+        for i, spk_data in enumerate(spk_folders):
+            raw_dir = spk_data["raw_dir"]
+            folder_name = spk_data["folder_name"]
+            dict_key = spk_data["dict_key"]
+            
             spk_rows.append(ctk.CTkFrame(master=self.subframe2, width=340))
-            spk_rows[folder_id].grid(row=folder_id,sticky="EW", pady=3)
-            spk_name_box = ctk.CTkEntry(master=spk_rows[folder_id], width=100, font = self.font)
+            spk_rows[i].grid(row=i, sticky="EW", pady=3)
+            
+            spk_name_box = ctk.CTkEntry(master=spk_rows[i], width=100, font=self.font)
             spk_name_box.insert(0, folder_name)
             spk_name_box.grid(column=0, row=0, padx=15, pady=3)
-            #default selectable languages currently match premade dictionaries
-            #premade dictionaries are enough to cover the phonemizer defaults(minus a few obscure/rare phonemes in DIFFS JA)
-            spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "es", "fr", "ja", "ko", "th", "zh"], font = self.font)
+            
+            spk_lang_select = ctk.CTkComboBox(master=spk_rows[i], values=["other", "en", "es", "fr", "ja", "ko", "th", "zh"], font=self.font)
             spk_lang_select.grid(column=1, row=0, padx=10)
-            spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20, font = self.font)
-            spk_id_select.insert(0, folder_id)
+            
+            spk_id_select = ctk.CTkEntry(master=spk_rows[i], width=20, font=self.font)
+            spk_id_select.insert(0, i) 
             spk_id_select.grid(column=2, row=0, padx=15)
-            self.spk_info[spk] =(raw_dir, folder_name, spk_lang_select, spk_id_select)
+            
+            self.spk_info[dict_key] = (raw_dir, folder_name, spk_lang_select, spk_id_select)
 
 
     def ckpt_folder_save(self):
@@ -921,13 +947,14 @@ class tabview(ctk.CTkTabview):
         print("writing config...")
 
         enable_random_aug = randaug.get()
-        enable_stretch_aug = stretchaug.get()
+        enable_time_aug = timeaug.get()
         duration = traindur.get()
         breathiness = trainbre.get()
         energy = trainene.get()
         pitch = trainpitch.get()
         tension = trainten.get()
         voicing = trainvoc.get()
+        stretch = trainstretch.get()
         pre_type = vr.get()
         ds = preferds.get()
         backbone_type = backbone.get()
@@ -963,7 +990,9 @@ class tabview(ctk.CTkTabview):
         unique_ids = set()
         for spk_block in allspeakers:
             unique_ids.add(spk_block["spk_id"])
-        num_spk = len(unique_ids)
+        num_spk = max(unique_ids) 
+        #technically less correct but using the actual number of speakers forces you to fill in the gaps
+        #as long as it's higher it somehow works
 
 
         if selected_config_type == 1:
@@ -990,9 +1019,9 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
             bitch_ass_config["merged_phoneme_groups"] = merges["merged_phoneme_groups"]
             bitch_ass_config["augmentation_args"]["random_pitch_shifting"]["enabled"] = enable_random_aug
-            bitch_ass_config["augmentation_args"]["random_time_stretching"]["enabled"] = enable_stretch_aug
+            bitch_ass_config["augmentation_args"]["random_time_stretching"]["enabled"] = enable_time_aug
             bitch_ass_config["use_key_shift_embed"] = enable_random_aug
-            bitch_ass_config["use_speed_embed"] = enable_stretch_aug
+            bitch_ass_config["use_speed_embed"] = enable_time_aug
             bitch_ass_config["max_batch_size"] = int(batch)
             #ive never tried reaching the limit so ill trust kei's setting for this(MLo7)
             #sounds like a lot of users can go higher but 9 is a good start(Aster)
@@ -1001,6 +1030,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["use_breathiness_embed"] = breathiness
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
+            bitch_ass_config["use_stretch_embed"] = stretch
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
             else:
@@ -1076,6 +1106,7 @@ class tabview(ctk.CTkTabview):
             bitch_ass_config["predict_pitch"] = pitch
             bitch_ass_config["predict_tension"] = tension
             bitch_ass_config["predict_voicing"] = voicing
+            bitch_ass_config["use_stretch_embed"] = stretch
             bitch_ass_config["use_melody_encoder"] = pitch
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             if pre_type==True:
