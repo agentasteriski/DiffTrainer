@@ -916,6 +916,8 @@ class tabview(ctk.CTkTabview):
             spk_name_box.insert(0, folder_name)
             spk_name_box.grid(column=0, row=0, padx=15, pady=3)
             
+            #default selectable languages currently match premade dictionaries
+            #premade dictionaries are enough to cover the phonemizer defaults(minus a few obscure/rare phonemes in DIFFS JA)
             spk_lang_select = ctk.CTkComboBox(master=spk_rows[i], values=["other", "en", "es", "fr", "ja", "ko", "th", "zh"], font=self.font)
             spk_lang_select.grid(column=1, row=0, padx=10)
             
