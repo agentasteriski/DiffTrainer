@@ -108,15 +108,14 @@ class tabview(ctk.CTkTabview):
                                   size=(400, 150))
 
         ##ABOUT
-        #to do: rewrite for accuracy(at this point all that's left of Ghin's code is the segmenter tab and the questionable variable names)
-        #add info on tools used, add line to credit active localization
+        #to do: audit translations/clear unused strings from en_US
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = "", image = self.logo)
         self.label.grid(row=0, column=0, ipady=10, columnspan = 3)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = f"{self.L('vers')} {version}({releasedate})", font = self.font)
         self.label.grid(row=1, column=1)
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('changelog'), font = self.font)
         self.button.grid(row=2, column=0, padx=50)
-        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/main/changelog.md"))
+        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/rewrite/changelog.md")) #why tf is it still opening the one on main. it literally says rewrite. it exists.
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
@@ -125,7 +124,7 @@ class tabview(ctk.CTkTabview):
         self.label.grid(row=3, column=0, pady=30)
         self.tooltip = CTkToolTip(self.label, message="this is a link", font = self.font)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = (self.L('cred_tools')), font = self.font_ul)
-        self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/MLo7Ghinsan")) #replace ghin's link with actual docs later
+        self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/rewrite/extracredits.md"))
         self.label.grid(row=3, column=1, pady=30)
         self.tooltip = CTkToolTip(self.label, message="this is also a link", font = self.font)
         self.label = ctk.CTkLabel(master=self.tab(self.L('tab_ttl_1')), text = self.L('cred_trans'), font = self.font)
@@ -145,7 +144,7 @@ class tabview(ctk.CTkTabview):
         self.segtoggle.grid(row=0, column=0)
         self.tooltip = CTkToolTip(self.segtoggle, message=self.L('seg2'), font = self.font)
         self.segframe = ctk.CTkFrame(master=self.frame1)
-        self.segframe.grid(row=1, column=0, padx=10, pady=10)
+        self.segframe.grid(row=1, column=0, padx=(60,10), pady=10)
         self.seglabel = ctk.CTkLabel(master=self.segframe, text=self.L('length_seg'), font = self.font)
         self.seglabel.grid(row=1, padx=10, pady=5)
         self.tooltip = CTkToolTip(self.seglabel, message=self.L('length_seg2'), font = self.font)
@@ -159,14 +158,14 @@ class tabview(ctk.CTkTabview):
 
         self.estvar = tk.BooleanVar()
         self.estmidi = ctk.CTkCheckBox(master=self.frame1, text=self.L('estmidi'), variable=self.estvar, font = self.font)
-        self.estmidi.grid(row=0, column=1, padx=(50,5))
+        self.estmidi.grid(row=0, column=1, padx=50)
         self.tooltip = CTkToolTip(self.estmidi, message=self.L('estmidi2'), font = self.font)
 
         self.rawbutton = ctk.CTkButton(master=self.frame1, text=self.L('rawdata'), command=self.grab_raw_data, font = self.font)
         self.rawbutton.grid(row=4, column=0, pady=(10,0))
         self.tooltip = CTkToolTip(self.rawbutton, message=self.L('rawdata2'), font = self.font)
         self.convertbutton = ctk.CTkButton(master=self.frame1, text=self.L('prepdata'), command= self.convert2csv, font = self.font)
-        self.convertbutton.grid(row=4, column=1, padx=(50,5), pady=(10,0))
+        self.convertbutton.grid(row=4, column=1, padx=50, pady=(10,0))
         self.tooltip = CTkToolTip(self.convertbutton, message=self.L('prepdata2'), font = self.font)
 
 
@@ -1246,11 +1245,15 @@ class tabview(ctk.CTkTabview):
     
     def remove_entry(self):
         try:
-            index = dictbox.curselection()[0]
-            language = list(langloader['dictionaries'].keys())[index]
-            del langloader['dictionaries'][language]
-            self.update_dictbox()
-        except IndexError:
+            index = dictbox.curselection()
+            if index is not None:
+                language = list(langloader['dictionaries'].keys())[index]
+                del langloader['dictionaries'][language]
+                self.update_dictbox()
+            else:
+                print("No dictionary selected")
+        except Exception as e:
+            print(f"Error removing dictionary: {e}")
             pass
 
     def updatelangloader(self):

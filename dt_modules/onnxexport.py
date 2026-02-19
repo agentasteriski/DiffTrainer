@@ -47,6 +47,7 @@ def prep_onnx_export(ckpt_save_dir):
             counter += 1
         os.rename(onnx_folder_dir, onnx_bak)
         print("backing up existing onnx folder...")
+    os.mkdir(onnx_folder_dir)
     spkmap = os.path.join(ckpt_save_dir, "spk_map.json")
     with open(spkmap, "r") as file:
         data = json.load(file)
