@@ -991,7 +991,7 @@ class tabview(ctk.CTkTabview):
         unique_ids = set()
         for spk_block in allspeakers:
             unique_ids.add(spk_block["spk_id"])
-        num_spk = max(unique_ids) 
+        num_spk = max(unique_ids) +1
         #technically less correct but using the actual number of speakers forces you to fill in the gaps
         #as long as it's higher it somehow works
 
