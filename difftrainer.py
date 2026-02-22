@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from CTkListbox import CTkListbox
+from datetime import datetime
 from ezlocalizr import ezlocalizr
 from plyer import notification
 from dt_modules import onnxexport, basicexport, advexport, liteconvert, corpus_segmenter
@@ -619,7 +620,49 @@ class tabview(ctk.CTkTabview):
         except Exception as e:
             print(f"Notification failed: {e}")
 
+    def last_github_commit(self):
+        ds_url = "https://api.github.com/repos/agentasteriski/DiffSinger/commits?sha=mix-LN"
+        fallback = datetime(2000, 1, 1, 0, 0, 0).isoformat() + 'Z'
+        try:
+            response = requests.get(ds_url)
+            data = response.json()
+
+            if data and isinstance(data, list) and len(data) > 0:
+                last_commit = data[0]
+                commit_date_str = last_commit['commit']['author']['date']
+                return commit_date_str
+            else:
+                print("No commits found or unexpected API response.")
+                return fallback
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching data from GitHub: {e}")
+            return fallback
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON response: {e}")
+            return fallback
+        except KeyError as e:
+            print(f"KeyError accessing commit data: {e}.  API structure may have changed.")
+            return fallback
+        
+    def ref_file_date(self, file):
+        fallback = datetime(2000, 1, 1, 0, 0, 0).isoformat() + 'Z'
+        try:
+            timestamp = os.path.getmtime(file)
+            dt_object = datetime.fromtimestamp(timestamp)
+            iso_string = dt_object.isoformat() + 'Z'
+            return iso_string
+        except FileNotFoundError:
+            print(f"Reference file not found")
+            return fallback
+        except OSError as e:
+            print(f"Error accessing file: {e}")
+            return fallback
+
     def dl_update(self):
+        ds_commit = self.last_github_commit()
+        ref_file = os.path.join(main_path, "DiffSinger/deployment/__init__.py")
+        local_date = self.ref_file_date(ref_file)
+
         diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/mix-LN.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
         diffsinger_script_folder_name = "DiffSinger-mix-LN"
@@ -651,10 +694,15 @@ class tabview(ctk.CTkTabview):
         dicts_subfolder_name = "DiffSinger/dictionaries"
         dicts_subsubfolder = os.path.join(dicts_subfolder_name, "difftrainer-dictfiles-main")
 
-        if os.path.exists("DiffSinger"):
-            user_response = messagebox.askyesno("File Exists", "Necessary files already exist. Do you want to re-download and replace them? Make sure any user files are backed up OUTSIDE of the DiffSinger folder.")
-            if not user_response:
-                return
+        if os.path.exists(ds_path):
+            if ds_commit > local_date:
+                user_response = messagebox.askyesno(self.L('update_available1'), self.L('update_available2'))
+                if not user_response:
+                    return
+            else:
+                user_response = messagebox.askyesno(self.L('update_not_available1'), self.L('update__not_available2'))
+                if not user_response:
+                    return
 
             if os.path.exists("DiffSinger"):
                 try:

@@ -9,7 +9,7 @@ might have new bugs, might bring old bugs back bc I fixed them in the main branc
 - add vlabeler format(separate wav/lab folder) compatibility
 - clean up translation strings
 - add translation strings for all errors and random terminal bits
-- add check for diffsinger updates
+- ~~add check for diffsinger updates~~
 - ~~get liteconvert(in the files but unused) to work~~
 - ~~implement Ghin's segmenter instead~~
 - ~~target Mix_LN branch due to single environment required~~
