@@ -25,7 +25,7 @@ cred_lead: "Maintainer:"
 cred_tools: "Additional credits"
 cred_front: "Front end:"
 cred_back: "Back end:"
-cred_trans: "Translation: N/A"
+cred_trans: "Translation: N/A" #translators: your username here
 restart: "(restart to apply)"
 #note: string should not be longer than this or it will be cut off
 
