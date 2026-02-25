@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
 main_path = os.path.dirname(__file__)
-version = "0.3.41"
-releasedate = "12/15/25"
+version = "0.3.42"
+releasedate = "2/26/26"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -1231,7 +1231,7 @@ class tabview(ctk.CTkTabview):
         unique_ids = set()
         for spk_block in allspeakers:
             unique_ids.add(spk_block["spk_id"])
-        num_spk = len(unique_ids)
+        num_spk = max(unique_ids) +1 #technically wrong but it works better
 
         if selected_config_type == 1:
             with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf=8") as langloader:
