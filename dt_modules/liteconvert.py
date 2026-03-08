@@ -137,22 +137,32 @@ def lab2csv(base_path, langconfig):
     """Iterates through subfolders and creates one CSV for each containing .lab files"""
 
     base_dir = Path(base_path)
-    subdirs = [d for d in base_dir.rglob('*') if d.is_dir() and d.name != 'wavs']
-    subdirs.append(base_dir)
+    speaker_labs = {}
 
-    for subdir in subdirs:
-        lab_files = list(subdir.glob('*.lab'))
-        if not lab_files:
+    for lab_file in base_dir.rglob('*.lab'):
+        # If the file is inside a "lab" subfolder, the speaker dir is one level up
+        if lab_file.parent.name == 'lab':
+            speaker_dir = lab_file.parent.parent
+        else:
+            speaker_dir = lab_file.parent
+
+        # Skip if we are accidentally looking inside an already processed 'wavs' output folder
+        if speaker_dir.name == 'wavs' or lab_file.parent.name == 'wavs':
             continue
 
-        wavs_dir = subdir / "wavs"
+        if speaker_dir not in speaker_labs:
+            speaker_labs[speaker_dir] = []
+        speaker_labs[speaker_dir].append(lab_file)
+
+    for speaker_dir, lab_files in speaker_labs.items():
+        wavs_dir = speaker_dir / "wavs"
         wavs_dir.mkdir(parents=True, exist_ok=True)
         
         lab_files.sort(key=lambda x: x.name)
 
-        output_csv = subdir / "transcriptions.csv"
+        output_csv = speaker_dir / "transcriptions.csv"
 
-        print(f"Processing speaker {subdir.name}")
+        print(f"Processing speaker {speaker_dir.name}")
 
         with open(output_csv, 'w', newline='', encoding="utf-8") as csvfile:
             fieldnames = ['name', 'ph_seq', 'ph_dur', 'ph_num']
@@ -161,7 +171,11 @@ def lab2csv(base_path, langconfig):
             
             for lab_file in lab_files:
                 try:
-                    wav_file = lab_file.with_suffix('.wav')
+                    if lab_file.parent.name == 'lab': #vlabeler format
+                        wav_file = speaker_dir / 'wav' / f"{lab_file.stem}.wav"
+                    else:
+                        wav_file = lab_file.with_suffix('.wav') #nnsvs_db_converter format
+
                     if not wav_file.exists():
                         print(f"Warning: No matching .wav file found for {lab_file}")
                         continue
@@ -181,6 +195,12 @@ def lab2csv(base_path, langconfig):
 
                 except Exception as e:
                     print(f"Error in {lab_file.name}: {e}")
+            
+            for subfolder_name in ['lab', 'wav']:
+                subfolder_path = speaker_dir / subfolder_name
+                if subfolder_path.exists() and subfolder_path.is_dir():
+                    if not any(subfolder_path.iterdir()):
+                        subfolder_path.rmdir()
     print("Converted all speakers to DiffSinger format!")
 
 
