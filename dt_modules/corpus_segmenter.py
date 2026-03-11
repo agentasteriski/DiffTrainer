@@ -219,45 +219,72 @@ def segment_audio_and_labels(wav_path, lab_path, output_folder, max_length_sec):
 # for both folders and wav|lab that are in the folder
 def process_folder(input_folder, output_folder, max_length_sec, report_path):
     os.makedirs(output_folder, exist_ok=True)
-    
     global total_skipped_files, subfolder_reports
+    
+    processed_files = set()
+
     for root, dirs, files in os.walk(input_folder):
+        folder_name = os.path.basename(root)
+        is_split_folder = folder_name.lower() in ["wav", "lab"]
+        
         relative_path = os.path.relpath(root, input_folder)
-        if relative_path == ".":
-            relative_path = ""
         output_subfolder = os.path.join(output_folder, relative_path)
-        os.makedirs(output_subfolder, exist_ok=True)
-        base_filenames = set(os.path.splitext(filename)[0] for filename in files if filename.endswith(".wav") or filename.endswith(".lab"))
+        
+        if is_split_folder:
+            target_output = os.path.dirname(output_subfolder) #redirect to speaker level
+        else:
+            target_output = output_subfolder
 
         folder_segments = 0
-        folder_removed_segments = 0
         skipped_count = 0
 
-        for base_filename in base_filenames:
-            wav_path = os.path.join(root, f"{base_filename}.wav")
-            lab_path = os.path.join(root, f"{base_filename}.lab")
-            
-            if not os.path.exists(wav_path) or not os.path.exists(lab_path):
-                skipped_count += 1
-                total_skipped_files += 1
-                print(f"No equivalent file to {base_filename}.wav|.lab, skipping it....")
-                continue
+        removed_at_start = total_removed_segments #segments counted in previous speakers
 
-            segments_before = total_segments
-            segment_audio_and_labels(wav_path, lab_path, output_subfolder, max_length_sec)
-            folder_segments += total_segments - segments_before
-            folder_removed_segments = total_removed_segments
+        for filename in files:
+            if filename.endswith(".wav"):
+                base_name = os.path.splitext(filename)[0]
+                wav_path = os.path.join(root, filename)
+                
+                lab_path_same = os.path.join(root, f"{base_name}.lab")
+                
+                parent_dir = os.path.dirname(root)
+                final_lab_path = None
+                
+                if os.path.exists(lab_path_same):
+                    final_lab_path = lab_path_same #nnsvs_db_converter style
+                else: #VLabeler style
+                    for sibling in os.listdir(parent_dir):
+                        if sibling.lower() == "lab":
+                            potential_lab = os.path.join(parent_dir, sibling, f"{base_name}.lab")
+                            if os.path.exists(potential_lab):
+                                final_lab_path = potential_lab
+                                break
 
-        longest_segment_file, longest_segment_duration = find_longest_seg(output_subfolder)
+                if final_lab_path:
+                    file_key = os.path.abspath(wav_path)
+                    if file_key in processed_files:
+                        continue
+                    
+                    os.makedirs(target_output, exist_ok=True)
+                    segments_before = total_segments
+                    segment_audio_and_labels(wav_path, final_lab_path, target_output, max_length_sec)
+                    folder_segments += (total_segments - segments_before)
+                    processed_files.add(file_key)
+                else:
+                    skipped_count += 1
+                    total_skipped_files += 1
+                    print(f"No equivalent .lab to {filename}.wav, skipping it....")
 
-        subfolder_reports.append({
-            "folder": relative_path,
-            "segments_created": folder_segments,
-            "segments_removed": folder_removed_segments,
-            "files_skipped": skipped_count,
-            "longest_audio_file": longest_segment_file,
-            "longest_audio_duration": longest_segment_duration
-        })
+        if folder_segments > 0:
+            longest_file, longest_dur = find_longest_seg(target_output)
+            subfolder_reports.append({
+                "folder": os.path.relpath(target_output, output_folder),
+                "segments_created": folder_segments,
+                "segments_removed": total_removed_segments - removed_at_start,
+                "files_skipped": skipped_count,
+                "longest_audio_file": longest_file,
+                "longest_audio_duration": longest_dur
+            })
 
     with open(report_path, "w") as report_file:
         for report in subfolder_reports:
