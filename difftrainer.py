@@ -268,7 +268,7 @@ class tabview(ctk.CTkTabview):
         self.confbox11.set("lynxnet2")
         self.confbox11.configure(state="disabled")
         self.confbox11.grid(row=5, column=2, columnspan=2, pady=5)
-        self.tooltip = CTkToolTip(self.confbox11, message=(self.L('wavenet2')), font = self.font)
+        self.tooltip = CTkToolTip(self.confbox11, message=(self.L('backbone')), font = self.font)
         global trainstretch
         trainstretch = tk.BooleanVar()
         self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="stretch", variable=trainstretch, onvalue = True, offvalue = False, state=tk.DISABLED, font=self.font)
