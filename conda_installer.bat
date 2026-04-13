@@ -1,10 +1,10 @@
 @echo off
-
+cd %~dp0
 set "download_url=https://repo.anaconda.com/miniconda/Miniconda3-py310_24.5.0-0-Windows-x86_64.exe" #exact version needed instead of the latest python
 set "installer_name=miniconda_installer.exe"
-set "install_path=%cd%\miniconda"
-set "conda_python=%cd%\miniconda\python.exe"
-set "conda_pip=%cd%\miniconda\Scripts\pip.exe"
+set "install_path=%~dp0\miniconda"
+set "conda_python=%~dp0\miniconda\python.exe"
+set "conda_pip=%~dp0\miniconda\Scripts\pip.exe"
 
 echo downloading miniconda installer...
 powershell -ExecutionPolicy Bypass -command "invoke-webrequest -uri %download_url% -outfile %installer_name%"

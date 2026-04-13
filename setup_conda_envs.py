@@ -79,7 +79,7 @@ def run_cmdBase(cmd):
 
 print("Creating environment for DiffSinger...")
 try:
-    output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
+    output = subprocess.check_output(f'"{conda_path}" env list', stderr=subprocess.STDOUT).decode()
     lines = output.split("\n")
     for line in lines:
         if "difftrainerA" in line:
@@ -89,12 +89,12 @@ try:
     envtxt = os.path.join(mainpath, "assets", "environmentA.yml")
 except:
     print("Error removing old environment")
-run_cmdBase(f'"{conda_path}" env create -f {envtxt}')
+run_cmdBase(f'"{conda_path}" env create -f "{envtxt}"')
 
 
 print("Creating environment for ONNX...")
 try:
-    output = subprocess.check_output([conda_path, "env", "list"], stderr=subprocess.STDOUT).decode()
+    output = subprocess.check_output(f'"{conda_path}" env list', stderr=subprocess.STDOUT).decode()
     lines = output.split("\n")
     for line in lines:
         if "difftrainerB" in line:
@@ -104,7 +104,7 @@ try:
 except:
     print("Error removing old environment")
 envtxt = os.path.join(mainpath, "assets", "environmentB.yml")
-run_cmdBase(f'"{conda_path}" env create -f {envtxt}')
+run_cmdBase(f'"{conda_path}" env create -f "{envtxt}"')
 
 
 ###setup envs###
@@ -217,7 +217,7 @@ deactivate = " ".join(deac)
 run_cmdBase(deactivate)
 
 print("Setting up ONNX environment...")
-if is_macos:
+if is_macos():
     torch = ["pip", "install", "torch==1.13.1", "torchvision==0.14.1", "torchaudio==0.13.1", "--no-warn-script-location"]
 else: 
     torch = ["pip", "install", "torch==1.13.1+cpu", "torchvision==0.14.1+cpu", "torchaudio==0.13.1", "--extra-index-url", "https://download.pytorch.org/whl/cpu", "--no-warn-script-location"]
