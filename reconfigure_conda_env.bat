@@ -1,6 +1,7 @@
 @echo off
-if exist "%cd%\miniconda" (
-	set "conda_hook=%cd%\miniconda\scripts\activate.bat"
+cd %~dp0
+if exist "%~dp0\miniconda" (
+	set "conda_hook=%~dp0\miniconda\scripts\activate.bat"
 ) else if exist "C:\Users\%username%\anaconda3" (
 	set "conda_hook=C:\Users\%username%\anaconda3\scripts\activate.bat"
 ) else if exist "C:\Users\%username%\miniconda3" (
@@ -26,7 +27,7 @@ echo removing existing environment...
 call conda remove -n difftrainer --all
 
 echo reinstalling requirements...
-call conda env create --file %cd%\assets\environment.yml
+call conda env create --file %~dp0\assets\environment.yml
 
 call conda activate difftrainer && python auto_torch.py
 pause

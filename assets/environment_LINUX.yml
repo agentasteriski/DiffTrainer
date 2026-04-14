@@ -4,6 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.10
+  - "setuptools<=80.10.2"
   - tk[build=xft_*]
   - tqdm
   - pyyaml
