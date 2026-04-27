@@ -364,7 +364,7 @@ class tabview(ctk.CTkTabview):
         expselect = self.expselect_option
         global drop_on
         drop_on = tk.StringVar()
-        self.droptoggle = ctk.CTkSwitch(master=self.frame12, text="OPTIONAL: Drop speakers", variable=drop_on, onvalue="on", offvalue="off", command=self.changeState2, font = self.font)
+        self.droptoggle = ctk.CTkSwitch(master=self.frame12, text=self.L('dropspk'), variable=drop_on, onvalue="on", offvalue="off", command=self.changeState2, font = self.font)
         self.droptoggle.grid(row=0, column=1, padx=10)
         global dropspk
         dropspk = tk.StringVar(value="speakers_to_drop")
@@ -397,8 +397,9 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')), font = self.font)
         global autodsdictvar
         autodsdictvar = tk.BooleanVar()
-        self.checkbox = ctk.CTkCheckBox(master=self.frame13, text=f"(Experimental)\nWrite base dsdicts", font = self.font, variable = autodsdictvar)
+        self.checkbox = ctk.CTkCheckBox(master=self.frame13, text=self.L('dsdict'), font = self.font, variable = autodsdictvar)
         self.checkbox.grid(row=2, column=1, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.checkbox, message=self.L('dsdict2'), font = self.font)
         self.button = ctk.CTkButton(master=self.frame13, text=(self.L('ouexport')), command=self.run_OU_config, font = self.font)
         self.button.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
 
@@ -416,7 +417,7 @@ class tabview(ctk.CTkTabview):
         expselect2 = self.expselect_option2
         global drop_on2
         drop_on2 = tk.StringVar()
-        self.droptoggle2 = ctk.CTkSwitch(master=self.frame15, text="OPTIONAL: Drop speakers", variable=drop_on2, onvalue="on", offvalue="off", command=self.changeState3, font = self.font)
+        self.droptoggle2 = ctk.CTkSwitch(master=self.frame15, text=self.L('dropspk'), variable=drop_on2, onvalue="on", offvalue="off", command=self.changeState3, font = self.font)
         self.droptoggle2.grid(row=0, column=1, padx=10)
         global dropspk2
         dropspk2 = tk.StringVar(value="speakers_to_drop")
@@ -454,8 +455,9 @@ class tabview(ctk.CTkTabview):
         self.tooltip = CTkToolTip(self.button, message=(self.L('ousave2')), font = self.font)
         global autodsdictvar2
         autodsdictvar2 = tk.BooleanVar()
-        self.checkbox = ctk.CTkCheckBox(master=self.frame16, text=f"(Experimental)\nWrite base dsdicts", font = self.font, variable = autodsdictvar2)
+        self.checkbox = ctk.CTkCheckBox(master=self.frame16, text=self.L('dsdict'), font = self.font, variable = autodsdictvar2)
         self.checkbox.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+        self.tooltip = CTkToolTip(self.checkbox, message=self.L('dsdict2'), font = self.font)
         self.button = ctk.CTkButton(master=self.frame16, text=(self.L('ouexport')), command=self.run_adv_config, font = self.font)
         self.button.grid(row=3, column=1, columnspan=2, padx=10, pady=10)
 
@@ -514,7 +516,7 @@ class tabview(ctk.CTkTabview):
 
 #same
     def changeState3(self):
-        print("Toggling speaker dropping", drop_on2.get())
+        print(self.L("advtoggle"), drop_on2.get())
         if drop_on2.get() == "on":
             self.dropbox2.configure(state=tk.NORMAL)
         elif drop_on2.get() == "off":
@@ -524,7 +526,7 @@ class tabview(ctk.CTkTabview):
 
     #checks and unchecks boxes based on selected config
     def combobox_callback(self, choice):
-        print("Configuration selected:", choice)
+        print(self.L("selected"), choice)
         if choice == "1. Basic functions":
             self.confbox1.select()
             self.confbox2.deselect()
@@ -589,7 +591,7 @@ class tabview(ctk.CTkTabview):
             self.confbox7.select()
             self.confbox8.deselect()
         else:
-            print("Please select a preset or enable custom configuration!")
+            print(self.L("preseterror"))
 
 ###COMMANDS###
 
