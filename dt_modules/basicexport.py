@@ -135,17 +135,13 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
 
         print("writing sub-configs...")
         try:
-            with open(aco_config, "r", encoding = "utf-8") as config:
-                acoustic_config_data = yaml.safe_load(config) #copies most of the main dsconfig
-            sample_rate = acoustic_config_data.get("audio_sample_rate")
-            hop_size = acoustic_config_data.get("hop_size")
             with open(os.path.join(var_folder_onnx, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
                 variance_config_data = yaml.safe_load(config)
-            sample_rate2 = variance_config_data.get("sample_rate")
-            hop_size2 = variance_config_data.get("hop_size")
+            sample_rate = variance_config_data.get("sample_rate")
+            hop_size = variance_config_data.get("hop_size")
             use_note_rest = variance_config_data.get("use_note_rest")
             use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
-            use_lang_id = acoustic_config_data.get("use_lang_id")
+            use_lang_id = variance_config_data.get("use_lang_id")
             hidden_size = variance_config_data.get("hidden_size")
 
             with open(os.path.join(dsdur, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
@@ -156,9 +152,9 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
             with open(os.path.join(dsdur, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
                 dsdur_config = yaml.safe_load(config)
             dsdur_config["use_continuous_acceleration"] = use_continuous_acceleration
-            dsdur_config["sample_rate"] = sample_rate2
+            dsdur_config["sample_rate"] = sample_rate
             dsdur_config["hidden_size"] = hidden_size
-            dsdur_config["hop_size"] = hop_size2
+            dsdur_config["hop_size"] = hop_size
             dsdur_config["predict_dur"] = True #this is the dur config, if it doesn't predict_dur wtf does it do
             dsdur_config["use_lang_id"] = use_lang_id
             if subbanks:

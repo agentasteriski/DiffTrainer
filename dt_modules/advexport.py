@@ -166,17 +166,13 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
 
         print("writing sub-configs...")
         try:
-            with open(aco_config, "r", encoding = "utf-8") as config: #all this stuff should be consistent across configs
-                acoustic_config_data = yaml.safe_load(config)
-            sample_rate = acoustic_config_data.get("audio_sample_rate")
-            hop_size = acoustic_config_data.get("hop_size")
             with open(os.path.join(dur_folder_onnx, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
-                variance_config_data = yaml.safe_load(config)
-            sample_rate2 = variance_config_data.get("sample_rate")
-            hop_size2 = variance_config_data.get("hop_size")
-            use_continuous_acceleration = variance_config_data.get("use_continuous_acceleration")
-            use_lang_id = acoustic_config_data.get("use_lang_id")
-            hidden_size = variance_config_data.get("hidden_size")
+                dur_config_data = yaml.safe_load(config)
+            sample_rate = dur_config_data.get("sample_rate")
+            hop_size = dur_config_data.get("hop_size")
+            use_continuous_acceleration = dur_config_data.get("use_continuous_acceleration")
+            use_lang_id = dur_config_data.get("use_lang_id")
+            hidden_size = dur_config_data.get("hidden_size")
 
             with open(os.path.join(dsdur, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
                 file.write("phonemes: ../dsmain/phonemes.json\n") #dur gets the main one
@@ -186,9 +182,9 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
             with open(os.path.join(dsdur, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
                 dsdur_config = yaml.safe_load(config)
             dsdur_config["use_continuous_acceleration"] = use_continuous_acceleration
-            dsdur_config["sample_rate"] = sample_rate2
+            dsdur_config["sample_rate"] = sample_rate
             dsdur_config["hidden_size"] = hidden_size
-            dsdur_config["hop_size"] = hop_size2
+            dsdur_config["hop_size"] = hop_size
             dsdur_config["predict_dur"] = True
             dsdur_config["use_lang_id"] = use_lang_id
             if subbanks:
@@ -198,13 +194,19 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
 
             try:
                 if var_folder_onnx:
-                    with open(var_config, "r", encoding = "utf-8") as config:
+                    with open(os.path.join(var_folder_onnx, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
                         var_config_data = yaml.safe_load(config)
                     predict_voicing = var_config_data.get("predict_voicing")
                     predict_tension = var_config_data.get("predict_tension")
                     predict_energy = var_config_data.get("predict_energy")
                     predict_breathiness = var_config_data.get("predict_breathiness")
                     predict_dur = var_config_data.get("predict_dur")
+                    sample_rate = var_config_data.get("sample_rate")
+                    hop_size = var_config_data.get("hop_size")
+                    use_continuous_acceleration = var_config_data.get("use_continuous_acceleration")
+                    use_lang_id = var_config_data.get("use_lang_id")
+                    hidden_size = var_config_data.get("hidden_size")
+                    
                     with open(os.path.join(dsvariance, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
                         file.write("phonemes: phonemes.json\n") #multidict merging shenanigans can require separate phonemes.json
                         file.write("languages: ../dsmain/languages.json\n")
@@ -243,6 +245,11 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
                         pitch_config_data = yaml.safe_load(config)
                     predict_dur = pitch_config_data.get("predict_dur")
                     use_note_rest = pitch_config_data.get("use_note_rest")
+                    sample_rate = pitch_config_data.get("sample_rate")
+                    hop_size = pitch_config_data.get("hop_size")
+                    use_continuous_acceleration = pitch_config_data.get("use_continuous_acceleration")
+                    use_lang_id = pitch_config_data.get("use_lang_id")
+                    hidden_size = pitch_config_data.get("hidden_size")
                     with open(os.path.join(dspitch, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
                         dspitch_config = yaml.safe_load(config)
                     dspitch_config["use_continuous_acceleration"] = use_continuous_acceleration

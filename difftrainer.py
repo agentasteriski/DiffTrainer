@@ -881,6 +881,7 @@ class App(ctk.CTk):
         print("raw data path: " + self.raw_data)
 
     def convert2csv(self):
+        os.chdir(main_path)
         segmenting = self.segvar.get()
         seglength = self.seglength.get()
         if segmenting == True:
@@ -1005,6 +1006,7 @@ class App(ctk.CTk):
         print("save path: " + ckpt_save_dir)
 
     def write_config(self):
+        os.chdir(main_path)
         #adding checks lmao make sure they select them
         config_check = trainselect.get()
         if not config_check:
@@ -1253,7 +1255,8 @@ class App(ctk.CTk):
         editor.wm_iconbitmap()
         editor.iconphoto(False, editor.iconpath)
         editor.resizable(False, False)
-        with open("DiffSinger/dictionaries/langloader.yaml", "r", encoding = "utf-8") as load_lang:
+        self.langloader_path = os.path.join(main_path, "dictionaries", "langloader.yaml")
+        with open(self.langloader_path, "r", encoding = "utf-8") as load_lang:
                 global langloader
                 langloader = yaml.safe_load(load_lang)
         dictframe = ctk.CTkFrame(master=editor)
@@ -1336,7 +1339,7 @@ class App(ctk.CTk):
             new_phonemes_list = [item.strip() for item in new_phonemes_str.split(',')]
         langloader["extra_phonemes"] = new_phonemes_list
         langloader["merge_list"] = mergebox.get()
-        with open("DiffSinger/dictionaries/langloader.yaml", "w", encoding="utf-8") as langdump:
+        with open(self.langloader_path, "w", encoding="utf-8") as langdump:
             yaml.dump(langloader, langdump, sort_keys=False)
         editor.destroy()
 

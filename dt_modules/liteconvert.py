@@ -21,7 +21,7 @@ def auto_config(base_path):
                     if not is_excluded(phoneme):
                         phonemes.add(phoneme)
     
-    vowel_types = {"a", "i", "u", "e", "o", "N", "M", "NG", "A", "E", "I", "O", "U"}
+    vowel_types = {"a", "i", "u", "e", "o", "N", "M", "NG", "A", "E", "I", "O", "U", "vtrash"}
     liquid_types = {"y", "w", "l", "r"} # liquids and semivowels
     vowel_data = []
     liquid_data = []
