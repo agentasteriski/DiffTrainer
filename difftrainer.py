@@ -723,7 +723,7 @@ class App(ctk.CTk):
                 if not user_response:
                     return
             else:
-                user_response = messagebox.askyesno(self.L('update_not_available1'), self.L('update__not_available2'))
+                user_response = messagebox.askyesno(self.L('update_not_available1'), self.L('update_not_available2'))
                 if not user_response:
                     return
 
