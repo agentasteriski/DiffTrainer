@@ -1081,10 +1081,10 @@ class App(ctk.CTk):
             bitch_ass_config["num_spk"] = num_spk
             if num_spk > 1:
                 bitch_ass_config["use_spk_id"] = True
-                bitch_ass_config["use_mixln"] = True
+                bitch_ass_config["use_mix_ln"] = True
             else:
                 bitch_ass_config["use_spk_id"] = False
-                bitch_ass_config["use_mixln"] = False
+                bitch_ass_config["use_mix_ln"] = False
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
             bitch_ass_config["num_lang"] = len(lang["dictionaries"])
