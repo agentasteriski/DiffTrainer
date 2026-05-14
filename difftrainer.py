@@ -1255,7 +1255,7 @@ class App(ctk.CTk):
         editor.wm_iconbitmap()
         editor.iconphoto(False, editor.iconpath)
         editor.resizable(False, False)
-        self.langloader_path = os.path.join(main_path, "dictionaries", "langloader.yaml")
+        self.langloader_path = os.path.join(ds_path, "dictionaries", "langloader.yaml")
         with open(self.langloader_path, "r", encoding = "utf-8") as load_lang:
                 global langloader
                 langloader = yaml.safe_load(load_lang)
