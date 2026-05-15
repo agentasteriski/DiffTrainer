@@ -15,6 +15,43 @@ might have new bugs, might bring old bugs back bc I fixed them in the main branc
 - ~~target Mix_LN branch due to single environment required~~
 - ~~un-Conda everything (much harder than it sounds)~~
 
+### Installation:
+- Easy Mode(Windows):
+    - make sure a compatible version of [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) is installed
+        - compatible versions: 11.8, 12.1, 12.4, 12.6, 12.8, 12.9
+    - install [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) (full conda works but comes with tons of stuff not needed, waste of space)
+    - reconfigure_conda_env.bat
+    - run_gui.bat
+    - Update Tools button to finish
+    - in future usage, run_gui.bat will check for DiffTrainer updates before launching(updater not yet activated)
+- Easy-ish Mode(Linux)
+    - make sure a compatible version of [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) is installed
+        - compatible versions: 11.8, 12.1, 12.4, 12.6, 12.8, 12.9
+    - install [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main) (full conda works but comes with tons of stuff not needed, waste of space)
+    - `conda env create --file assets/environment_LINUX.yml`
+    - always activate newly created `difftrainer` environment before running any python files
+    - run auto_torch.py
+    - run difftrainer.py 
+    - Update Tools button to finish
+    - in future usage, check_update.py checks for DiffTrainer updates before running difftrainer.py(updater not yet activated)
+- Normal Mode(Windows/Linux)
+    - make sure a compatible version of [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) is installed
+        - compatible versions: 11.8, 12.1, 12.4, 12.6, 12.8, 12.9
+    - bring your environment manager of choice(or don't, if you live dangerously)
+    - python 3.10
+    - install requirements.txt (less tested than the conda equivalent `assets/environment.yml`)
+    - always activate your environment before running any python files
+    - run auto_torch.py OR add a compatible version of PyTorch yourself (>=2.4, <=2.8, CUDA enabled)
+    - run difftrainer.py
+    - Update Tools button to finish
+    - in future usage, check_update.py checks for DiffTrainer updates before running difftrainer.py(updater not yet activated)
+- Nightmare Mode(Mac)
+    - see Linux instructions, but use the non-Linux environment.yml for conda
+    - auto_torch should just give you a CPU version, you're on your own trying MLX
+    - honestly you're on your own in general but in theory it's supposed to run
+    - I'm willing to try to make it work better but my tester Mac is Intel(a lost cause)
+
+
 ### wait this is good, why isn't it recommended yet
 - onnx export on torch 2 breaks wavenet and something on macs and the devs insist on keeping the terrible conflicting environment setup instead of deprecating wavenet/fixing the mac thing
 - this difftrainer downloads a copy of diffsinger with the torch 1.13 check disabled
