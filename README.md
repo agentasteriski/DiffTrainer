@@ -12,6 +12,7 @@ might have new bugs, might bring old bugs back bc I fixed them in the main branc
 - ~~add check for diffsinger updates~~
 - ~~get liteconvert(in the files but unused) to work~~
 - ~~implement Ghin's segmenter instead~~
+- unblock interface/add stop button as much as possible(currently added to binarize/train, needed for segment/SOME/export)
 - ~~target Mix_LN branch due to single environment required~~
 - ~~un-Conda everything (much harder than it sounds)~~
 
