@@ -4,9 +4,7 @@ from dt_modules import autodsdict # type: ignore (stops vscode from whining)
 def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_dir, var_folder_dir=None, pitch_folder_dir=None, vocoder_onnx=None, autodsdictvar2=None): #see basic export for most of the comments
         print("\nmaking directories...")
         aco_folder_onnx = os.path.join(aco_folder_dir, "onnx")
-        aco_config = os.path.join(aco_folder_dir, "config.yaml")
         var_folder_onnx = os.path.join(var_folder_dir, "onnx")
-        var_config = os.path.join(var_folder_dir, "config.yaml")
         dur_folder_onnx = os.path.join(dur_folder_dir, "onnx")
         pitch_folder_onnx = os.path.join(pitch_folder_dir, "onnx")
         try:
@@ -60,7 +58,6 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
             shutil.copy(os.path.join(aco_folder_onnx, "phonemes.json"), dsmain)
             shutil.copy(os.path.join(aco_folder_onnx, "languages.json"), dsmain)
             shutil.copy(os.path.join(aco_folder_onnx, "dsconfig.yaml"), main_stuff) #default acoustic dsconfig becomes the base
-            shutil.copy(os.path.join(dur_folder_onnx, "linguistic.onnx"), dsmain)
 
         except Exception as e:
             print(f"Error moving core files: {e}")
@@ -87,6 +84,8 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
             for emb_file in dur_emb_files:
                 shutil.copy(os.path.join(dur_folder_onnx, emb_file), durembeds)
             shutil.copy(os.path.join(dur_folder_onnx, "dur.onnx"), dsdur)
+            shutil.copy(os.path.join(dur_folder_onnx, "phonemes.json"), dsdur)
+            shutil.copy(os.path.join(dur_folder_onnx, "linguistic.onnx"), dsdur)
             duration_emb_files = os.listdir(dur_folder_onnx)
             duration_embeds = []
             duration_color_suffix = []
@@ -175,9 +174,9 @@ def run_adv_config(ou_name_var2, ou_export_location, aco_folder_dir, dur_folder_
             hidden_size = dur_config_data.get("hidden_size")
 
             with open(os.path.join(dsdur, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
-                file.write("phonemes: ../dsmain/phonemes.json\n") #dur gets the main one
+                file.write("phonemes: phonemes.json\n")
                 file.write("languages: ../dsmain/languages.json\n")
-                file.write("linguistic: ../dsmain/linguistic.onnx\n")
+                file.write("linguistic: linguistic.onnx\n")
                 file.write("dur: dur.onnx\n")
             with open(os.path.join(dsdur, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
                 dsdur_config = yaml.safe_load(config)

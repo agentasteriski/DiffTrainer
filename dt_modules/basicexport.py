@@ -85,6 +85,8 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
             var_emb_files = [file for file in os.listdir(var_folder_onnx) if file.endswith(".emb")]
             if os.path.exists(os.path.join(var_folder_onnx, "dur.onnx")):
                 shutil.copy(os.path.join(var_folder_onnx, "dur.onnx"), dsdur)
+                shutil.copy(os.path.join(var_folder_onnx, "phonemes.json"), dsdur)
+                shutil.copy(os.path.join(var_folder_onnx, "languages.json"), dsdur)
                 for emb_file in var_emb_files:
                     shutil.copy(os.path.join(var_folder_onnx, emb_file), durembeds)
             if os.path.exists(os.path.join(var_folder_onnx, "variance.onnx")):
@@ -145,8 +147,8 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
             hidden_size = variance_config_data.get("hidden_size")
 
             with open(os.path.join(dsdur, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
-                file.write("phonemes: ../dsmain/phonemes.json\n")
-                file.write("languages: ../dsmain/languages.json\n")
+                file.write("phonemes: phonemes.json\n")
+                file.write("languages: languages.json\n")
                 file.write("linguistic: ../dsmain/linguistic.onnx\n")
                 file.write("dur: dur.onnx\n") #file paths aren't totally the same so gotta rewrite
             with open(os.path.join(dsdur, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
@@ -172,8 +174,8 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
                     predict_breathiness = var_config_data.get("predict_breathiness")
                     predict_dur = var_config_data.get("predict_dur")
                     with open(os.path.join(dsvariance, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
-                        file.write("phonemes: ../dsmain/phonemes.json\n")
-                        file.write("languages: ../dsmain/languages.json\n")
+                        file.write("phonemes: ../dsdur/phonemes.json\n")
+                        file.write("languages: ../dsdur/languages.json\n")
                         file.write("linguistic: ../dsmain/linguistic.onnx\n")
                         file.write("variance: variance.onnx\n")
                     with open(os.path.join(dsvariance, "dsconfig.yaml"), "r", encoding = "utf-8") as config:
@@ -200,8 +202,8 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
             try:
                 if os.path.exists(os.path.join(var_folder_onnx, "pitch.onnx")): #if no pitch, skips this section
                     with open(os.path.join(dspitch, "dsconfig.yaml"), "w", encoding = "utf-8") as file:
-                        file.write("phonemes: ../dsmain/phonemes.json\n")
-                        file.write("languages: ../dsmain/languages.json\n")
+                        file.write("phonemes: ../dsdur/phonemes.json\n")
+                        file.write("languages: ../dsdur/languages.json\n")
                         file.write("linguistic: ../dsmain/linguistic.onnx\n")
                         file.write("predict_dur: true\n")
                         file.write("pitch: pitch.onnx\n")
