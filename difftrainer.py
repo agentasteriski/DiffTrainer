@@ -1,4 +1,4 @@
-import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, sys, threading
+import zipfile, shutil, csv, json, yaml, random, subprocess, os, requests, re, webbrowser, sys, threading, torch
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 from tqdm import tqdm
 from CTkToolTip import CTkToolTip
 from CTkListbox import CTkListbox
+from CTkMessagebox import CTkMessagebox
 from datetime import datetime
 from ezlocalizr import ezlocalizr
 from plyer import notification
@@ -1410,11 +1411,6 @@ class App(ctk.CTk):
             self.binarize_process = None
             os.chdir(main_path)
     
-    def stop_binarize(self):
-        if self.binarize_process:
-            print("\n[GUI] Stopping training process...")
-            self.binarize_process.terminate()
-            self.statuslabel.configure(text=(self.L('status6')))
 
     def load_config_function(self):
         global configpath
@@ -1479,11 +1475,25 @@ class App(ctk.CTk):
             print("\n[GUI] Stopping training process...")
             self.train_process.terminate()
             self.statuslabel.configure(text=(self.L('status6')))
+        elif self.binarize_process:
+            print("\n[GUI] Stopping binarization process...")
+            self.binarize_process.terminate()
+            self.statuslabel.configure(text=(self.L('status6')))
 
     def run_onnx_export(self):
+            #wavenet check
+            with open((os.path.join(ckpt_save_dir, "config.yaml")), "r", encoding = "utf-8") as c:
+                training_config = yaml.safe_load(c)
+            if training_config["backbone_type"] == "wavenet":
+                if not torch.__version__.startswith('1.13.'):
+                    print("Error: Wavenet requires Torch 1.13.x")
+                    CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
+                    return
+                
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)
             sys.path.insert(0, str(ds_path))
+                
             if drop_on.get() == "on":
                 drop_command = onnxexport.drop_speakers(ckpt_save_dir, dropspk)
                 print("Dropping speakers", dropspk.get())
@@ -1499,10 +1509,20 @@ class App(ctk.CTk):
             print("Done!")
             os.chdir(main_path)
 
-    def run_onnx_export2(self):
+    def run_onnx_export2(self): 
+            #wavenet check
+            with open((os.path.join(ckpt_save_dir, "config.yaml")), "r", encoding = "utf-8") as c:
+                training_config = yaml.safe_load(c)
+            if training_config["backbone_type"] == "wavenet":
+                if not torch.__version__.startswith('1.13.'):
+                    print("Error: Wavenet requires Torch 1.13.x")
+                    CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
+                    return
+                
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)
             sys.path.insert(0, str(ds_path))
+  
             if drop_on2.get() == "on":
                 drop_command = onnxexport.drop_speakers(ckpt_save_dir, dropspk2)
                 print("Dropping speakers", dropspk2.get())
