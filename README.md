@@ -47,9 +47,9 @@ might have new bugs, might bring old bugs back bc I fixed them in the main branc
     - run difftrainer.py
     - Update Tools button to finish
     - in future usage, check_update.py checks for DiffTrainer updates before running difftrainer.py(updater not yet activated)
-- Nightmare Mode(Mac)
+- ??? Mode(Mac)
     - see Linux instructions, but use the non-Linux environment.yml for conda
-    - auto_torch should just give you a CPU version, you're on your own trying MLX
+    - auto_torch should install Torch 2.11 for M-series, 2.8 for anything else
     - honestly you're on your own in general but in theory it's supposed to run
     - I'm willing to try to make it work better but my tester Mac is Intel(a lost cause)
 
