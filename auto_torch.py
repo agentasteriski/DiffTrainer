@@ -1,4 +1,4 @@
-import os, subprocess, sys
+import os, subprocess, sys, platform
 
 
 def is_linux():
@@ -7,6 +7,8 @@ def is_windows():
     return sys.platform.startswith("win")
 def is_macos():
     return sys.platform.startswith("darwin")
+def is_mchip():
+    return platform.processor('arm')
 
 mainpath = os.path.dirname(__file__)
 
@@ -108,13 +110,22 @@ try:
 except (FileNotFoundError, subprocess.CalledProcessError):
     print("CUDA is not available")
     if is_macos():
-        print("Mac detected! Installing latest available for this CPU")
-        torch = [realpython, "-m", "pip", "install", "torch<=2.8.0", "torchvision<=0.23.0", "torchaudio<=2.8.0", "--no-warn-script-location"]
-        nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
-        command1 = " ".join(torch)
-        command2 = " ".join(nottorch)
-        run_cmd(command1)
-        run_cmd(command2)
+        if is_mchip():
+            print("M-series Mac detected! Installing possible candidate Torch")
+            torch = [realpython, "-m", "pip", "install", "torch<=2.11.0", "torchvision<=0.26.0", "torchaudio<=2.11.0", "--no-warn-script-location"]
+            nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+            command1 = " ".join(torch)
+            command2 = " ".join(nottorch)
+            run_cmd(command1)
+            run_cmd(command2)
+        else:
+            print("Mac detected! good luck lol")
+            torch = [realpython, "-m", "pip", "install", "torch<=2.8.0", "torchvision<=0.23.0", "torchaudio<=2.8.0", "--no-warn-script-location"]
+            nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+            command1 = " ".join(torch)
+            command2 = " ".join(nottorch)
+            run_cmd(command1)
+            run_cmd(command2)
     else:
         torch = [realpython, "-m", "pip", "install", "torch==2.4.0", "torchvision==0.19.0", "torchaudio==2.4.0", "--no-warn-script-location"]
         nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
