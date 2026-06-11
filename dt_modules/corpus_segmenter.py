@@ -2,6 +2,7 @@
 import soundfile as sf
 import os
 import numpy as np
+import librosa
 
 pause_phonemes = ["pau", "sil", "SP"]
 breath_phonemes = ["AP", "bre"]
@@ -75,7 +76,8 @@ def find_longest_seg(folder_path):
 def segment_audio_and_labels(wav_path, lab_path, output_folder, max_length_sec):
     global total_segments, total_removed_segments, total_audio_duration, valid_segments_count
 
-    audio, sample_rate = sf.read(wav_path)
+    audio, sample_rate = librosa.load(wav_path, sr=44100, mono=True)
+    #audio = (audio * 32767).astype(np.int16) #p sure diffsinger is cool with float32 but I was warned that vague 'other tools' might want int16. undummy this line to put it back
     max_samples = int(max_length_sec * sample_rate)
     lab_data = load_lab(lab_path)
 
