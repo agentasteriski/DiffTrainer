@@ -980,6 +980,11 @@ class App(ctk.CTk):
             raw_dir = spk_data["raw_dir"]
             folder_name = spk_data["folder_name"]
             dict_key = spk_data["dict_key"]
+
+            default_lang = "other"
+            if "." in folder_name:
+                default_lang = folder_name.split(".")[-1]
+                folder_name = folder_name.split(".")[0]
             
             spk_rows.append(ctk.CTkFrame(master=self.subframe2, width=340))
             spk_rows[i].grid(row=i, sticky="EW", pady=3)
@@ -991,6 +996,7 @@ class App(ctk.CTk):
             #default selectable languages currently match premade dictionaries
             #premade dictionaries are enough to cover the phonemizer defaults(minus a few obscure/rare phonemes in DIFFS JA)
             spk_lang_select = ctk.CTkComboBox(master=spk_rows[i], values=["other", "en", "es", "fr", "ja", "ko", "th", "zh"], font=self.font)
+            spk_lang_select.set(default_lang)
             spk_lang_select.grid(column=1, row=0, padx=10)
             
             spk_id_select = ctk.CTkEntry(master=spk_rows[i], width=20, font=self.font)
