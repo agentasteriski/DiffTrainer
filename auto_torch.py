@@ -65,7 +65,7 @@ try:
                 break
             elif version == "12.8":
                 #print("Preferred Torch version not available for this CUDA version, installing latest")
-                torch = realpython, "-m", ["pip", "install", "torch==2.8.0+cu128", "torchvision==0.23.0+cu128", "torchaudio==2.8.0", "--extra-index-url", "https://download.pytorch.org/whl/cu128", "--no-warn-script-location"]
+                torch = [realpython, "-m", "pip", "install", "torch==2.8.0+cu128", "torchvision==0.23.0+cu128", "torchaudio==2.8.0", "--extra-index-url", "https://download.pytorch.org/whl/cu128", "--no-warn-script-location"]
                 nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
