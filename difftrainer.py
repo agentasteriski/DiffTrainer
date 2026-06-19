@@ -1003,7 +1003,7 @@ class App(ctk.CTk):
             spk_id_select.insert(0, i) 
             spk_id_select.grid(column=2, row=0, padx=15)
             
-            self.spk_info[dict_key] = (raw_dir, folder_name, spk_lang_select, spk_id_select)
+            self.spk_info[dict_key] = (raw_dir, spk_name_box, spk_lang_select, spk_id_select)
 
 
     def ckpt_folder_save(self):
@@ -1044,9 +1044,10 @@ class App(ctk.CTk):
         selected_config_type = trainselect.get()
         allspeakers = []
 
-        for spk, (raw_dir, folder_name, spk_lang_select, spk_id_select) in self.spk_info.items():
+        for spk, (raw_dir, spk_name_box, spk_lang_select, spk_id_select) in self.spk_info.items():
             spk_lang = spk_lang_select.get()
             merged_id = int(spk_id_select.get())
+            updated_name = spk_name_box.get()
             prefixes = []
             trns = os.path.join(raw_dir, 'transcriptions.csv')
             with open(trns, "r", newline="", encoding = "utf-8") as csv_file:
@@ -1061,7 +1062,7 @@ class App(ctk.CTk):
                 #tried using less than 3 way back and it just errored, not sure what I'm missing there
             spk_block = {
                 "raw_data_dir": raw_dir,
-                "speaker": folder_name,
+                "speaker": updated_name,
                 "spk_id": merged_id,
                 "language": spk_lang,
                 "test_prefixes": test_prefixes
