@@ -1,4 +1,4 @@
-# EXPERIMENTAL BRANCH. IF THIS IS STILL HERE, USE AT YOUR OWN RISK
+# MERGE TO MAIN COMING SOON
 might have new bugs, might bring old bugs back bc I fixed them in the main branch and forgot to port it. don't bother complaining about them until this readme is gone.
 ## Current status: actually pretty close
 ### Key features:
@@ -60,6 +60,7 @@ might have new bugs, might bring old bugs back bc I fixed them in the main branc
 - I do not want users relying on something like that as part of the main branch
 - I also do not want to try to put auto-management back
 - absolutely no way am I releasing a main version where the user has to manually select the right environment again. we had that briefly and none of y'all remembered to use the export env.
+- UPDATE 6/19/26: OH MY GOD IT'S FINALLY GETTING FIXED. the merge is upon us once more
 - this was supposed to be prep for v3 but that was supposed to happen months ago and yet here we are
 
 ### on environment management and .bats
