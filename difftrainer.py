@@ -645,7 +645,7 @@ class App(ctk.CTk):
             print(f"Notification failed: {e}")
 
     def last_github_commit(self):
-        ds_url = "https://api.github.com/repos/agentasteriski/DiffSinger/commits?sha=mix-LN"
+        ds_url = "https://api.github.com/repos/agentasteriski/DiffSinger/commits?sha=mix-ln"
         fallback = datetime(2000, 1, 1, 0, 0, 0).isoformat() + 'Z'
         try:
             response = requests.get(ds_url)
@@ -687,9 +687,9 @@ class App(ctk.CTk):
         ref_file = os.path.join(main_path, "DiffSinger/deployment/__init__.py")
         local_date = self.ref_file_date(ref_file)
 
-        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/mix-LN.zip"
+        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/mix-ln.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-mix-LN"
+        diffsinger_script_folder_name = "DiffSinger-mix-ln"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
@@ -747,7 +747,7 @@ class App(ctk.CTk):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("mix-LN.zip", "wb") as f:
+            with open("mix-ln.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -1119,14 +1119,12 @@ class App(ctk.CTk):
             else:
                 bitch_ass_config["hnsep"] = "world"
             if backbone_type == "wavenet":
-                #switches to wavenet backbone at default recommended settings
-                #it's the *alternate* backbone toggle, it makes it the opposite of what the default config does
+                #requires torch 1.13 to export tho
                 bitch_ass_config["backbone_type"] = "wavenet"
                 bitch_ass_config["backbone_args"]["num_channels"] = 512
                 bitch_ass_config["backbone_args"]["num_layers"] = 20
                 bitch_ass_config["backbone_args"]["dilation_cycle_length"] = 4
             elif backbone_type == "lynxnet":
-                #keeps lynxnet backbone at default recommended settings
                 #some people complain they're too heavy but I think they were trying to train on weak cards
                 bitch_ass_config["backbone_type"] = "lynxnet"
                 bitch_ass_config["backbone_args"]["num_channels"] = 1024
@@ -1135,7 +1133,6 @@ class App(ctk.CTk):
                 bitch_ass_config["backbone_args"]["dropout_rate"] = 0.0
                 bitch_ass_config["backbone_args"]["strong_cond"] = True
             elif backbone_type == "lynxnet2":
-                #keeps lynxnet backbone at default recommended settings
                 #some people complain they're too heavy but I think they were trying to train on weak cards
                 bitch_ass_config["backbone_type"] = "lynxnet2"
                 bitch_ass_config["backbone_args"]["num_channels"] = 1024
