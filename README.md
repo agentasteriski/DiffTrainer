@@ -1,3 +1,4 @@
+# [***ANNOUNCEMENT 6/20/26***](./ANNOUNCEMENT.md)
 
 **English** *[中文（正體）](./README-zh.md)*
 
