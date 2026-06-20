@@ -1,7 +1,7 @@
 # NEW Announcement 6/20/26: Major pending changes (again)
 ### DiffTrainer v4 will have significant changes under the hood.
 - A fresh install is *extremely* recommended when moving from v3 to v4.
-- Much like the transition to multi-dict format, the main branch of DiffTrainer will receive an update that redirects future updates to an archived version.
+- Much like the transition to multi-dict format, the main branch of DiffTrainer will receive an update that redirects future updates to an archived version. (Yes, I realized I named the archive v2-archived instead of v3-archived. Yes, there will now have to be a v2-archived2 when DiffSinger v3 actually happens. I'm very tired and I already committed the update. It is what it is.)
 - A staging branch will soon be added, based on the rewrite branch but targeted at the main branch of DiffSinger. (This will become available after muon_lynxnet2 is added to main, which the devs have said will be coming soon.)
 - New users will be encouraged to download the staging branch, while old users update to the archived branch.
 - Several weeks after the archive update has been deployed, staging will become the new main branch, and staging users will receive a redirect update.
