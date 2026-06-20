@@ -11,8 +11,8 @@ from collections import defaultdict
 
 ctk.set_default_color_theme(os.path.join("assets", "ds_gui.json"))
 main_path = os.path.dirname(__file__)
-version = "0.3.42"
-releasedate = "2/26/26"
+version = "0.3.43"
+releasedate = "6/20/26"
 
 #checks OS, looks for conda in default install locations(+custom install in Difftrainer folder for Windows)
 #if it's not there then it better be in path
@@ -131,7 +131,7 @@ class tabview(ctk.CTkTabview):
         self.label.grid(row=1, column=1)
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('changelog'), font = self.font)
         self.button.grid(row=2, column=0, padx=50)
-        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/main/changelog.md"))
+        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/v2-archived/changelog.md"))
         self.button = ctk.CTkButton(master=self.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
@@ -1151,6 +1151,10 @@ class tabview(ctk.CTkTabview):
             folder_name = os.path.basename(spk)
             folder_id = folder_to_id.get(folder_name, -1)
             raw_dir = os.path.join(data_folder, folder_name)
+            default_lang = "other"
+            if "." in folder_name:
+                default_lang = folder_name.split(".")[-1]
+                folder_name = folder_name.split(".")[0]
             spk_rows.append(ctk.CTkFrame(master=self.subframe2, width=340))
             spk_rows[folder_id].grid(row=folder_id,sticky="EW", pady=3)
             spk_name_box = ctk.CTkEntry(master=spk_rows[folder_id], width=100, font = self.font)
@@ -1160,6 +1164,7 @@ class tabview(ctk.CTkTabview):
             #might change it to the default phoneme lists instead
             #does a Swedish DiffSinger even exist yet?
             spk_lang_select = ctk.CTkComboBox(master=spk_rows[folder_id], values = ["other", "en", "es", "fr", "ja", "ko", "th", "zh"], font = self.font)
+            spk_lang_select.set(default_lang)
             spk_lang_select.grid(column=1, row=0, padx=10)
             spk_id_select = ctk.CTkEntry(master=spk_rows[folder_id], width = 20, font = self.font)
             spk_id_select.insert(0, folder_id)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.43
+- redirect future updates to archive
+- add folder language tag parsing
+
 ## 0.3.41
 - improve handing of tagged phonemes during conversion
 - removed config edits that were already added upstream
