@@ -1,4 +1,12 @@
-# NEW Announcement 3/28/25: THE MERGE IS COMING
+# NEW Announcement 6/20/26: Major pending changes (again)
+### DiffTrainer v3 will have significant changes under the hood.
+- A fresh install is *extremely* recommended when moving from v2 to v3.
+- Much like the transition to multi-dict format, the main branch of DiffTrainer will receive an update that redirects future updates to an archived version.
+- A staging branch will soon be added, based on the rewrite branch but targeted at the main branch of DiffSinger. (This will become available after muon_lynxnet2 is added to main, which the devs have said will be coming soon.)
+- New users will be encouraged to download the staging branch, while old users update to the archived branch.
+- Several weeks after the archive update has been deployed, staging will become the new main branch, and staging users will receive a redirect update.
+
+# OLD Announcement 3/28/25: THE MERGE IS COMING ( *[中文（正體）](./ANNOUNCEMENT-zh.md)* )
 ![Image](https://github.com/user-attachments/assets/017e89e2-4b73-4766-8294-95c7b4ae644d)
 ### Here's how DiffTrainer is handling it:
 - Main(currently single-dict) will get an update that redirects the update functions to a new branch, singledict-archive, and an archived copy of DiffSinger
@@ -6,7 +14,7 @@
 - When this happens, the multi-dict branch will get an update redirecting the update functions to the main branch, and the current multi-dict branch will be abandoned
 - Single-dict is highly unlikely to receive further updates. Do multi-dict. It's good.
 
-# OLD Announcement 2/17/25: Auto-update error ( *[中文（正體）](./ANNOUNCEMENT-zh.md)* )
+# OLD Announcement 2/17/25: Auto-update error 
 ### Versions 0.2.2 through 0.2.9 will no longer correctly trigger the auto-update. To restore this feature, edit difftrainer.py in your choice of text editor and change `version: 0.2.x` to `version: 0.2.0`.
 
 
