@@ -1488,11 +1488,19 @@ class App(ctk.CTk):
             #wavenet check
             with open((os.path.join(ckpt_save_dir, "config.yaml")), "r", encoding = "utf-8") as c:
                 training_config = yaml.safe_load(c)
-            if training_config["backbone_type"] == "wavenet":
-                if not torch.__version__.startswith('1.13.'):
-                    print("Error: Wavenet requires Torch 1.13.x")
-                    CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
-                    return
+
+            if training_config["task_cls"] == "training.acoustic_task.AcousticTask":
+                if training_config["backbone_type"] == "wavenet":
+                    if not torch.__version__.startswith('1.13.'):
+                        print("Error: Wavenet requires Torch 1.13.x")
+                        CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
+                        return
+            elif training_config["task_cls"] == "training.variance_task.VarianceTask":
+                if training_config["variances_prediction_args"]["backbone_type"] == "wavenet":
+                    if not torch.__version__.startswith('1.13.'):
+                        print("Error: Wavenet requires Torch 1.13.x")
+                        CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
+                        return
                 
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)
