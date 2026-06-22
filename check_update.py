@@ -80,10 +80,7 @@ else:
 			shutil.rmtree(folder)
 
 		if update_reqs == True:
-			try:
-				subprocess.check_call([realpython, '-m', 'pip', 'install', '-r', 'requirements.txt'])
-			except subprocess.CalledProcessError as e:
-				print(f"Error updating dependencies: {e}")
+			messagebox.showinfo(title="Environment Out-of-Date", message="New or changed requirements have been added. \nPlease update your environment, or you may experience unexpected behavior.")
 
 	else:
 		pass
