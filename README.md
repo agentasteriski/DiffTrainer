@@ -1,4 +1,4 @@
-# MERGE TO MAIN COMING SOON. (may require manual update, stay tuned)
+# rewrite is dead, go grab staging instead
 might have new bugs, might bring old bugs back bc I fixed them in the main branch and forgot to port it. don't bother complaining about them until this readme is gone.
 ## Current status: actually pretty close
 ### Key features:
