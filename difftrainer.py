@@ -20,7 +20,7 @@ main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.2"
+version = "0.4.3"
 releasedate = "6/22/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
@@ -1089,10 +1089,10 @@ class App(ctk.CTk):
             bitch_ass_config["num_spk"] = num_spk
             if num_spk > 1:
                 bitch_ass_config["use_spk_id"] = True
-                #bitch_ass_config["use_mix_ln"] = True
+                bitch_ass_config["use_mix_ln"] = True
             else:
                 bitch_ass_config["use_spk_id"] = False
-                #bitch_ass_config["use_mix_ln"] = False
+                bitch_ass_config["use_mix_ln"] = False
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
             bitch_ass_config["num_lang"] = len(lang["dictionaries"])

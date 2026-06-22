@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.3
+- restore mix-ln lines from rewrite
+
 ## 0.4.2
 - remove wavenet check on export
 
