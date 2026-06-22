@@ -20,7 +20,7 @@ main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.1"
+version = "0.4.2"
 releasedate = "6/22/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
@@ -1485,22 +1485,6 @@ class App(ctk.CTk):
             self.statuslabel.configure(text=(self.L('status6')))
 
     def run_onnx_export(self):
-            #wavenet check
-            with open((os.path.join(ckpt_save_dir, "config.yaml")), "r", encoding = "utf-8") as c:
-                training_config = yaml.safe_load(c)
-
-            if training_config["task_cls"] == "training.acoustic_task.AcousticTask":
-                if training_config["backbone_type"] == "wavenet":
-                    if not torch.__version__.startswith('1.13.'):
-                        print("Error: Wavenet requires Torch 1.13.x")
-                        CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
-                        return
-            elif training_config["task_cls"] == "training.variance_task.VarianceTask":
-                if training_config["variances_prediction_args"]["backbone_type"] == "wavenet":
-                    if not torch.__version__.startswith('1.13.'):
-                        print("Error: Wavenet requires Torch 1.13.x")
-                        CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
-                        return
                 
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)
@@ -1522,14 +1506,6 @@ class App(ctk.CTk):
             os.chdir(main_path)
 
     def run_onnx_export2(self): 
-            #wavenet check
-            with open((os.path.join(ckpt_save_dir, "config.yaml")), "r", encoding = "utf-8") as c:
-                training_config = yaml.safe_load(c)
-            if training_config["backbone_type"] == "wavenet":
-                if not torch.__version__.startswith('1.13.'):
-                    print("Error: Wavenet requires Torch 1.13.x")
-                    CTkMessagebox(title="Error", message=self.L('onnxerror'), icon="cancel", font=self.font)
-                    return
                 
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)

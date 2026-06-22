@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+- remove wavenet check on export
+
+## 0.4.1
+- push to staging branch
+
 ## 0.4.0
 - massive code rearrangement
 - single environment returns! conda requirement dropped
