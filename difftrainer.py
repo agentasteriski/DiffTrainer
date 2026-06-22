@@ -20,8 +20,8 @@ main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.0"
-releasedate = "10/29/25"
+version = "0.4.1"
+releasedate = "6/22/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
@@ -31,8 +31,8 @@ def is_windows():
 def is_macos():
     return sys.platform.startswith("darwin")
 
-if is_linux():
-    ctk.DrawEngine.preferred_drawing_method = "circle_shapes" #helps de-uglyfy ctk in linux+base conda if not using the real fix
+#if is_linux():
+    #ctk.DrawEngine.preferred_drawing_method = "circle_shapes" #helps de-uglyfy ctk in linux+base conda if not using the real fix
 
 #starts with English before overriding the language with whatever's in the settings
 guisettings = {
@@ -645,7 +645,7 @@ class App(ctk.CTk):
             print(f"Notification failed: {e}")
 
     def last_github_commit(self):
-        ds_url = "https://api.github.com/repos/agentasteriski/DiffSinger/commits?sha=mix-ln"
+        ds_url = "https://api.github.com/repos/agentasteriski/DiffSinger/commits?sha=main"
         fallback = datetime(2000, 1, 1, 0, 0, 0).isoformat() + 'Z'
         try:
             response = requests.get(ds_url)
@@ -687,9 +687,9 @@ class App(ctk.CTk):
         ref_file = os.path.join(main_path, "DiffSinger/deployment/__init__.py")
         local_date = self.ref_file_date(ref_file)
 
-        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/mix-ln.zip"
+        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/main.zip"
         diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-mix-ln"
+        diffsinger_script_folder_name = "DiffSinger-main"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
@@ -747,7 +747,7 @@ class App(ctk.CTk):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("mix-ln.zip", "wb") as f:
+            with open("main.zip", "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -1089,10 +1089,10 @@ class App(ctk.CTk):
             bitch_ass_config["num_spk"] = num_spk
             if num_spk > 1:
                 bitch_ass_config["use_spk_id"] = True
-                bitch_ass_config["use_mix_ln"] = True
+                #bitch_ass_config["use_mix_ln"] = True
             else:
                 bitch_ass_config["use_spk_id"] = False
-                bitch_ass_config["use_mix_ln"] = False
+                #bitch_ass_config["use_mix_ln"] = False
             bitch_ass_config["binary_data_dir"] = self.binary_save_dir
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
             bitch_ass_config["num_lang"] = len(lang["dictionaries"])

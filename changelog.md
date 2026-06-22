@@ -1,5 +1,49 @@
 # Changelog
 
+## 0.4.0
+- massive code rearrangement
+- single environment returns! conda requirement dropped
+- drop nnsvs_db_converter entirely in favor of corpus_segmenter and liteconvert, thank you for your service
+- binarizing/training no longer freeze the UI
+- dropping speakers at export now available
+- localization strings purged due to content now being incorrect, re-submissions welcome
+- probably a whole lot more I'm forgetting
+
+## 0.3.43
+- redirect future updates to archive
+- add folder language tag parsing
+
+## 0.3.41
+- improve handing of tagged phonemes during conversion
+- removed config edits that were already added upstream
+
+## 0.3.40
+- fix hidden size in OU configs
+- langloader loads on top!
+
+## 0.3.39
+- dummy box has become the stretch embed
+- adds CUDA 12.9 support
+- caps Torch to 2.8
+
+## 0.3.38
+- fix `use_lang_id` in dsdur/dspitch/dsvariance when using multiple languages but NOT merging phonemes
+- force alphabetical order in loading speakers
+- language list matches premade base dictionaries instead of localizations
+
+## 0.3.37
+- [turns out Torch 2.3.1 was actually the worst possible choice](https://github.com/pytorch/pytorch/issues/122085)
+- users with CUDA 11.8/12.1 should re-run setup_conda_envs.py
+- also calculate `num_spk` correctly now
+
+## 0.3.36
+- move torch in env B back to setup script instead of directly in .yml to force the CPU version
+- support "in between" CUDA versions(versions not officially supported by Pytorch but between supported versions, rounds down to the nearest supported version)
+- force creation of onnx folder
+
+## 0.3.34
+- new technically optional but recommended base env for Linux users(assets/linuxbaseenv.yml, creates difftrainerBase)
+
 ## 0.3.33
 - fix extra_phonemes creating a fake phoneme `['']`
 
