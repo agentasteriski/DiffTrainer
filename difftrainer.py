@@ -1519,7 +1519,9 @@ class App(ctk.CTk):
                     print("Error dropping speakers")
             onnxexport.prep_onnx_export(ckpt_save_dir)
             command = onnxexport.writecmd(ckpt_save_dir, expselect2, drop_on2)
-            subprocess.run(command, check=True, shell=True)
+            try: subprocess.run(command, check=True, shell=True)
+            except: 
+                print("Error exporting onnx")
             onnxexport.onnx_cleanup(ckpt_save_dir)
             print("Done!")
             os.chdir(main_path)
