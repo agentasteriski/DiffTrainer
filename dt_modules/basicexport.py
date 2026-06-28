@@ -214,7 +214,6 @@ def run_OU_config(ou_name_var, ou_export_location, aco_folder_dir, var_folder_di
                     dspitch_config["sample_rate"] = sample_rate
                     dspitch_config["hidden_size"] = hidden_size
                     dspitch_config["hop_size"] = hop_size
-                    dspitch_config["predict_dur"] = predict_dur
                     dspitch_config["use_lang_id"] = use_lang_id
                     if subbanks:
                         dspitch_config["speakers"] = variance_embeds
