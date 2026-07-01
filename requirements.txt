@@ -19,7 +19,7 @@ matplotlib
 MonkeyType>=23.3.0
 numpy<2.0.0
 onnx>=1.21.0
-onnxslim>=0.1.93
+onnxsim>=0.6.5
 plyer
 praat-parselmouth==0.4.3
 pyworld==0.3.4

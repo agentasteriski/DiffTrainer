@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.4
+- apparently we're going back to onnxsim again(requires updating both environment and tools)
+- fix error in config writing for basic export
+- add error handling to onnx export on adv tab
+
 ## 0.4.3
 - restore mix-ln lines from rewrite
 

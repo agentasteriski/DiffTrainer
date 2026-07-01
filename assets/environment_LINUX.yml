@@ -15,7 +15,7 @@ dependencies:
   - matplotlib
   - "numpy<2.0.0"
   - "onnx>=1.21.0"
-  - "onnxslim>=0.1.93"
+  - "onnxsim>=0.6.5"
   - "scipy>=1.10.0"
   - resampy
   - tensorboard
