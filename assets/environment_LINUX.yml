@@ -15,7 +15,6 @@ dependencies:
   - matplotlib
   - "numpy<2.0.0"
   - "onnx>=1.21.0"
-  - "onnxsim>=0.6.5"
   - "scipy>=1.10.0"
   - resampy
   - tensorboard
@@ -34,5 +33,6 @@ dependencies:
     - "librosa<0.10.0"
     - "lightning~=2.3.0"
     - MonkeyType>=23.3.0
+    - "onnxsim>=0.6.5"
     - praat-parselmouth==0.4.3
     - pyworld==0.3.4
