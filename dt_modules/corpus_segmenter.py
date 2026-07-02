@@ -5,7 +5,7 @@ import numpy as np
 import librosa
 
 pause_phonemes = ["pau", "sil", "SP"]
-breath_phonemes = ["AP", "bre"]
+breath_phonemes = ["AP", "bre", "br"]
 all_pause_phonemes = pause_phonemes + breath_phonemes
 report_path = "report.txt"
 
