@@ -14,7 +14,7 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
     - reconfigure_conda_env.bat
     - run_gui.bat
     - Update Tools button to finish
-    - in future usage, run_gui.bat will check for DiffTrainer updates before launching(updater not yet activated)
+    - in future usage, run_gui.bat will check for DiffTrainer updates before launching
 - Easy-ish Mode(Linux)
     - make sure a compatible version of [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) is installed
         - compatible versions: 11.8, 12.1, 12.4, 12.6, 12.8, 12.9
@@ -24,7 +24,7 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
     - run auto_torch.py
     - run difftrainer.py 
     - Update Tools button to finish
-    - in future usage, check_update.py checks for DiffTrainer updates before running difftrainer.py(updater not yet activated)
+    - in future usage, check_update.py checks for DiffTrainer updates before running difftrainer.py
 - Normal Mode(Windows/Linux)
     - make sure a compatible version of [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) is installed
         - compatible versions: 11.8, 12.1, 12.4, 12.6, 12.8, 12.9
@@ -35,7 +35,7 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
     - run auto_torch.py OR add a compatible version of PyTorch yourself (>=2.4, <=2.8, CUDA enabled)
     - run difftrainer.py
     - Update Tools button to finish
-    - in future usage, check_update.py checks for DiffTrainer updates before running difftrainer.py(updater not yet activated)
+    - in future usage, check_update.py checks for DiffTrainer updates before running difftrainer.py
 - ??? Mode(Mac)
     - see Linux instructions, but use the non-Linux environment.yml for conda
     - auto_torch should install Torch 2.11 for M-series, 2.8 for anything else
