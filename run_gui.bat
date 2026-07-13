@@ -3,9 +3,9 @@ cd %~dp0
 set "conda_python=%~dp0\miniconda\python.exe"
 
 if exist %conda_python% (
-	%conda_python% check_update.py
+	%conda_python% difftrainer.py
 ) else (
-	python check_update.py
+	python difftrainer.py
 )
 
 pause
