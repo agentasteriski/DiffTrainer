@@ -42,6 +42,13 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
     - honestly you're on your own in general but in theory it's supposed to run
     - I'm willing to try to make it work better but my tester Mac is Intel(a lost cause)
 
+### Known issues:
+- (Windows)Pytorch fails to extract during environment setup
+    - try [enabling long paths](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry#enable-long-paths-in-windows-10-version-1607-and-later)
+- langloader editor sometimes hides behind main window
+- if you type in the save interval or batch size boxes, an error appears in the terminal window
+  - no actual impact, just enter your number and ignore it
+- do not name checkpoint folders just "acoustic" or "variance", it conflicts with the onnx export cleanup
 
 ### on environment management and .bats
 Starting from DiffTrainer 0.4, environments will be once again self-manageable. All .py files will act using the environment that is active when the file is run. However, all .bat files will still be written to activate a Conda environment(specifically named `difftrainer`) and run the file from that environment. If you want to use a different environment manager or different environment name, you will need to run the .py files directly from the command line or write your own automated activation scripts. **No .bats are strictly required, they are purely for convenience.**
@@ -61,8 +68,4 @@ Starting from DiffTrainer 0.4, environments will be once again self-manageable. 
     - Attempts to locate conda at either the custom location installed with the old conda_installer.bat or one of the default install locations. If it is not found at any of these locations, it will still attempt to call Conda with the system PATH.
     - Activates the difftrainer environment before running quickinference.py.
 
-### Known issues:
-- langloader editor sometimes hides behind main window
-- if you type in the save interval or batch size boxes, an error appears in the terminal window
-  - no actual impact, just enter your number and ignore it
-- do not name checkpoint folders just "acoustic" or "variance", it conflicts with the onnx export cleanup
+
