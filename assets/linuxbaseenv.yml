@@ -1,0 +1,17 @@
+name: difftrainerBase
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.*
+  - tk[build=xft_*]
+  - tqdm
+  - pyyaml
+  - requests
+  - pillow
+  - pip
+  - pip:
+    - customtkinter
+    - ctktooltip
+    - ctkmessagebox
+    - ctklistbox
+    - ez-localizr
