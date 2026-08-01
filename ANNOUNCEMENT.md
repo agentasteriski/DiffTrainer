@@ -1,10 +1,12 @@
-# NEW Announcement 6/20/26: Major pending changes (again)
+# NEW Announcement 8/1/26: Staging has become main. Versions below 0.3.44 will encounter errors when updating.
+
+# Announcement 6/20/26: Major pending changes (again)
 ### DiffTrainer v4 will have significant changes under the hood.
 - A fresh install is *extremely* recommended when moving from v3 to v4.
 - Much like the transition to multi-dict format, the main branch of DiffTrainer will receive an update that redirects future updates to an archived version. (Yes, I realized I named the archive v2-archived instead of v3-archived. Yes, there will now have to be a v2-archived2 when DiffSinger v3 actually happens. I'm very tired and I already committed the update. It is what it is.)
 - A staging branch will soon be added, based on the rewrite branch but targeted at the main branch of DiffSinger. (Added 6/22/26)
 - New users will be encouraged to download the staging branch, while old users update to the archived branch.
-- ***On July 1, 2026 at 12PM EDT UTC-4***, staging will become the new main branch, and staging users will receive a redirect update. (date set 7/20/26)
+- ***On ~~July~~August 1, 2026 at 12PM EDT UTC-4***, staging will become the new main branch, and staging users will receive a redirect update. (date set 7/20/26, July was always a typo)
 
 # OLD Announcement 3/28/25: THE MERGE IS COMING ( *[中文（正體）](./ANNOUNCEMENT-zh.md)* )
 ![Image](https://github.com/user-attachments/assets/017e89e2-4b73-4766-8294-95c7b4ae644d)
