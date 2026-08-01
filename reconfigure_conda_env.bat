@@ -23,7 +23,11 @@ if exist "%~dp0\miniconda" (
 )
 
 call %conda_hook%
+echo removing existing environment...
+call conda remove -n difftrainer --all
 
-echo Activating environment...
-call conda activate difftrainer && tensorboard --logdir=DiffSinger\checkpoints
+echo reinstalling requirements...
+call conda env create --file %~dp0\assets\environment.yml
+
+call conda activate difftrainer && python auto_torch.py
 pause

@@ -1,11 +1,12 @@
-import requests, os, zipfile, shutil, subprocess
+import requests, os, zipfile, shutil, subprocess, sys
 from tqdm import tqdm
 import re
 from tkinter import messagebox
 
 main_path = os.path.dirname(__file__)
+realpython = sys.executable
 
-gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/v2-archived/difftrainer.py")
+gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/main/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
 github_version = github_version.group(1)
 
@@ -14,7 +15,7 @@ with open("difftrainer.py", "r", encoding = "utf-8") as gui_local:
 local_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_local)
 local_version = local_version.group(1)
 
-reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/v2-archived/requirements.txt"
+reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/main/requirements.txt"
 reqresponse = requests.get(reqs_url)
 with open('requirements_compare.txt', 'wb') as f:
             f.write(reqresponse.content)
@@ -37,9 +38,9 @@ if local_version >= github_version:
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest DiffTrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update DiffTrainer?")
 	if update_prompt:
-		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/v2-archived.zip"
+		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/staging.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
-		folder = "DiffTrainer-v2-archived"
+		folder = "DiffTrainer-staging"
 
 
 
@@ -47,7 +48,7 @@ else:
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
 		with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffTrainer...") as progress_bar:
-			with open("v2-archived.zip", "wb") as f:
+			with open("main.zip", "wb") as f:
 				for chunk in response.iter_content(chunk_size = 1024):
 					if chunk:
 						f.write(chunk)
@@ -61,6 +62,8 @@ else:
 			shutil.move(f"{folder}/strings", main_path)
 			shutil.rmtree("assets")
 			shutil.move(f"{folder}/assets", main_path)
+			shutil.rmtree("dt_modules")
+			shutil.move(f"{folder}/dt_modules", main_path)
 			[os.remove(filename)
 			for filename in os.listdir(main_path) if filename.endswith(".bat")]
 			[shutil.move(os.path.join(folder, filename), main_path)
@@ -77,10 +80,7 @@ else:
 			shutil.rmtree(folder)
 
 		if update_reqs == True:
-			try:
-				subprocess.check_call(['pip', 'install', '-r', 'requirements.txt'])
-			except subprocess.CalledProcessError as e:
-				print(f"Error updating dependencies: {e}")
+			messagebox.showinfo(title="Environment Out-of-Date", message="New or changed requirements have been added. \nPlease update your environment, or you may experience unexpected behavior.")
 
 	else:
 		pass

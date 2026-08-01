@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.4.4
+- apparently we're going back to onnxsim again(requires updating both environment and tools)
+- fix error in config writing for basic export
+- add error handling to onnx export on adv tab
+
+## 0.4.3
+- restore mix-ln lines from rewrite
+
+## 0.4.2
+- remove wavenet check on export
+
+## 0.4.1
+- push to staging branch
+
+## 0.4.0
+- massive code rearrangement
+- single environment returns! conda requirement dropped
+- drop nnsvs_db_converter entirely in favor of corpus_segmenter and liteconvert, thank you for your service
+- binarizing/training no longer freeze the UI
+- dropping speakers at export now available
+- localization strings purged due to content now being incorrect, re-submissions welcome
+- probably a whole lot more I'm forgetting
+
 ## 0.3.43
 - redirect future updates to archive
 - add folder language tag parsing
