@@ -6,7 +6,7 @@ from tkinter import messagebox
 main_path = os.path.dirname(__file__)
 realpython = sys.executable
 
-gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/staging/difftrainer.py")
+gui_github = requests.get("https://raw.githubusercontent.com/agentasteriski/DiffTrainer/main/difftrainer.py")
 github_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_github.text)
 github_version = github_version.group(1)
 
@@ -15,7 +15,7 @@ with open("difftrainer.py", "r", encoding = "utf-8") as gui_local:
 local_version = re.search(r'version\s*=\s*[\'"]([^\'"]+)[\'"]', gui_local)
 local_version = local_version.group(1)
 
-reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/staging/requirements.txt"
+reqs_url = "https://raw.githubusercontent.com/agentasteriski/DiffTrainer/refs/heads/main/requirements.txt"
 reqresponse = requests.get(reqs_url)
 with open('requirements_compare.txt', 'wb') as f:
             f.write(reqresponse.content)
