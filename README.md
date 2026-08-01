@@ -6,6 +6,8 @@ DiffTrainer brings together the most useful tools for DiffSinger in one easy, gr
 - [DiffSinger](https://github.com/openvpi/DiffSinger)'s primary training
 - OpenUtau export scripts
 
+# [News for existing users](https://github.com/agentasteriski/DiffTrainer/blob/main/ANNOUNCEMENT.md)
+
 ### Installation:
 - Easy Mode(Windows):
     - make sure a compatible version of [CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit-archive) is installed
