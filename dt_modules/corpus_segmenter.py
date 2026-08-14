@@ -288,7 +288,7 @@ def process_folder(input_folder, output_folder, max_length_sec, report_path):
                 "longest_audio_duration": longest_dur
             })
 
-    with open(report_path, "w") as report_file:
+    with open(report_path, "w", encoding='utf-8') as report_file:
         for report in subfolder_reports:
             report_file.write(f"Folder: {report['folder']}\n")
             report_file.write(f"  Segments created: {report['segments_created']}\n")
