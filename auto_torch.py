@@ -85,28 +85,37 @@ try:
                 print("Preferred Torch version not available for this CUDA version, installing 2.11")
                 torch = [realpython, "-m", "pip", "install", "torch==2.11.0", "torchvision==0.26.0", "torchaudio==2.11.0", "--extra-index-url", "https://download.pytorch.org/whl/cu130", "--no-warn-script-location"]
                 nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                dammittorch = [realpython, "-m", "pip", "install", "--upgrade", "nvidia-cudnn-cu13"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
+                command3 = " ".join(dammittorch)
                 run_cmd(command1)
                 run_cmd(command2)
+                run_cmd(command3)
                 break
             elif version == "13.2":
                 print("Preferred Torch version not available for this CUDA version, installing latest")
                 torch = [realpython, "-m", "pip", "install", "torch", "torchvision", "--extra-index-url", "https://download.pytorch.org/whl/cu132", "--no-warn-script-location"]
-                nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "torchaudio", "click", "--no-warn-script-location"]
+                dammittorch = [realpython, "-m", "pip", "install", "--upgrade", "nvidia-cudnn-cu13"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
+                command3 = " ".join(dammittorch)
                 run_cmd(command1)
                 run_cmd(command2)
+                run_cmd(command3)
                 break
             elif version > "13.2":
                 print("CUDA version not officially supported at time of writing, installing latest for 13.2")
                 torch = [realpython, "-m", "pip", "install", "torch", "torchvision", "--extra-index-url", "https://download.pytorch.org/whl/cu132", "--no-warn-script-location"]
-                nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "--no-warn-script-location"]
+                nottorch = [realpython, "-m", "pip", "install", "protobuf", "onnxruntime", "click", "torchaudio", "--no-warn-script-location"]
+                dammittorch = [realpython, "-m", "pip", "install", "--upgrade", "nvidia-cudnn-cu13"]
                 command1 = " ".join(torch)
                 command2 = " ".join(nottorch)
+                command3 = " ".join(dammittorch)
                 run_cmd(command1)
                 run_cmd(command2)
+                run_cmd(command3)
                 break
             else:
                 print("Unsupported CUDA version detected! Installing generic Torch")
