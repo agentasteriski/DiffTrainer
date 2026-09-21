@@ -20,8 +20,8 @@ main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.5"
-releasedate = "8/1/26"
+version = "0.4.6"
+releasedate = "9/20/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
@@ -246,12 +246,12 @@ class App(ctk.CTk):
         global trainbre
         trainbre = tk.BooleanVar()
         self.confbox3 =  ctk.CTkCheckBox(master=self.subframe, text="bre", variable=trainbre, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox3.grid(row=4, column=1, pady=5, padx=(3,0))
+        self.confbox3.grid(row=4, column=1, pady=5, padx=(5,0), sticky="W")
         self.tooltip = CTkToolTip(self.confbox3, message="use_breathiness_embed/predict_breathiness", font=self.font)
         global trainten
         trainten = tk.BooleanVar()
         self.confbox4 =  ctk.CTkCheckBox(master=self.subframe, text="ten", variable=trainten, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox4.grid(row=3, column=1, pady=5, padx=(3,0))
+        self.confbox4.grid(row=3, column=1, pady=5, padx=(5,0), sticky="W")
         self.tooltip = CTkToolTip(self.confbox4, message="use_tension_embed/predict_tension", font=self.font)
         global trainvoc
         trainvoc = tk.BooleanVar()
@@ -261,7 +261,7 @@ class App(ctk.CTk):
         global traindur
         traindur = tk.BooleanVar()
         self.confbox6 =  ctk.CTkCheckBox(master=self.subframe, text="dur", variable=traindur, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox6.grid(row=2, column=1, pady=5, padx=(3,0))
+        self.confbox6.grid(row=2, column=1, pady=5, padx=(5,0), sticky="W")
         self.tooltip = CTkToolTip(self.confbox6, message="predict_dur", font=self.font)
         global timeaug
         timeaug = tk.BooleanVar()
@@ -276,7 +276,7 @@ class App(ctk.CTk):
         global preferds
         preferds = tk.BooleanVar()
         self.confbox9 = ctk.CTkCheckBox(master=self.subframe, text="prefer_ds", variable=preferds, onvalue = True, offvalue = False, state=tk.DISABLED, font = self.font)
-        self.confbox9.grid(row=5, column=1, padx=(3,0), pady=5)
+        self.confbox9.grid(row=6, column=1, pady=5)
         global vr
         vr = tk.BooleanVar()
         self.confbox10 =  ctk.CTkCheckBox(master=self.frame6, text=(self.L('vr')), variable=vr, onvalue = True, offvalue = False, font = self.font)
@@ -287,13 +287,20 @@ class App(ctk.CTk):
         self.confbox11 = ctk.CTkComboBox(master=self.subframe, values=["lynxnet2", "wavenet", "lynxnet"], variable=backbone, font = self.font, dropdown_font = self.font)
         self.confbox11.set("lynxnet2")
         self.confbox11.configure(state="disabled")
-        self.confbox11.grid(row=5, column=2, columnspan=2, pady=5)
+        self.confbox11.grid(row=6, column=2, columnspan=2, pady=5)
         self.tooltip = CTkToolTip(self.confbox11, message=(self.L('backbone')), font = self.font)
         global trainstretch
         trainstretch = tk.BooleanVar()
         self.confbox12 = ctk.CTkCheckBox(master=self.subframe, text="stretch", variable=trainstretch, onvalue = True, offvalue = False, state=tk.DISABLED, font=self.font)
         self.confbox12.grid(row=4, column=3, pady=5, padx=(0,3))
         self.tooltip = CTkToolTip(self.confbox12, message=(self.L('stretch')), font = self.font)
+        global dual_timestep
+        dual_timestep = tk.BooleanVar()
+        self.confbox13 = ctk.CTkCheckBox(master=self.subframe, text="dual_timestep", variable=dual_timestep, onvalue = True, offvalue = False, state=tk.DISABLED, font=self.font)
+        self.confbox13.grid(row=5, column=1, padx=(5,0), pady=5, sticky="W")
+        self.tooltip = CTkToolTip(self.confbox13, message=(self.L('dual_timestep')), font = self.font)
+        #self.confbox14 = ctk.CTkCheckBox(master=self.subframe, text="dummy", state=tk.DISABLED, font=self.font)
+        #self.confbox14.grid(row=5, column=3, pady=5, padx=(0,3))
 
         self.frame14 = ctk.CTkFrame(master=self.tabview.tab(self.L('tab_ttl_3')))
         self.frame14.grid(columnspan=2, row=1, column=1, pady=10)
@@ -499,6 +506,7 @@ class App(ctk.CTk):
             self.confbox9.configure(state=tk.NORMAL)
             self.confbox11.configure(state=tk.NORMAL)
             self.confbox12.configure(state=tk.NORMAL)
+            self.confbox13.configure(state=tk.NORMAL)
             self.confnamebox.configure(state=tk.NORMAL)
         elif adv_on.get() == "off":
             self.confbox1.configure(state=tk.DISABLED)
@@ -512,6 +520,7 @@ class App(ctk.CTk):
             self.confbox9.configure(state=tk.DISABLED)
             self.confbox11.configure(state=tk.DISABLED)
             self.confbox12.configure(state=tk.DISABLED)
+            self.confbox13.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
         else:
             self.confbox1.configure(state=tk.DISABLED)
@@ -525,6 +534,7 @@ class App(ctk.CTk):
             self.confbox9.configure(state=tk.DISABLED)
             self.confbox11.configure(state=tk.DISABLED)
             self.confbox12.configure(state=tk.DISABLED)
+            self.confbox13.configure(state=tk.DISABLED)
             self.confnamebox.configure(state=tk.DISABLED)
 
 #this one's for dropping speakers
@@ -1036,6 +1046,7 @@ class App(ctk.CTk):
         tension = trainten.get()
         voicing = trainvoc.get()
         stretch = trainstretch.get()
+        timestep = dual_timestep.get()
         pre_type = vr.get()
         ds = preferds.get()
         backbone_type = backbone.get()
@@ -1115,6 +1126,7 @@ class App(ctk.CTk):
             bitch_ass_config["use_tension_embed"] = tension
             bitch_ass_config["use_voicing_embed"] = voicing
             bitch_ass_config["use_stretch_embed"] = stretch
+            bitch_ass_config["use_dual_timestep"] = timestep
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
             else:
@@ -1189,6 +1201,7 @@ class App(ctk.CTk):
             bitch_ass_config["predict_voicing"] = voicing
             bitch_ass_config["use_stretch_embed"] = stretch
             bitch_ass_config["use_melody_encoder"] = pitch
+            bitch_ass_config["use_dual_timestep"] = timestep
             bitch_ass_config["binarization_args"]["prefer_ds"] = ds
             if pre_type==True:
                 bitch_ass_config["hnsep"] = "vr"
