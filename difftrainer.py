@@ -11,7 +11,7 @@ from CTkMessagebox import CTkMessagebox
 from datetime import datetime
 from ezlocalizr import ezlocalizr
 from plyer import notification
-from dt_modules import onnxexport, basicexport, advexport, liteconvert, corpus_segmenter
+from dt_modules import onnxexport, basicexport, advexport, liteconvert, corpus_segmenter, csv2ds
 
 
 
@@ -129,7 +129,6 @@ class App(ctk.CTk):
                                   size=(400, 150))
         
         ##ABOUT
-        #to do: audit translations/clear unused strings from en_US
         self.label = ctk.CTkLabel(master=self.tabview.tab(self.L('tab_ttl_1')), text = "", image = self.logo)
         self.label.grid(row=0, column=0, ipady=10, columnspan = 3)
         self.label = ctk.CTkLabel(master=self.tabview.tab(self.L('tab_ttl_1')), text = f"{self.L('vers')} {version}({releasedate})", font = self.font)
@@ -182,11 +181,23 @@ class App(ctk.CTk):
         self.estmidi.grid(row=0, column=1, padx=50)
         self.tooltip = CTkToolTip(self.estmidi, message=self.L('estmidi2'), font = self.font)
 
+        self.dsframe = ctk.CTkFrame(master=self.frame1)
+        self.dsframe.grid(row=1, column=1, padx=(30, 40), pady=10)
+        self.dsvar = tk.BooleanVar()
+        self.convertds = ctk.CTkCheckBox(master=self.dsframe, text=self.L('convertds'), variable=self.dsvar, font = self.font)
+        self.convertds.grid(row=1, column=1, padx=50, pady=(10,5))
+        self.pelabel = ctk.CTkLabel(master=self.dsframe, text=self.L('select_pe'), font=self.font)
+        self.pelabel.grid(row=2, column=1)
+        self.pevar = ctk.StringVar()
+        self.pebox = ctk.CTkComboBox(master=self.dsframe, values=["rmvpe", "parselmouth", "harvest"], variable=self.pevar, state="readonly", font = self.font, dropdown_font = self.font)
+        self.pebox.grid(row=3, column=1, pady=(0,10))
+        self.tooltip = CTkToolTip(self.convertds, message=self.L('convertds2'), font = self.font)
+
         self.rawbutton = ctk.CTkButton(master=self.frame1, text=self.L('rawdata'), command=self.grab_raw_data, font = self.font)
-        self.rawbutton.grid(row=4, column=0, pady=(10,0))
+        self.rawbutton.grid(row=4, column=0, pady=10)
         self.tooltip = CTkToolTip(self.rawbutton, message=self.L('rawdata2'), font = self.font)
         self.convertbutton = ctk.CTkButton(master=self.frame1, text=self.L('prepdata'), command= self.convert2csv, font = self.font)
-        self.convertbutton.grid(row=4, column=1, padx=50, pady=(10,0))
+        self.convertbutton.grid(row=4, column=1, padx=50, pady=10)
         self.tooltip = CTkToolTip(self.convertbutton, message=self.L('prepdata2'), font = self.font)
 
 
@@ -907,6 +918,8 @@ class App(ctk.CTk):
 
             try:
                     estimatemidi = self.estvar.get()
+                    convertds = self.dsvar.get()
+                    extractor = self.pevar.get()
                     if estimatemidi == True:
                         #print("should estimate MIDI")
                         base_dir = Path(segdata_folder)
@@ -922,6 +935,13 @@ class App(ctk.CTk):
                                 cmdstage = [realpython, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
                                 command2 = " ".join(cmdstage)
                                 subprocess.run(command2, check=True, shell=True)
+                                if convertds == True:
+                                    #print("should make .ds")
+                                    speaker_wavs = os.path.join(speaker_path, "wavs")
+                                    try: csv2ds.csv2ds(transcription, speaker_wavs, 0.01, 512, 44100, extractor, ds_path)
+                                    except Exception as e: print(f"Error during .ds creation: {e}")
+                                else: continue
+
                     else:
                         pass
             except Exception as e:
@@ -1402,6 +1422,11 @@ class App(ctk.CTk):
         try:
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)
+            
+            with open(configpath, "r", encoding = "utf-8") as checkconfig:
+                trainingconfig = yaml.safe_load(checkconfig)
+            if trainingconfig["prefer_ds"] == True:
+                print("prefers .ds")
             
             cmdstage = [realpython, 'scripts/binarize.py', '--config', configpath]
 
