@@ -1,4 +1,10 @@
 # Changelog
+## 0.4.6
+- support use_dual_timestep toggle
+
+## 0.4.5
+- officially support up to CUDA 13.2 in auto_torch
+- corpus_segmenter no longer dies if it doesn't like the name of the longest file
 
 ## 0.4.4
 - apparently we're going back to onnxsim again(requires updating both environment and tools)
