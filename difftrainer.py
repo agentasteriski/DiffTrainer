@@ -20,8 +20,8 @@ main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.6"
-releasedate = "9/20/26"
+version = "0.4.7"
+releasedate = "9/22/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
@@ -135,7 +135,7 @@ class App(ctk.CTk):
         self.label.grid(row=1, column=1)
         self.button = ctk.CTkButton(master=self.tabview.tab(self.L('tab_ttl_1')), text = self.L('changelog'), font = self.font)
         self.button.grid(row=2, column=0, padx=50)
-        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/staging/changelog.md")) #why tf is it still opening the one on main. it literally says rewrite. it exists.
+        self.button.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/main/changelog.md"))
         self.button = ctk.CTkButton(master=self.tabview.tab(self.L('tab_ttl_1')), text = self.L('update'), command = self.dl_update, font = self.font)
         self.button.grid(row=2, column=2, padx=50)
         self.tooltip = CTkToolTip(self.button, message=(self.L('update2')), font = self.font)
@@ -144,7 +144,7 @@ class App(ctk.CTk):
         self.label.grid(row=3, column=0, pady=30)
         self.tooltip = CTkToolTip(self.label, message="this is a link", font = self.font)
         self.label = ctk.CTkLabel(master=self.tabview.tab(self.L('tab_ttl_1')), text = (self.L('cred_tools')), font = self.font_ul)
-        self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/staging/extracredits.md"))
+        self.label.bind("<Button-1>", lambda e: self.credit("https://github.com/agentasteriski/DiffTrainer/blob/main/extracredits.md"))
         self.label.grid(row=3, column=1, pady=30)
         self.tooltip = CTkToolTip(self.label, message="this is also a link", font = self.font)
         self.label = ctk.CTkLabel(master=self.tabview.tab(self.L('tab_ttl_1')), text = self.L('cred_trans'), font = self.font)
@@ -189,7 +189,7 @@ class App(ctk.CTk):
         self.pelabel = ctk.CTkLabel(master=self.dsframe, text=self.L('select_pe'), font=self.font)
         self.pelabel.grid(row=2, column=1)
         self.pevar = ctk.StringVar()
-        self.pebox = ctk.CTkComboBox(master=self.dsframe, values=["rmvpe", "parselmouth", "harvest"], variable=self.pevar, state="readonly", font = self.font, dropdown_font = self.font)
+        self.pebox = ctk.CTkComboBox(master=self.dsframe, values=["rmvpe", "parselmouth"], variable=self.pevar, state="readonly", font = self.font, dropdown_font = self.font)
         self.pebox.grid(row=3, column=1, pady=(0,10))
         self.tooltip = CTkToolTip(self.convertds, message=self.L('convertds2'), font = self.font)
 
@@ -363,7 +363,7 @@ class App(ctk.CTk):
 
         ##PREPROCESS/TRAIN
         self.frame9 = ctk.CTkFrame(master=self.tabview.tab(self.L('tab_ttl_4')))
-        self.frame9.grid(row=0, column=0, rowspan=2, columnspan=2, padx=120)
+        self.frame9.grid(row=0, column=0, rowspan=2, columnspan=3, padx=120)
         self.loadbutton = ctk.CTkButton(master=self.frame9, text=("1. " + (self.L('step1'))), command=self.load_config_function, font = self.font)
         self.loadbutton.grid(row=0, column=0, padx=25, pady=25)
         self.tooltip = CTkToolTip(self.loadbutton, message=(self.L('step1-2')), font = self.font)
@@ -382,8 +382,13 @@ class App(ctk.CTk):
         self.label = ctk.CTkLabel(master=self.frame10, text=(self.L('statusheader')), font = self.font).grid(row=0, column=0)
         self.statuslabel = ctk.CTkLabel(master=self.frame10, text=(self.L('status1')), font = self.font)
         self.statuslabel.grid(row=1, column=0)
+        self.dsrescue = tk.StringVar()
+        self.dsswitch = ctk.CTkSwitch(master= self.tabview.tab(self.L('tab_ttl_4')), text=self.L('dsswitch'), variable=self.dsrescue, onvalue="on", offvalue="off", font=self.font)
+        self.dsswitch.grid(row=3, column=1, sticky="E")
+        self.dsswitch.select()
+        self.tooltip = CTkToolTip(self.dsswitch, message=(self.L('dsswitch2')), font=self.font)
         self.frame11 = ctk.CTkFrame(master=self.tabview.tab(self.L('tab_ttl_4')))
-        self.frame11.grid(row=3, column=1)
+        self.frame11.grid(row=3, column=2)
         self.label = ctk.CTkLabel(master=self.frame11, text=(self.L('patchlabel')), font = self.font)
         self.label.grid()
         self.tooltip = CTkToolTip(self.label, message=(self.L('patchtip')), font = self.font)
@@ -1423,10 +1428,30 @@ class App(ctk.CTk):
             os.chdir(ds_path)
             os.environ["PYTHONPATH"] = str(ds_path)
             
-            with open(configpath, "r", encoding = "utf-8") as checkconfig:
-                trainingconfig = yaml.safe_load(checkconfig)
-            if trainingconfig["prefer_ds"] == True:
-                print("prefers .ds")
+            if self.dsrescue.get() == "on":
+                with open(configpath, "r", encoding = "utf-8") as checkconfig:
+                    trainingconfig = yaml.safe_load(checkconfig)
+                if trainingconfig["binarization_args"]["prefer_ds"] == True:
+                    dirs = []
+                    for speaker in trainingconfig.get('datasets', []):
+                        raw_dir = speaker.get('raw_data_dir')
+                        if raw_dir:
+                            dirs.append(raw_dir)
+                    for raw_dir in dirs:
+                        wavs_folder = os.path.join(raw_dir, 'wavs')
+                        ds_folder = os.path.join(raw_dir, 'ds')
+                        if not os.path.isdir(wavs_folder):
+                            continue
+                        ds_files = [f for f in os.listdir(wavs_folder) if f.lower().endswith('.ds')]
+                        if not ds_files:
+                            continue
+                        os.makedirs(ds_folder, exist_ok=True)
+                        for filename in ds_files:
+                            src = os.path.join(wavs_folder, filename)
+                            dst = os.path.join(ds_folder, filename)
+                            if not os.path.isfile(src):
+                                continue
+                            shutil.copy2(src, dst)
             
             cmdstage = [realpython, 'scripts/binarize.py', '--config', configpath]
 

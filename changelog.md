@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.7
+- add .ds creation to data prep tab(currently supports RMVPE and Parselmouth)
+- .ds Rescue: If prefer_ds is enabled when binarizing, copies .ds files located in a speaker's wavs folder from SlurCutter use to the correct ds folder.
 ## 0.4.6
 - support use_dual_timestep toggle
 

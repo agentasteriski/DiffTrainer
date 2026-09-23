@@ -4,6 +4,7 @@
 - [corpus_segmenter](https://github.com/MLo7Ghinsan/ghin_shenanigans/blob/main/scripts/corpus_segmenter.py)
 - assorted legacy code from MLo7Ghinsan (as maintainer of predecessor project)
 - logic from [nnsvs_db_converter](https://github.com/UtaUtaUtau/nnsvs-db-converter) used in liteconvert
+- logic from [variance-temp-solution](https://github.com/openvpi/MakeDiffSinger/tree/main/variance-temp-solution) used in csv2ds/get_pitch
 - fonts:
     - English: [Red Hat Display](https://fonts.google.com/specimen/Red+Hat+Display)
     - Japanese: [M PLUS 2](https://fonts.google.com/specimen/M+PLUS+2)
