@@ -38,7 +38,7 @@ if local_version >= github_version:
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest DiffTrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update DiffTrainer?")
 	if update_prompt:
-		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/staging.zip"
+		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/main.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
 		folder = "DiffTrainer-staging"
 
