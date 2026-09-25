@@ -20,8 +20,8 @@ main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.7"
-releasedate = "9/22/26"
+version = "0.4.8"
+releasedate = "9/25/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
@@ -973,6 +973,12 @@ class App(ctk.CTk):
                                 cmdstage = [realpython, "SOME/batch_infer.py", "--model", "DiffSinger/checkpoints/SOME/0119_continuous256_5spk/model_ckpt_steps_100000_simplified.ckpt", "--dataset", speaker_path, "--overwrite"]
                                 command2 = " ".join(cmdstage)
                                 subprocess.run(command2, check=True, shell=True)
+                                if convertds == True:
+                                    #print("should make .ds")
+                                    speaker_wavs = os.path.join(speaker_path, "wavs")
+                                    try: csv2ds.csv2ds(transcription, speaker_wavs, 0.01, 512, 44100, extractor, ds_path)
+                                    except Exception as e: print(f"Error during .ds creation: {e}")
+                                else: continue
                     else:
                         pass
             except Exception as e:
