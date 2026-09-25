@@ -40,7 +40,7 @@ else:
 	if update_prompt:
 		url = "https://github.com/agentasteriski/DiffTrainer/archive/refs/heads/main.zip"
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
-		folder = "DiffTrainer-staging"
+		folder = "DiffTrainer-main"
 
 
 
