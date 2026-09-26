@@ -20,8 +20,8 @@ main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
 ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.8"
-releasedate = "9/25/26"
+version = "0.4.9"
+releasedate = "9/26/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
@@ -177,19 +177,19 @@ class App(ctk.CTk):
         self.batchslider.grid(row=2)
 
         self.estvar = tk.BooleanVar()
-        self.estmidi = ctk.CTkCheckBox(master=self.frame1, text=self.L('estmidi'), variable=self.estvar, font = self.font)
+        self.estmidi = ctk.CTkCheckBox(master=self.frame1, text=self.L('estmidi'), variable=self.estvar, command=self.changeState4, font = self.font)
         self.estmidi.grid(row=0, column=1, padx=50)
         self.tooltip = CTkToolTip(self.estmidi, message=self.L('estmidi2'), font = self.font)
 
         self.dsframe = ctk.CTkFrame(master=self.frame1)
         self.dsframe.grid(row=1, column=1, padx=(30, 40), pady=10)
         self.dsvar = tk.BooleanVar()
-        self.convertds = ctk.CTkCheckBox(master=self.dsframe, text=self.L('convertds'), variable=self.dsvar, font = self.font)
+        self.convertds = ctk.CTkCheckBox(master=self.dsframe, text=self.L('convertds'), variable=self.dsvar, state=tk.DISABLED, font = self.font)
         self.convertds.grid(row=1, column=1, padx=50, pady=(10,5))
         self.pelabel = ctk.CTkLabel(master=self.dsframe, text=self.L('select_pe'), font=self.font)
         self.pelabel.grid(row=2, column=1)
         self.pevar = ctk.StringVar()
-        self.pebox = ctk.CTkComboBox(master=self.dsframe, values=["rmvpe", "parselmouth"], variable=self.pevar, state="readonly", font = self.font, dropdown_font = self.font)
+        self.pebox = ctk.CTkComboBox(master=self.dsframe, values=["rmvpe", "parselmouth"], variable=self.pevar, state=tk.DISABLED, font = self.font, dropdown_font = self.font)
         self.pebox.grid(row=3, column=1, pady=(0,10))
         self.tooltip = CTkToolTip(self.convertds, message=self.L('convertds2'), font = self.font)
 
@@ -572,6 +572,14 @@ class App(ctk.CTk):
             self.dropbox2.configure(state=tk.DISABLED)
         else:
             self.dropbox2.configure(state=tk.DISABLED)
+    
+    def changeState4(self):
+        if self.estvar.get():
+            self.convertds.configure(state=tk.NORMAL)
+            self.pebox.configure(state="readonly")
+        else:
+            self.convertds.configure(state=tk.DISABLED)
+            self.pebox.configure(state=tk.DISABLED)
 
     #checks and unchecks boxes based on selected config
     def combobox_callback(self, choice):
@@ -959,6 +967,8 @@ class App(ctk.CTk):
             liteconvert.lab2csv(self.raw_data, auto_config)
             try:
                     estimatemidi = self.estvar.get()
+                    convertds = self.dsvar.get()
+                    extractor = self.pevar.get()
                     if estimatemidi == True:
                         base_dir = Path(self.raw_data)
                         subdirs = [d for d in base_dir.rglob('*') if d.is_dir() and d.name != 'wavs']
