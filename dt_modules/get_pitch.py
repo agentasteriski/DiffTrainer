@@ -1,5 +1,5 @@
 import numpy as np
-#import pyworld as pw
+import pyworld as pw
 import parselmouth, pathlib, sys, os
 
 
@@ -60,9 +60,27 @@ def get_pitch_parselmouth(wav_data, hop_size, audio_sample_rate, interp_uv=True)
         f0, uv = interp_f0(f0, uv)
     return time_step, f0, uv
 
+def get_pitch_harvest(wav_data, hop_size, audio_sample_rate, interp_uv=True):
+    time_step = hop_size / audio_sample_rate
+    f0_min = 65.
+    f0_max = 1600.
+
+    # pw.harvest expects frame_period in milliseconds
+    frame_period_ms = time_step * 1000.0
+
+    f0, _ = pw.harvest(
+        wav_data.astype(np.float64), audio_sample_rate,
+        f0_floor=f0_min, f0_ceil=f0_max, frame_period=frame_period_ms
+    )
+    f0 = f0.astype(np.float32)
+    uv = f0 == 0
+
+    if interp_uv:
+        f0, uv = interp_f0(f0, uv)
+    return time_step, f0, uv
+
 
 rmvpe = None
-
 
 def get_pitch_rmvpe(wav_data, hop_size, audio_sample_rate, ds_path, interp_uv=True):
     global rmvpe
@@ -87,6 +105,8 @@ def get_pitch_rmvpe(wav_data, hop_size, audio_sample_rate, ds_path, interp_uv=Tr
 def get_pitch(algorithm, wav_data, hop_size, audio_sample_rate, ds_path, interp_uv=True):
     if algorithm == 'parselmouth':
         return get_pitch_parselmouth(wav_data, hop_size, audio_sample_rate, interp_uv=interp_uv)
+    elif algorithm == 'harvest':
+        return get_pitch_rmvpe(wav_data, hop_size, audio_sample_rate, ds_path, interp_uv=interp_uv)
     elif algorithm == 'rmvpe':
         return get_pitch_rmvpe(wav_data, hop_size, audio_sample_rate, ds_path, interp_uv=interp_uv)
     else:

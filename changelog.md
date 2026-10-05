@@ -1,7 +1,18 @@
 # Changelog
+## 0.4.10
+- BUG/BUGFIX: updates from below 0.4.10 will be accidentally ignored. grab a fresh copy of check_update.py or change the version number in your existing difftrainer.py to 0.4.0. won't happen again for real this time.
+- attempts to auto-merge speakers with the same name before the language tag
+- .ds creation supports Harvest
+- assets/guisettings.yaml(generated at first launch) now does more than hold your language choice!
+  - branch: current options are `default` and `benchmark`. set your choice and restart, and the next time you update tools, it will select the corresponding DiffSinger branch. (benchmark branch is an experiment with no model differences, but logs training speeds to the checkpoint folder.)
+  - theme: can be any CustomTkInter compatible .json placed in the assets folder
+  - pl_trainer_devices: can be used to overwrite the default 'auto' in the base config upon updating. if you don't already know what this does, don't touch it. make sure you restart after saving changes, the value is loaded when DiffTrainer is launched.
+- extra_phonemes/merged_phoneme_groups look nicer and easier to read when manually tweaking configs
+
 ## 0.4.7
 - add .ds creation to data prep tab(currently supports RMVPE and Parselmouth)
 - .ds Rescue: If prefer_ds is enabled when binarizing, copies .ds files located in a speaker's wavs folder from SlurCutter use to the correct ds folder.
+
 ## 0.4.6
 - support use_dual_timestep toggle
 

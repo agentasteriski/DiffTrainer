@@ -19,9 +19,8 @@ from dt_modules import onnxexport, basicexport, advexport, liteconvert, corpus_s
 main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
-ctk.set_default_color_theme(os.path.join(main_path, "assets", "ds_gui.json"))
-version = "0.4.9"
-releasedate = "9/26/26"
+version = "0.4.10"
+releasedate = "10/5/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
@@ -34,9 +33,11 @@ def is_macos():
 #if is_linux():
     #ctk.DrawEngine.preferred_drawing_method = "circle_shapes" #helps de-uglyfy ctk in linux+base conda if not using the real fix
 
+
 #starts with English before overriding the language with whatever's in the settings
 guisettings = {
     'lang': 'en_US',
+    'theme': 'ds_gui.json'
 }
 settingspath = os.path.join(main_path, "assets", "guisettings.yaml")
 if os.path.exists(settingspath):
@@ -45,7 +46,27 @@ if os.path.exists(settingspath):
                 guisettings.update(yaml.safe_load(c))
                 c.close()
         except yaml.YAMLError as exc:
-            print("No settings detected, defaulting to EN_US")
+            print("No settings detected, defaulting to en_US")
+            c.close()
+            guisettings['lang'] = "en_US"
+            guisettings['branch'] = "default"
+            guisettings['pl_trainer_devices'] = "auto"
+            guisettings['theme'] = "ds_gui.json"
+            with open('assets/guisettings.yaml', 'w', encoding='utf-8') as f:
+                yaml.dump(guisettings, f, default_flow_style=False)
+                f.close()
+else: 
+    print("No settings detected, defaulting to en_US")
+    guisettings['lang'] = "en_US"
+    guisettings['branch'] = "default"
+    guisettings['pl_trainer_devices'] = "auto"
+    guisettings['theme'] = "ds_gui.json"
+    with open('assets/guisettings.yaml', 'w', encoding='utf-8') as f:
+        yaml.dump(guisettings, f, default_flow_style=False)
+        f.close()
+
+theme_path = os.path.join(main_path, "assets", guisettings['theme'])
+ctk.set_default_color_theme(theme_path)
 
 #this function is basically undocumented in CTk docs but I found it in a random issues thread on the GitHub
 #it doesn't work on Mac but it doesn't break things like the Pyglet method did
@@ -59,6 +80,21 @@ font_jp = 'M PLUS 2'
 font_cn = 'Noto Sans SC'
 font_tw = 'Noto Sans TC'
 
+#makes phoneme lists look better
+class PhonemeGroups(list):
+    pass
+def phoneme_groups_representer(dumper, data):
+    items = []
+    for group in data:
+        inner_node = dumper.represent_sequence('tag:yaml.org,2002:seq', group, flow_style=True)
+        items.append(inner_node)
+    return yaml.SequenceNode('tag:yaml.org,2002:seq', items, flow_style=False)
+yaml.add_representer(PhonemeGroups, phoneme_groups_representer)
+class List(list):
+    pass
+def extra_representer(dumper, data):
+    return dumper.represent_sequence('tag:yaml.org,2002:seq', data, flow_style=True)
+yaml.add_representer(List, extra_representer)
 
 
 
@@ -189,7 +225,7 @@ class App(ctk.CTk):
         self.pelabel = ctk.CTkLabel(master=self.dsframe, text=self.L('select_pe'), font=self.font)
         self.pelabel.grid(row=2, column=1)
         self.pevar = ctk.StringVar()
-        self.pebox = ctk.CTkComboBox(master=self.dsframe, values=["rmvpe", "parselmouth"], variable=self.pevar, state=tk.DISABLED, font = self.font, dropdown_font = self.font)
+        self.pebox = ctk.CTkComboBox(master=self.dsframe, values=["rmvpe", "parselmouth", "harvest"], variable=self.pevar, state=tk.DISABLED, font = self.font, dropdown_font = self.font)
         self.pebox.grid(row=3, column=1, pady=(0,10))
         self.tooltip = CTkToolTip(self.convertds, message=self.L('convertds2'), font = self.font)
 
@@ -721,9 +757,16 @@ class App(ctk.CTk):
         ref_file = os.path.join(main_path, "DiffSinger/deployment/__init__.py")
         local_date = self.ref_file_date(ref_file)
 
-        diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/main.zip"
-        diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
-        diffsinger_script_folder_name = "DiffSinger-main"
+        if guisettings.get('branch', 'default') == "benchmark":
+            diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/benchmark.zip"
+            diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
+            ds_zip_short = "benchmark.zip"
+            diffsinger_script_folder_name = "DiffSinger-benchmark"
+        else:
+            diffsinger_url = "https://github.com/agentasteriski/DiffSinger/archive/refs/heads/main.zip"
+            diffsinger_zip = os.path.join(os.getcwd(), diffsinger_url.split("/")[-1])
+            ds_zip_short = "main.zip"
+            diffsinger_script_folder_name = "DiffSinger-main"
 
         vocoder_url = "https://github.com/openvpi/vocoders/releases/download/pc-nsf-hifigan-44.1k-hop512-128bin-2025.02/pc_nsf_hifigan_44.1k_hop512_128bin_2025.02.zip"
         vocoder_zip = os.path.join(os.getcwd(), vocoder_url.split("/")[-1])
@@ -781,7 +824,7 @@ class App(ctk.CTk):
         response = requests.get(diffsinger_url, stream = True)
         total_size = int(response.headers.get("content-length", 0))
         with tqdm(total = total_size, unit = "B", unit_scale = True, desc = "downloading DiffSinger") as progress_bar:
-            with open("main.zip", "wb") as f:
+            with open(ds_zip_short, "wb") as f:
                 for chunk in response.iter_content(chunk_size = 1024):
                     if chunk:
                         f.write(chunk)
@@ -876,12 +919,13 @@ class App(ctk.CTk):
 
         try: os.mkdir("raw_data")
         except FileExistsError: pass
-
+        
         print("Adding the secret sauce...")
         with open("DiffSinger/configs/base.yaml", "r", encoding = "utf-8") as config1:
             base_config = yaml.safe_load(config1)
         base_config["pe"] = "rmvpe"
         base_config["f0_max"] = 1600
+        base_config["pl_trainer_devices"] = guisettings.get("pl_trainer_devices", "auto")
         with open("DiffSinger/configs/base.yaml", "w", encoding = "utf-8") as config1:
             yaml.dump(base_config, config1, default_flow_style=False, sort_keys=False)
         with open("DiffSinger/configs/acoustic.yaml", "r", encoding = "utf-8") as config2:
@@ -1026,6 +1070,19 @@ class App(ctk.CTk):
                     "dict_key": spk
                 })
         
+        base_name_to_spkid = {}
+        next_spkid = 0
+        for spk_data in spk_folders:
+            folder_name = spk_data["folder_name"]
+            if "." in folder_name:
+                base_name = folder_name.split(".")[0]
+            else:
+                base_name = folder_name
+            
+            if base_name not in base_name_to_spkid:
+                base_name_to_spkid[base_name] = next_spkid
+                next_spkid += 1
+        
         spk_rows = []
         for i, spk_data in enumerate(spk_folders):
             raw_dir = spk_data["raw_dir"]
@@ -1051,7 +1108,11 @@ class App(ctk.CTk):
             spk_lang_select.grid(column=1, row=0, padx=10)
             
             spk_id_select = ctk.CTkEntry(master=spk_rows[i], width=20, font=self.font)
-            spk_id_select.insert(0, i) 
+            if "." in folder_name:
+                base_name = folder_name.split(".")[0]
+            else:
+                base_name = folder_name
+            spk_id_select.insert(0, base_name_to_spkid[base_name]) 
             spk_id_select.grid(column=2, row=0, padx=15)
             
             self.spk_info[dict_key] = (raw_dir, spk_name_box, spk_lang_select, spk_id_select)
@@ -1152,8 +1213,8 @@ class App(ctk.CTk):
                 bitch_ass_config["use_lang_id"] = False
             else:
                 bitch_ass_config["use_lang_id"] = True
-            bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
-            bitch_ass_config["merged_phoneme_groups"] = merges["merged_phoneme_groups"]
+            bitch_ass_config["extra_phonemes"] = List(lang["extra_phonemes"])
+            bitch_ass_config["merged_phoneme_groups"] = PhonemeGroups(merges["merged_phoneme_groups"])
             bitch_ass_config["augmentation_args"]["random_pitch_shifting"]["enabled"] = enable_random_aug
             bitch_ass_config["augmentation_args"]["random_time_stretching"]["enabled"] = enable_time_aug
             bitch_ass_config["use_key_shift_embed"] = enable_random_aug
@@ -1224,8 +1285,8 @@ class App(ctk.CTk):
                 bitch_ass_config["use_spk_id"] = False
             bitch_ass_config["datasets"] = allspeakers
             bitch_ass_config["dictionaries"] = lang["dictionaries"]
-            bitch_ass_config["extra_phonemes"] = lang["extra_phonemes"]
-            bitch_ass_config["merged_phoneme_groups"] = merges["merged_phoneme_groups"]
+            bitch_ass_config["extra_phonemes"] = List(lang["extra_phonemes"])
+            bitch_ass_config["merged_phoneme_groups"] = PhonemeGroups(merges["merged_phoneme_groups"])
             bitch_ass_config["num_lang"] = len(lang["dictionaries"])
             if len(lang["dictionaries"]) == 1:
                 bitch_ass_config["use_lang_id"] = False
@@ -1396,7 +1457,7 @@ class App(ctk.CTk):
         new_phonemes_list = []
         if new_phonemes_str and new_phonemes_str.strip():
             new_phonemes_list = [item.strip() for item in new_phonemes_str.split(',')]
-        langloader["extra_phonemes"] = new_phonemes_list
+        langloader["extra_phonemes"] = List(new_phonemes_list)
         langloader["merge_list"] = mergebox.get()
         with open(self.langloader_path, "w", encoding="utf-8") as langdump:
             yaml.dump(langloader, langdump, sort_keys=False)
