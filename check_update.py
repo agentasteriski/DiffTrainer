@@ -1,4 +1,4 @@
-import requests, os, zipfile, shutil, subprocess, sys
+import requests, os, zipfile, shutil, subprocess, sys, yaml
 from tqdm import tqdm
 import re
 from tkinter import messagebox
@@ -32,8 +32,11 @@ try:
 except:
 	print("Error removing temporary comparison file")
 
+def version_tuple(v):
+    return tuple(map(int, v.split('.')))
 
-if local_version >= github_version:
+
+if version_tuple(local_version) >= version_tuple(github_version):
 	pass
 else:
 	update_prompt = messagebox.askyesno("Notice", f"Latest DiffTrainer version is {github_version}.\n\nYou currently have {local_version}.\n\nWould you like to update DiffTrainer?")
@@ -42,8 +45,11 @@ else:
 		zip = os.path.join(os.getcwd(), url.split("/")[-1])
 		folder = "DiffTrainer-main"
 
-
-
+		settingspath = os.path.join(main_path, "assets", "guisettings.yaml")
+		if os.path.exists(settingspath):
+			with open(settingspath, 'r', encoding='utf-8') as c:
+				settings = yaml.safe_load(c)
+				c.close()
 
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
@@ -78,6 +84,10 @@ else:
         	for filename in os.listdir(folder) if filename.endswith(".py")]
 			
 			shutil.rmtree(folder)
+		
+		with open(settingspath, 'w', encoding='utf-8') as f:
+			yaml.dump(settings, f, default_flow_style=False)
+			f.close()
 
 		if update_reqs == True:
 			messagebox.showinfo(title="Environment Out-of-Date", message="New or changed requirements have been added. \nPlease update your environment, or you may experience unexpected behavior.")
