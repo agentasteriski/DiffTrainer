@@ -49,7 +49,6 @@ else:
 		if os.path.exists(settingspath):
 			with open(settingspath, 'r', encoding='utf-8') as c:
 				settings = yaml.safe_load(c)
-				c.close()
 
 		response = requests.get(url, stream = True)
 		total_size = int(response.headers.get("content-length", 0))
@@ -85,6 +84,7 @@ else:
 			
 			shutil.rmtree(folder)
 		
+		c.close()
 		with open(settingspath, 'w', encoding='utf-8') as f:
 			yaml.dump(settings, f, default_flow_style=False)
 			f.close()
