@@ -84,7 +84,6 @@ else:
 			
 			shutil.rmtree(folder)
 		
-		c.close()
 		with open(settingspath, 'w', encoding='utf-8') as f:
 			yaml.dump(settings, f, default_flow_style=False)
 			f.close()
