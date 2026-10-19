@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.11
+- formally support attention-based relative duration predictor
+
 ## 0.4.10
 - BUG/BUGFIX: updates from below 0.4.10 will be accidentally ignored. grab a fresh copy of check_update.py or change the version number in your existing difftrainer.py to 0.4.0. won't happen again for real this time.
 - attempts to auto-merge speakers with the same name before the language tag
