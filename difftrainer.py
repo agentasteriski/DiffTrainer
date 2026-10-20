@@ -19,8 +19,8 @@ from dt_modules import onnxexport, basicexport, advexport, liteconvert, corpus_s
 main_path = os.path.dirname(__file__)
 ds_path = os.path.join(main_path, "DiffSinger")
 realpython = sys.executable
-version = "0.4.11"
-releasedate = "10/18/26"
+version = "0.4.12"
+releasedate = "10/20/26"
 
 #after the de-Condaing the only one that gets used is the Linux check but I'm leaving the others for now
 def is_linux():
@@ -1523,27 +1523,29 @@ class App(ctk.CTk):
             if self.dsrescue.get() == "on":
                 with open(configpath, "r", encoding = "utf-8") as checkconfig:
                     trainingconfig = yaml.safe_load(checkconfig)
-                if trainingconfig["binarization_args"]["prefer_ds"] == True:
-                    dirs = []
-                    for speaker in trainingconfig.get('datasets', []):
-                        raw_dir = speaker.get('raw_data_dir')
-                        if raw_dir:
-                            dirs.append(raw_dir)
-                    for raw_dir in dirs:
-                        wavs_folder = os.path.join(raw_dir, 'wavs')
-                        ds_folder = os.path.join(raw_dir, 'ds')
-                        if not os.path.isdir(wavs_folder):
-                            continue
-                        ds_files = [f for f in os.listdir(wavs_folder) if f.lower().endswith('.ds')]
-                        if not ds_files:
-                            continue
-                        os.makedirs(ds_folder, exist_ok=True)
-                        for filename in ds_files:
-                            src = os.path.join(wavs_folder, filename)
-                            dst = os.path.join(ds_folder, filename)
-                            if not os.path.isfile(src):
+                if trainingconfig["task_cls"] == "training.variance_task.VarianceTask":
+                    #print(".ds Rescue on")
+                    if trainingconfig["binarization_args"]["prefer_ds"] == True:
+                        dirs = []
+                        for speaker in trainingconfig.get('datasets', []):
+                            raw_dir = speaker.get('raw_data_dir')
+                            if raw_dir:
+                                dirs.append(raw_dir)
+                        for raw_dir in dirs:
+                            wavs_folder = os.path.join(raw_dir, 'wavs')
+                            ds_folder = os.path.join(raw_dir, 'ds')
+                            if not os.path.isdir(wavs_folder):
                                 continue
-                            shutil.copy2(src, dst)
+                            ds_files = [f for f in os.listdir(wavs_folder) if f.lower().endswith('.ds')]
+                            if not ds_files:
+                                continue
+                            os.makedirs(ds_folder, exist_ok=True)
+                            for filename in ds_files:
+                                src = os.path.join(wavs_folder, filename)
+                                dst = os.path.join(ds_folder, filename)
+                                if not os.path.isfile(src):
+                                    continue
+                                shutil.copy2(src, dst)
             
             cmdstage = [realpython, 'scripts/binarize.py', '--config', configpath]
 

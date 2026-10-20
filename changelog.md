@@ -1,4 +1,7 @@
 # Changelog
+## 0.4.12
+- .ds Rescue fully ignores acoustic training
+
 ## 0.4.11
 - formally support attention-based relative duration predictor
 
